@@ -92,13 +92,16 @@ app.post('/api/register', async (req, res) => {
       const newUsername = req.body;
       try {
           // Check if the user exists
-        const usertoEdit = await usersCollection.findOneAndReplace({ UserId: userIdtoEdit}, { UserName: newUsername })
+        const usertoEdit = await usersCollection.findOneAndUpdate(
+          { UserId: userIdtoEdit},
+          { $set: { UserName: newUsername }})
                 
         if (!usertoEdit) {
           return res.status(401).json({ error: 'User Not Found' });
         }
         
         res.status(200).json({ message: 'Updated Username' });
+
       } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal server error' });
