@@ -86,22 +86,22 @@ app.post('/api/register', async (req, res) => {
 
 
     // Edit a username
-    app.get('/api/editusers/:UserId', async (req, res) => {
-
-      const userIdtoEdit = parseInt(req.params.UserId);
-      const newUsername = req.body;
+    app.put('/api/editusers/:UserId', async (req, res) => {
+      const userIdToEdit = parseInt(req.params.UserId);
+      const newUsername = req.body.UserName; // Assuming the new username is in the "UserName" field of the request body
+    
       try {
-          // Check if the user exists
-        const usertoEdit = await usersCollection.findOneAndUpdate(
-          { UserId: userIdtoEdit},
-          { $set: { UserName: newUsername }})
-                
-        if (!usertoEdit) {
-          return res.status(401).json({ error: 'User Not Found' });
+        // Check if the user exists
+        const userToEdit = await usersCollection.findOneAndUpdate(
+          { UserId: userIdToEdit },
+          { $set: { UserName: newUsername } }
+        );
+    
+        if (!userToEdit) {
+          return res.status(404).json({ error: 'User Not Found' });
         }
-        
+    
         res.status(200).json({ message: 'Updated Username' });
-
       } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal server error' });
