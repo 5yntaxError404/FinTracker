@@ -92,7 +92,7 @@ app.post('/api/register', async (req, res) => {
       const newUsername = req.body;
       try {
           // Check if the user exists
-        const usertoEdit = await usersCollection.findOneAndUpdate({ UserId: userIdtoEdit}, { UserName: newUsername })
+        const usertoEdit = await usersCollection.findOneAndReplace({ UserId: userIdtoEdit}, { UserName: newUsername })
                 
         if (!usertoEdit) {
           return res.status(401).json({ error: 'User Not Found' });
