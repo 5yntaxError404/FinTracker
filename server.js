@@ -70,7 +70,7 @@ app.post('/api/register', async (req, res) => {
         try {
           // Check if the user exists
           const user = await usersCollection.findOne({ UserName, Password });
-  
+          
           if (!user) {
             return res.status(401).json({ error: 'Invalid credentials' });
           }
@@ -83,6 +83,29 @@ app.post('/api/register', async (req, res) => {
           res.status(500).json({ error: 'Internal server error' });
         }
       });
+
+
+    // Edit a username
+    app.get('/api/editusers/:UserId', async (req, res) => {
+
+      const userIdToEdit = parseInt(req.params.UserId);
+      const newUsername = parseInt(req.params.UserName);
+      try {
+          // Check if the user exists
+        const usertoEdit = await usersCollection.findOneAndUpdate({ UserId: usertoEdit}, { UserName: newUsername })
+                
+        if (!user) {
+          return res.status(401).json({ error: 'User Not Found' });
+        }
+        
+        
+        
+        res.status(200).json({ message: 'Updated Username' });
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error' });
+      }
+    });
     
     // Delete a user by UserId
     app.delete('/api/users/:UserId', async (req, res) => {
