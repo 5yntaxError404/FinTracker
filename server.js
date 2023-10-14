@@ -88,7 +88,7 @@ app.post('/api/register', async (req, res) => {
     // Edit a username
     app.get('/api/editusers/:UserId', async (req, res) => {
 
-      const userIdtoEdit = parseInt(req.params.UserId);
+      const userIdtoEdit = req.body;
       const newUsername = req.body;
       try {
           // Check if the user exists
