@@ -20,7 +20,8 @@ async function main() {
       console.log('Connected to MongoDB');
       const db = client.db('FinanceBuddy');
       const usersCollection = db.collection('Users');
-  
+      const accCollection = db.collection('Accounts');
+
       // Define Express.js app and routes
       const app = express();
       app.use(bodyParser.json());
@@ -92,7 +93,7 @@ app.post('/api/register', async (req, res) => {
 
 
     // Edit a username
-    app.put('/api/editusers/:UserId', async (req, res) => {
+    app.put('/api/users/edit/:UserId', async (req, res) => {
       const userIdToEdit = parseInt(req.params.UserId);
       const newUsername = req.body.UserName; // Assuming the new username is in the "UserName" field of the request body
     
@@ -116,7 +117,7 @@ app.post('/api/register', async (req, res) => {
     });
     
     // Delete a user by UserId
-    app.delete('/api/users/:UserId', async (req, res) => {
+    app.delete('/api/users/delete/:UserId', async (req, res) => {
     const userIdToDelete = parseInt(req.params.UserId);
   
     try {
@@ -133,6 +134,91 @@ app.post('/api/register', async (req, res) => {
       res.status(500).json({ error: 'Internal server error' });
     }
   });
+
+  ////////////////////////Account adding, editing, and deleting////////////////////////////////////
+// Add new account
+app.post('/api/accounts/add/:UserId', async (req, res) => {
+  const { AccountNum, RouteNum, BankName} = req.body;
+  try {
+    // Check if accounts already added to a user
+    const existingAccount = await accCollection.findOne({ AccountNum });
+
+    if (existingAccount) {
+      return res.status(400).json({ error: 'Account has already been added' });
+    }
+
+    //Check if valid?
+    
+    const newAccount = {
+      AccountNum,
+      RouteNum,
+      BankName,
+      UserIdRef : parseInt(req.params.UserId)
+    };
+
+    // Insert account into accounts collection
+    await accCollection.insertOne(newAccount);
+
+    // Return a success message
+    res.status(201).json({ message: 'Account added successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Edit account information
+app.put('/api/accounts/edit/:UserId', async (req, res) => {
+  const { newAccountNum, newRouteNum, newBankName} = req.body;
+
+  try {
+    //make changes one by one (does not work altogether)
+    var accountToEdit = await accCollection.findOneAndUpdate(
+      { UserIdRef: parseInt(req.params.UserId)},
+      { $set: { AccountNum: newAccountNum } },
+    );
+
+    accountToEdit = await accCollection.findOneAndUpdate(
+      { UserIdRef: parseInt(req.params.UserId)},
+      { $set: { RouteNum: newRouteNum } },
+    );
+
+    accountToEdit = await accCollection.findOneAndUpdate(
+      { UserIdRef: parseInt(req.params.UserId)},
+      { $set: { BankName: newBankName } }
+    );
+
+    //makes sure changes were made
+    if (!accountToEdit) {
+      return res.status(404).json({ error: 'Account Not Found in your profile' });
+    }
+
+    res.status(200).json({ message: 'Updated Account Information' });
+        
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.delete('/api/accounts/delete', async (req, res) => {
+  
+  const AccountNumtoDelete = req.body.AccountNum;
+
+  try {
+    // Find and delete the account by account number
+    const deletionResult = await accCollection.deleteOne({ AccountNum : AccountNumtoDelete});
+
+    if (deletionResult.deletedCount === 1) {
+      res.status(200).json({ message: 'Account deleted successfully' });
+    } else {
+      res.status(404).json({ error: 'Account not found' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
   
       app.listen(port, () => {
         console.log(`Server is running on port ${port}`);
