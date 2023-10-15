@@ -39,9 +39,15 @@ app.post('/api/register', async (req, res) => {
     if (existingUser) {
       return res.status(400).json({ error: 'Username already exists' });
     }
+    
+    var check = await usersCollection.findOne({ UserId: userCounter });
 
-    // Increment the user counter and use it as UserId
-    userCounter += 1;
+    do{
+      // Increment the user counter and use it as UserId
+      userCounter += 1;
+      check = await usersCollection.findOne({ UserId: userCounter });
+
+    }while(check) //make sure there is no dup userIDs
 
     const newUser = {
       FirstName,
@@ -102,6 +108,7 @@ app.post('/api/register', async (req, res) => {
         }
     
         res.status(200).json({ message: 'Updated Username' });
+        
       } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal server error' });
