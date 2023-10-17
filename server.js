@@ -3,8 +3,12 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { MongoClient } = require('mongodb');
 require('dotenv/config');
+const PORT = process.env.PORT || 5000; // Heroku set port
 const app = express();
-const port = 3000;
+//const port = 3000;
+app.set('port', (process.env.PORT || 5000));
+
+
 
 app.use(bodyParser.json());
 
@@ -220,9 +224,9 @@ app.delete('/api/accounts/delete', async (req, res) => {
   }
 });
   
-      app.listen(port, () => {
-        console.log(`Server is running on port ${port}`);
-      });
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
     } finally {
       // The MongoDB client will be closed when the app is terminated
     }
