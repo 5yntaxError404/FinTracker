@@ -10,10 +10,6 @@ const transporter = nodemailer.createTransport({
 	} 
 }); 
 
-const token = jwt.sign({ 
-		data: 'Token Data' . 
-	}, 'ourSecretKey', { expiresIn: '10m' } 
-);	 
 
 const mailConfigurations = { 
 

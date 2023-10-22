@@ -99,9 +99,20 @@ app.post('/api/register', async (req, res) => {
       return emailValidator.validate(email);
     }
 
+    // Verifies email with token that user provides with link.
     app.get('/verify/:token', (req, res) => {
       const {token} = req.params;
-    })
+
+      jwt.verify(token, 'secretKey', function(err, decoded) {
+        if (err) {
+          console.log(err);
+          res.send("Email verification failed, possibly the link is invalid or expired");
+        }
+        else {
+          res.send("Email verified. You may now log-in.");
+        }
+      });
+    });
     
     // Edit a username
     app.put('/api/users/edit/:UserId', async (req, res) => {
