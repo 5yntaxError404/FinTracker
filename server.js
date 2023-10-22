@@ -1,5 +1,8 @@
 // Server.js
 const express = require('express');
+const jwt = require('jsonwebtoken');
+const router = express.Router();
+const emailValidator = require('deep-email-validator');
 const bodyParser = require('body-parser');
 const { MongoClient } = require('mongodb');
 require('dotenv/config');
@@ -91,7 +94,15 @@ app.post('/api/register', async (req, res) => {
         }
       });
 
+    // Validate userEmail
+    async function isEmailValid(email){
+      return emailValidator.validate(email);
+    }
 
+    app.get('/verify/:token', (req, res) => {
+      const {token} = req.params;
+    })
+    
     // Edit a username
     app.put('/api/users/edit/:UserId', async (req, res) => {
       const userIdToEdit = parseInt(req.params.UserId);
