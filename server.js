@@ -3,6 +3,7 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
 const emailValidator = require('deep-email-validator');
+const nodemailer = require ("nodemailer");
 const bodyParser = require('body-parser');
 const { MongoClient } = require('mongodb');
 require('dotenv/config');
@@ -34,14 +35,19 @@ let userCounter = 665;
 
 // Register a new user
 app.post('/api/register', async (req, res) => {
-  const { FirstName, LastName, UserName, Password } = req.body;
+  const { FirstName, LastName, Email, UserName, Password } = req.body;
 
   try {
     // Check if the username is already taken
     const existingUser = await usersCollection.findOne({ UserName });
+    const existingEmail = await usersCollection.findOne({ Email });
 
     if (existingUser) {
       return res.status(400).json({ error: 'Username already exists' });
+    }
+
+    if (existingEmail) {
+      return res.status(400).json({ error: 'Email already associated with another account.'});
     }
     
     var check = await usersCollection.findOne({ UserId: userCounter });
@@ -56,10 +62,13 @@ app.post('/api/register', async (req, res) => {
     const newUser = {
       FirstName,
       LastName,
+      Email,
       UserId: userCounter,
       UserName,
       Password,
     };
+
+    verifyEmail();
 
     // Insert the user document into the "Users" collection
     await usersCollection.insertOne(newUser);
@@ -94,26 +103,30 @@ app.post('/api/register', async (req, res) => {
         }
       });
 
-    // Validate userEmail
-    async function isEmailValid(email){
-      return emailValidator.validate(email);
-    }
+    ///////////////////////////EMAIL VERIFICATION/////////////////////
 
-    // Verifies email with token that user provides with link.
-    app.get('/verify/:token', (req, res) => {
-      const {token} = req.params;
-
-      jwt.verify(token, 'secretKey', function(err, decoded) {
-        if (err) {
-          console.log(err);
-          res.send("Email verification failed, possibly the link is invalid or expired");
-        }
-        else {
-          res.send("Email verified. You may now log-in.");
-        }
-      });
+    var transport = nodemailer.createTransport({
+      host: "sandbox.smtp.mailtrap.io",
+      port: 2525,
+      auth: {
+        user: "ed0a07b9d4af53",
+        pass: "c8cd5181f1667f"
+      }
     });
-    
+
+    async function verifyEmail() {
+      const info = await transport.sendMail({
+        from: '"Admin" <Admin@fintech.davidumanzor.com>',
+        // sender address
+        to: 'user1@example.com',
+        subject: 'EmailTest',
+        text: 'Testing our email services.'
+        
+      });
+
+    }
+    //////////////////////////END EMAIL VERIFICATION//////////////////
+
     // Edit a username
     app.put('/api/users/edit/:UserId', async (req, res) => {
       const userIdToEdit = parseInt(req.params.UserId);
@@ -157,7 +170,8 @@ app.post('/api/register', async (req, res) => {
     }
   });
 
-  ////////////////////////Account adding, editing, and deleting////////////////////////////////////
+
+////////////////////////Account adding, editing, and deleting////////////////////////////////////
 // Add new account
 app.post('/api/accounts/add/:UserId', async (req, res) => {
   const { AccountNum, RouteNum, BankName} = req.body;
@@ -188,6 +202,7 @@ app.post('/api/accounts/add/:UserId', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 // Edit account information
 app.put('/api/accounts/edit/:UserId', async (req, res) => {
@@ -223,6 +238,8 @@ app.put('/api/accounts/edit/:UserId', async (req, res) => {
   }
 });
 
+
+// Delete Account
 app.delete('/api/accounts/delete', async (req, res) => {
   
   const AccountNumtoDelete = req.body.AccountNum;
