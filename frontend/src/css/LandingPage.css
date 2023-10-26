@@ -1,0 +1,20 @@
+/* src/LandingPage.css */
+.landing-container {
+    background-color: #6C5B7B;
+    color: white;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+}
+
+.menu {
+    cursor: pointer;
+}
+
+.content {
+    text-align: center;
+    max-width: 600px;
+}
