@@ -87,6 +87,9 @@ const Login = (props) => {
             <p className="forgot-password text-right">
             Forgot <a href="#">password?</a>
             </p>
+			<p className="new-account test-right"> 
+			New <a href="/signup">account?</a>
+			</p>
         </form>
         </div> 
 	</div>

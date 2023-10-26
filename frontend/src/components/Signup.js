@@ -1,27 +1,53 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import '../css/LoginPage.css';
-import '../api/Register'
 
-const Login = (props) => {
+const SignUp = (props) => {
 
+	var signupFirstName;
+	var signupLastName;
 	var signupEmail;
 	var signupPassword;
+	var signupUsername;
+	
 	const [message,setMessage] = useState('');
 
-	function doSignup() {
-		firstName = document.getElementById("signupFirstName").value;
-		lastName = document.getElementById("signupLastName").value;
+	const doSignup = async event =>
+	 {
+		let firstName = document.getElementById("signupFirstName").value;
+		let lastName = document.getElementById("signupLastName").value;
 
 		let username = document.getElementById("signupEmail").value;
 		let password = document.getElementById("signupPassword").value;
 
-	//    if (!validSignUpForm(firstName, lastName, username, password)) {
-	//        document.getElementById("signupResult").innerHTML = "invalid signup";
-	//        return;
-	//    }
-
-	}
+		event.preventDefault();
+		var obj = {firstName:signupFirstName.value,lastName:signupLastName,email:signupEmail,password:signupPassword.value};
+		var js = JSON.stringify(obj);
+		try
+		{
+			const response = await fetch('http://localhost:3000/api/register',
+			{method:'POST',body:js,headers:{'Content-Type':
+			'application/json'}});
+			var res = JSON.parse(await response.text());
+			if( res.id <= 0 )
+			{
+				setMessage('User/Password combination incorrect');
+			}
+			else
+			{
+				var user =
+				{firstName:res.firstName,lastName:res.lastName,id:res.id}
+				localStorage.setItem('user_data', JSON.stringify(user));
+				setMessage('');
+				window.location.href = '/dash';
+			}
+		}
+		catch(e)
+		{
+			alert(e.toString());
+			return;
+		}
+	};
 
 	return (
 		<div className="login-container">
@@ -30,12 +56,34 @@ const Login = (props) => {
 				<h3>Sign In</h3>
 
 				<div className="mb-3">
-				<label>Email address</label>
+				<label>Firstname</label>
 				<input
-					id="loginEmail"
+					id="signupFirstName"
 					className="form-control"
-					placeholder="Enter email"
-					value={loginEmail}
+					placeholder="Enter firstname"
+					value={signupFirstName}
+					//onChange={(e) => setEmail(e.target.value)}
+				/>
+				</div>
+
+				<div className="mb-3">
+				<label>Lastname</label>
+				<input
+					id="signupLastName"
+					className="form-control"
+					placeholder="Enter lastname"
+					value={signupLastName}
+					//onChange={(e) => setEmail(e.target.value)}
+				/>
+				</div>
+
+				<div className="mb-3">
+				<label>Username</label>
+				<input
+					id="signupUsername"
+					className="form-control"
+					placeholder="Enter username"
+					value={signupUsername}
 					//onChange={(e) => setEmail(e.target.value)}
 				/>
 				</div>
@@ -43,10 +91,21 @@ const Login = (props) => {
 				<div className="mb-3">
 				<label>Password</label>
 				<input
-					id="loginPassword"
+					id="signupPassword"
 					className="form-control"
 					placeholder="Enter password"
-					value={loginPassword}
+					value={signupPassword}
+					//onChange={(e) => setPassword(e.target.value)}
+				/>
+				</div>
+
+				<div className="mb-3">
+				<label>Email</label>
+				<input
+					id="signupEmail"
+					className="form-control"
+					placeholder="Enter password"
+					value={signupEmail}
 					//onChange={(e) => setPassword(e.target.value)}
 				/>
 				</div>
@@ -65,16 +124,19 @@ const Login = (props) => {
 				</div>
 
 				<div className="d-grid">
-				<button onclick={doLogin} type="submit" className="btn btn-primary">
+				<button onclick={doSignup} type="submit" className="btn btn-primary">
 					Submit
 				</button>
 				</div>
 				<p className="forgot-password text-right">
 				Forgot <a href="#">password?</a>
 				</p>
+				<p className="new-account test-right"> 
+				Have an <a href="/login">account?</a>
+				</p>
 			</form>
 			</div> 
 		</div>
 	);
 }
-export default Login;
+export default SignUp;
