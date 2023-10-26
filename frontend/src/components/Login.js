@@ -4,12 +4,12 @@ import '../css/LoginPage.css';
 
 const Login = (props) => {
 
-	var loginEmail = "NotALizard";
-	var loginPassword = "Luvzards";
 	const [message,setMessage] = useState('');
     
 	const doLogin = async event =>
 	{
+        let loginEmail = document.querySelector("#loginUserName");
+	    let loginPassword = document.querySelector("#loginPassword")
 		event.preventDefault();
 		var obj = {UserName:loginEmail.value,Password:loginPassword.value};
 		//var js = JSON.stringify(obj);
@@ -41,6 +41,7 @@ const Login = (props) => {
 		}
 	};
 
+
     return (
 	<div className="login-container">
         <div className="login-form">
@@ -48,13 +49,11 @@ const Login = (props) => {
             <h3>Sign In</h3>
 
             <div className="mb-3">
-            <label>Email address</label>
+            <label>Username</label>
             <input
-				id="loginEmail"
+				id="loginUserName"
                 className="form-control"
-                placeholder="Enter email"
-                value={loginEmail}
-                //onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter username"
             />
             </div>
 
@@ -64,8 +63,6 @@ const Login = (props) => {
 				id="loginPassword"
                 className="form-control"
                 placeholder="Enter password"
-                value={loginPassword}
-                //onChange={(e) => setPassword(e.target.value)}
             />
             </div>
 
