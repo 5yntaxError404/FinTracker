@@ -4,20 +4,21 @@ import '../css/LoginPage.css';
 
 const Login = (props) => {
 
-	var loginEmail;
-	var loginPassword;
+	var loginEmail = "NotALizard";
+	var loginPassword = "Luvzards";
 	const [message,setMessage] = useState('');
     
 	const doLogin = async event =>
 	{
 		event.preventDefault();
-		var obj = {login:loginEmail.value,password:loginPassword.value};
-		var js = JSON.stringify(obj);
+		var obj = {UserName:loginEmail.value,Password:loginPassword.value};
+		//var js = JSON.stringify(obj);
 		try
 		{
-			const response = await fetch('http://localhost:5000/api/login',
-			{method:'POST',body:js,headers:{'Content-Type':
+			const response = await fetch('http://localhost:3000/api/login',
+			{method:'POST',body:obj,headers:{'Content-Type':
 			'application/json'}});
+            /*
 			var res = JSON.parse(await response.text());
 			if( res.id <= 0 )
 			{
@@ -31,6 +32,7 @@ const Login = (props) => {
 				setMessage('');
 				window.location.href = '/dash';
 			}
+            */
 		}
 		catch(e)
 		{
