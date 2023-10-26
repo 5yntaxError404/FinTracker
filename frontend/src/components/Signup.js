@@ -17,17 +17,19 @@ const SignUp = (props) => {
 		let firstName = document.getElementById("signupFirstName").value;
 		let lastName = document.getElementById("signupLastName").value;
 
-		let username = document.getElementById("signupEmail").value;
+		let email = document.getElementById("signupEmail").value;
+		let username = document.getElementById("signupUsername").value;
 		let password = document.getElementById("signupPassword").value;
 
 		event.preventDefault();
-		var obj = {firstName:signupFirstName.value,lastName:signupLastName,email:signupEmail,password:signupPassword.value};
+		var obj = {firstName:firstName,lastName:lastName,email:email,username:username,password:password};
 		var js = JSON.stringify(obj);
 		try
 		{
 			const response = await fetch('http://localhost:3000/api/register',
 			{method:'POST',body:js,headers:{'Content-Type':
 			'application/json'}});
+			/*
 			var res = JSON.parse(await response.text());
 			if( res.id <= 0 )
 			{
@@ -38,9 +40,10 @@ const SignUp = (props) => {
 				var user =
 				{firstName:res.firstName,lastName:res.lastName,id:res.id}
 				localStorage.setItem('user_data', JSON.stringify(user));
-				setMessage('');
+				setMessage('User Created');
 				window.location.href = '/dash';
 			}
+			*/
 		}
 		catch(e)
 		{

@@ -15,9 +15,18 @@ const Login = (props) => {
 		//var js = JSON.stringify(obj);
 		try
 		{
+            await fetch('http://localhost:3000/api/login', {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(obj),
+        })
+            /*
 			const response = await fetch('http://localhost:3000/api/login',
 			{method:'POST',body:obj,headers:{'Content-Type':
 			'application/json'}});
+            */
             /*
 			var res = JSON.parse(await response.text());
 			if( res.id <= 0 )
