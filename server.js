@@ -3,7 +3,7 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
 const emailValidator = require('deep-email-validator');
-const nodemailer = require ("nodemailer");
+
 const bodyParser = require('body-parser');
 const { MongoClient } = require('mongodb');
 const { generateOneTimePass, verifyEmail } = require('./mailing');
@@ -64,7 +64,6 @@ app.post('/api/register', async (req, res) => {
 
     const oneTimePass = generateOneTimePass()
     
-
     const newUser = {
       FirstName,
       LastName,

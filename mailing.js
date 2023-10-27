@@ -1,3 +1,4 @@
+const nodemailer = require ("nodemailer");
 
       exports.generateOneTimePass = () => {
         let oneTimePass = ""
@@ -17,7 +18,7 @@
       }
     });
 
-    export async function verifyEmail(email, OTP) {
+    async function verifyEmail(email, OTP) {
 
       const info = await transport.sendMail({
         from: '"Admin" <Admin@fintech.davidumanzor.com>',
@@ -27,5 +28,6 @@
         text: 'Here is your OTP: ' + OTP
         
       });
-
     }
+
+    module.exports.verifyEmail = verifyEmail;
