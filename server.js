@@ -6,9 +6,13 @@ const emailValidator = require('deep-email-validator');
 const nodemailer = require ("nodemailer");
 const bodyParser = require('body-parser');
 const { MongoClient } = require('mongodb');
+const { generateOneTimePass } = require('./mailing');
+const verificationToken = require('./verificationToken');
 require('dotenv/config');
 const app = express();
 const port = 3000;
+const mongoose = require("mongoose");
+const bcrypt = require ("bcrypt");
 
 app.use(bodyParser.json());
 
@@ -68,7 +72,12 @@ app.post('/api/register', async (req, res) => {
       Password,
     };
 
-    verifyEmail();
+    const oneTimePass = generateOneTimePass()
+    const verificationToken = new VerificationToken({
+      owner: newUser.UserId,
+      token: oneTimePass
+    })
+    //verifyEmail();
 
     // Insert the user document into the "Users" collection
     await usersCollection.insertOne(newUser);
@@ -115,6 +124,7 @@ app.post('/api/register', async (req, res) => {
     });
 
     async function verifyEmail() {
+
       const info = await transport.sendMail({
         from: '"Admin" <Admin@fintech.davidumanzor.com>',
         // sender address
