@@ -1,7 +1,7 @@
 .header {
 	display: flex;
 	position: fixed;
-	top: -20px;
+	top: -10px;
 	left: 0;
 	justify-content: space-between;
 	width: 100%;
@@ -9,7 +9,15 @@
 	color: purple;
 	background-color: white;
 	height: 60px;
-	border-radius: 14px;
+	border-radius: 0px 0px 14px 14px;
 	box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
 	margin-top: 10px;
+}
+
+menu {
+	width: var(--menu-width)
+}
+
+menu .icon a:hover {
+	color: black
 }

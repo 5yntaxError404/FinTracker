@@ -4,6 +4,7 @@ import './App.css';
 import LoginPage from './pages/LoginPage';
 import LandingPage from './pages/LandingPage';
 import SignUpPage from './pages/SignUpPage';
+import DashPage from './pages/DashPage';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 
@@ -15,6 +16,7 @@ function App() {
                   <Route exact path="/" element={<LandingPage />} />
                   <Route path="/login" element={<LoginPage />} />
                   <Route path="/signup" element={<SignUpPage />} />
+                  <Route path="/dash" element={<DashPage />} />
               </Routes>
           </div>
       </BrowserRouter>
