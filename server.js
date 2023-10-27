@@ -6,13 +6,12 @@ const emailValidator = require('deep-email-validator');
 const nodemailer = require ("nodemailer");
 const bodyParser = require('body-parser');
 const { MongoClient } = require('mongodb');
-const { generateOneTimePass } = require('./mailing');
-const verificationToken = require('./verificationToken');
+const { generateOneTimePass, verifyEmail } = require('./mailing');
 require('dotenv/config');
 const app = express();
 const port = 3000;
-const mongoose = require("mongoose");
 const bcrypt = require ("bcrypt");
+
 
 app.use(bodyParser.json());
 
@@ -63,6 +62,9 @@ app.post('/api/register', async (req, res) => {
 
     }while(check) //make sure there is no dup userIDs
 
+    const oneTimePass = generateOneTimePass()
+    
+
     const newUser = {
       FirstName,
       LastName,
@@ -70,17 +72,14 @@ app.post('/api/register', async (req, res) => {
       UserId: userCounter,
       UserName,
       Password,
+      VerificationToken: bcrypt.hash(oneTimePass, 8)
     };
 
-    const oneTimePass = generateOneTimePass()
-    const verificationToken = new VerificationToken({
-      owner: newUser.UserId,
-      token: oneTimePass
-    })
-    //verifyEmail();
-
+    
+    verifyEmail(newUser.Email,oneTimePass);
     // Insert the user document into the "Users" collection
     await usersCollection.insertOne(newUser);
+
 
     // Return a success message
     res.status(201).json({ message: 'User registered successfully' });
@@ -114,27 +113,7 @@ app.post('/api/register', async (req, res) => {
 
     ///////////////////////////EMAIL VERIFICATION/////////////////////
 
-    var transport = nodemailer.createTransport({
-      host: "sandbox.smtp.mailtrap.io",
-      port: 2525,
-      auth: {
-        user: "ed0a07b9d4af53",
-        pass: "c8cd5181f1667f"
-      }
-    });
-
-    async function verifyEmail() {
-
-      const info = await transport.sendMail({
-        from: '"Admin" <Admin@fintech.davidumanzor.com>',
-        // sender address
-        to: 'user1@example.com',
-        subject: 'EmailTest',
-        text: 'Testing our email services.'
-        
-      });
-
-    }
+    
     //////////////////////////END EMAIL VERIFICATION//////////////////
 
     // Edit a username
