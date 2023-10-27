@@ -4,7 +4,7 @@ import '../css/LandingPage.css';
 import Button from 'react-bootstrap/Button';
 import { Link } from 'react-router-dom';
 
-
+// Looking for correct code to import font
 
 
 const LandingPage = (props) => {
@@ -15,12 +15,14 @@ const LandingPage = (props) => {
 	};
 
     return (
+
         <div className="landing-container">
             <div className="content">
+            <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono"></link>
                 <p>Struggling with keeping tabs on your expenses?</p>
                 <p>Lost in the maze of monthly bills, savings, and investment options?</p>
                 <p>Say hello to <strong>FinTrack+</strong>, the ultimate tool designed specifically to help you master your money.</p>
-                <Button onClick={goToLogin} variant="primary">Get Started</Button>
+                <Button className="button" onClick={goToLogin}>Get Started</Button>
             </div>
         </div>
     );

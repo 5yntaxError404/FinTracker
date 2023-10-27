@@ -1,0 +1,77 @@
+/* Bar Graph Class */
+
+.barGraph {
+    position: relative;
+    width: 100%;
+    height: auto;
+    margin-bottom: 50px;
+  }
+  
+  .graph {
+    position: relative;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    width: calc(100% - 4%);
+    left: 4%;
+    
+    &-barBack {
+      border-radius: 2px;
+      background: #DAE4EB;
+      margin-bottom: 10px;
+      display: block;
+    }
+    
+    &-bar {
+      background-color: #59BAC0;    
+      .transition(all 1s ease-out);
+      border-radius: 2px;
+      cursor: pointer;
+      margin-bottom: 10px;
+      position: relative;
+      z-index: 9999;
+      display: block;
+      height: 20px;  
+      width: 0%;
+      
+      &:hover {
+        .transition(all 0.5s ease);
+        background: #428D92;
+      }
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+      
+      &:after {
+        position: absolute;
+        content: attr(data-value);
+        display: none;
+        
+        font-size: 12px;
+        border-radius: 4px;
+        background: rgba(0,0,0,0.5);
+        color: #fff;
+        
+        line-height: @barHeight;
+        height: @barHeight; 
+        padding: 0 10px;
+        
+        margin-left: 5px;
+        left: 100%;
+        top: 0;
+      }
+      
+      &:hover:after {
+        display: block;
+      }
+    }
+    
+    &-legend {
+      position: absolute;
+      margin-right: 10px;
+      left: -40px ;
+      z-index: 9999;
+    }
+  }
+  
