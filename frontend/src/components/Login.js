@@ -15,33 +15,23 @@ const Login = (props) => {
 		//var js = JSON.stringify(obj);
 		try
 		{
-            await fetch('http://localhost:3000/api/login', {
+            const response = await fetch('http://localhost:5000/api/login', {
             method: "POST",
             headers: {
-                'Content-Type': 'application/json'
-            },
+                'Access-Control-Allow-Origin': '*'
+			},
             body: JSON.stringify(obj),
         })
-            /*
-			const response = await fetch('http://localhost:3000/api/login',
-			{method:'POST',body:obj,headers:{'Content-Type':
-			'application/json'}});
-            */
-            /*
-			var res = JSON.parse(await response.text());
+			var res = response.json;
 			if( res.id <= 0 )
 			{
 				setMessage('User/Password combination incorrect');
 			}
 			else
 			{
-				var user =
-				{firstName:res.firstName,lastName:res.lastName,id:res.id}
-				localStorage.setItem('user_data', JSON.stringify(user));
-				setMessage('');
-				window.location.href = '/dash';
+				setMessage('Got response use Logged In')
+				//window.location.href = '/dash';
 			}
-            */
 		}
 		catch(e)
 		{

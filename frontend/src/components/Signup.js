@@ -22,14 +22,18 @@ const SignUp = (props) => {
 		let password = document.getElementById("signupPassword").value;
 
 		event.preventDefault();
-		var obj = {firstName:firstName,lastName:lastName,email:email,username:username,password:password};
+		var obj = {FirstName:firstName,LastName:lastName,Email:email,UserName:username,Password:password};
 		var js = JSON.stringify(obj);
 		try
 		{
-			const response = await fetch('http://localhost:3000/api/register',
-			{method:'POST',body:js,headers:{'Content-Type':
-			'application/json'}});
-			/*
+			const response = await fetch('http://localhost:5000/api/register', {
+			method: "POST",
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(obj),
+		})
+		/*
 			var res = JSON.parse(await response.text());
 			if( res.id <= 0 )
 			{
@@ -50,6 +54,7 @@ const SignUp = (props) => {
 			alert(e.toString());
 			return;
 		}
+		
 	};
 
 	return (
@@ -127,7 +132,7 @@ const SignUp = (props) => {
 				</div>
 
 				<div className="d-grid">
-				<button onclick={doSignup} type="submit" className="btn btn-primary">
+				<button onClick={doSignup} type="submit" className="btn btn-primary">
 					Submit
 				</button>
 				</div>
