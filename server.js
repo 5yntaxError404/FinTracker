@@ -1,12 +1,22 @@
 // Server.js
 const express = require('express');
+const jwt = require('jsonwebtoken');
+const router = express.Router();
+const emailValidator = require('deep-email-validator');
+
 const bodyParser = require('body-parser');
 const { MongoClient } = require('mongodb');
+const { generateOneTimePass, verifyEmail } = require('./mailing');
 require('dotenv/config');
 const PORT = process.env.PORT || 5000; // Heroku set port
 const app = express();
+
+const port = 3000;
+const bcrypt = require ("bcrypt");
+
 //const port = 3000;
 app.set('port', (process.env.PORT || 5000));
+
 
 
 
@@ -35,14 +45,19 @@ let userCounter = 665;
 
 // Register a new user
 app.post('/api/register', async (req, res) => {
-  const { FirstName, LastName, UserName, Password } = req.body;
+  const { FirstName, LastName, Email, UserName, Password } = req.body;
 
   try {
     // Check if the username is already taken
     const existingUser = await usersCollection.findOne({ UserName });
+    const existingEmail = await usersCollection.findOne({ Email });
 
     if (existingUser) {
       return res.status(400).json({ error: 'Username already exists' });
+    }
+
+    if (existingEmail) {
+      return res.status(400).json({ error: 'Email already associated with another account.'});
     }
     
     var check = await usersCollection.findOne({ UserId: userCounter });
@@ -54,16 +69,24 @@ app.post('/api/register', async (req, res) => {
 
     }while(check) //make sure there is no dup userIDs
 
+    const oneTimePass = generateOneTimePass()
+    
     const newUser = {
+      UserId: userCounter,
       FirstName,
       LastName,
-      UserId: userCounter,
+      Email,
       UserName,
       Password,
+      VerificationToken: bcrypt.hash(oneTimePass, 8),
+      isVerified: false
     };
 
+    
+    verifyEmail(newUser.Email,oneTimePass);
     // Insert the user document into the "Users" collection
     await usersCollection.insertOne(newUser);
+
 
     // Return a success message
     res.status(201).json({ message: 'User registered successfully' });
@@ -85,6 +108,9 @@ app.post('/api/register', async (req, res) => {
           if (!user) {
             return res.status(401).json({ error: 'Invalid credentials' });
           }
+
+          if (!user.isVerified)
+            return res.status(400).json({error: 'Email not yet verified.'})
   
           // You may implement token-based authentication here
   
@@ -95,6 +121,32 @@ app.post('/api/register', async (req, res) => {
         }
       });
 
+
+
+    app.post('/api/validateEmail', async (req, res) => {
+
+      let  { UserName, VerificationToken } = req.body;
+      VerificationToken = bcrypt.hash(VerificationToken, 8)
+
+      try 
+      {
+          const user = await usersCollection.findOne({UserName, VerificationToken});
+
+          if (!user)
+            return res.status(401).json({error: 'Invalid OTP or User. Please try again.'})
+          
+          const verified = await usersCollection.findOneAndUpdate(
+            { isVerified: false },
+            { $set: { isVerified: true } }
+          );
+          res.status(200).json({ message: 'Email Verified'})
+        
+      }
+      catch (error) {
+        console.error(error);
+        res.status(500),json({ error: 'Internal Server Error'})
+      }
+    });
 
     // Edit a username
     app.put('/api/users/edit/:UserId', async (req, res) => {
@@ -139,7 +191,8 @@ app.post('/api/register', async (req, res) => {
     }
   });
 
-  ////////////////////////Account adding, editing, and deleting////////////////////////////////////
+
+////////////////////////Account adding, editing, and deleting////////////////////////////////////
 // Add new account
 app.post('/api/accounts/add/:UserId', async (req, res) => {
   const { AccountNum, RouteNum, BankName} = req.body;
@@ -170,6 +223,7 @@ app.post('/api/accounts/add/:UserId', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 // Edit account information
 app.put('/api/accounts/edit/:UserId', async (req, res) => {
@@ -205,6 +259,8 @@ app.put('/api/accounts/edit/:UserId', async (req, res) => {
   }
 });
 
+
+// Delete Account
 app.delete('/api/accounts/delete', async (req, res) => {
   
   const AccountNumtoDelete = req.body.AccountNum;
