@@ -65,13 +65,14 @@ app.post('/api/register', async (req, res) => {
     const oneTimePass = generateOneTimePass()
     
     const newUser = {
+      UserId: userCounter,
       FirstName,
       LastName,
       Email,
-      UserId: userCounter,
       UserName,
       Password,
-      VerificationToken: bcrypt.hash(oneTimePass, 8)
+      VerificationToken: bcrypt.hash(oneTimePass, 8),
+      isVerified: false
     };
 
     
@@ -100,6 +101,9 @@ app.post('/api/register', async (req, res) => {
           if (!user) {
             return res.status(401).json({ error: 'Invalid credentials' });
           }
+
+          if (!user.isVerified)
+            return res.status(400).json({error: 'Email not yet verified.'})
   
           // You may implement token-based authentication here
   
@@ -110,10 +114,32 @@ app.post('/api/register', async (req, res) => {
         }
       });
 
-    ///////////////////////////EMAIL VERIFICATION/////////////////////
 
-    
-    //////////////////////////END EMAIL VERIFICATION//////////////////
+
+    app.post('/api/validateEmail', async (req, res) => {
+
+      let  { UserName, VerificationToken } = req.body;
+      VerificationToken = bcrypt.hash(VerificationToken, 8)
+
+      try 
+      {
+          const user = await usersCollection.findOne({UserName, VerificationToken});
+
+          if (!user)
+            return res.status(401).json({error: 'Invalid OTP or User. Please try again.'})
+          
+          const verified = await usersCollection.findOneAndUpdate(
+            { isVerified: false },
+            { $set: { isVerified: true } }
+          );
+          res.status(200).json({ message: 'Email Verified'})
+        
+      }
+      catch (error) {
+        console.error(error);
+        res.status(500),json({ error: 'Internal Server Error'})
+      }
+    });
 
     // Edit a username
     app.put('/api/users/edit/:UserId', async (req, res) => {
