@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const { MongoClient } = require('mongodb');
 require('dotenv/config');
 const app = express();
-const port = 5000;
+const port = 3000;
 
 app.use(bodyParser.json());
 
@@ -31,7 +31,7 @@ let userCounter = 665;
 
 // Register a new user
 app.post('/api/register', async (req, res) => {
-  const { FirstName, LastName, UserName, Password } = req.body;
+  const { FirstName, LastName,Email, UserName, Password } = req.body;
 
   try {
     // Check if the username is already taken
@@ -54,6 +54,7 @@ app.post('/api/register', async (req, res) => {
       FirstName,
       LastName,
       UserId: userCounter,
+      Email,
       UserName,
       Password,
     };

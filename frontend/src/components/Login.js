@@ -1,44 +1,33 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../css/LoginPage.css';
 
 const Login = (props) => {
 
-	const [message,setMessage] = useState('');
-    
-	const doLogin = async event =>
-	{
-        let loginEmail = document.querySelector("#loginUserName");
-	    let loginPassword = document.querySelector("#loginPassword")
-		event.preventDefault();
-		var obj = {UserName:loginEmail.value,Password:loginPassword.value};
-		//var js = JSON.stringify(obj);
-		try
+    const [username,setUserName] = useState()
+    const [password, setPassword] = useState()
+
+	const doLogin = async() => {
+        axios.post('http://localhost:3000/api/login', {username,password})
+        .then(result => console.log(result))
+        .catch(err=> console.log(err));
+    }
+
+    useEffect(() => {
+        doLogin();
+    },[])
+        
+		/*try
 		{
-            const response = await fetch('http://localhost:5000/api/login', {
+            const response = await fetch('http://localhost:3000/api/login', {
             method: "POST",
             headers: {
                 'Access-Control-Allow-Origin': '*'
 			},
             body: JSON.stringify(obj),
         })
-			var res = response.json;
-			if( res.id <= 0 )
-			{
-				setMessage('User/Password combination incorrect');
-			}
-			else
-			{
-				setMessage('Got response use Logged In')
-				//window.location.href = '/dash';
-			}
-		}
-		catch(e)
-		{
-			alert(e.toString());
-			return;
-		}
-	};
+		*/
+
 
 
     return (
@@ -50,9 +39,12 @@ const Login = (props) => {
             <div className="mb-3">
             <label>Username</label>
             <input
+                type="text"
 				id="loginUserName"
                 className="form-control"
                 placeholder="Enter username"
+                name="username"
+                onChange={(e) => setUserName(e.target.value)}
             />
             </div>
 
@@ -62,6 +54,8 @@ const Login = (props) => {
 				id="loginPassword"
                 className="form-control"
                 placeholder="Enter password"
+                name="password"
+                onChange={(e) => setPassword(e.target.value)}
             />
             </div>
 
