@@ -7,24 +7,40 @@ import { useNavigate } from 'react-router-dom';
 
 function SignUp(){
 
-	const [FirstName,setFirstName] = useState("")
-	const [LastName,setLastName] = useState("")
-	const [UserName,setUserName] = useState("")
-	const [Password,setPassword] = useState("")
-	const [Email,setEmail] = useState("")
+	var username,password,fname,lname,email;
 
-	const doSignup = () => {
-        axios.post('http://localhost:3000/api/register', {
-			FirstName: FirstName,
-			LastName: LastName,
-			Email: Email,
-			UserName: UserName,
-			Password: Password})
-        .then((response) => {
-			alert("USER CREATED");
-		})
-        .catch(err=> console.log(err));
-    }
+	const [message,setMessage] = useState('');
+    
+	const doSignup = async event =>
+	{
+		event.preventDefault();
+
+        var obj = {
+			"FirstName":fname.value,
+			"LastName":lname.value,
+			"Email":email.value,
+			"UserName":username.value,
+			"Password":password.value};
+		var js = JSON.stringify(obj);
+
+		try
+        {    
+            const response = await fetch('http://localhost:3000/api/login', 
+				{method:'post',body:js,headers:{'Content-Type': 'application/json'}});
+            var res = JSON.parse(await response.text());
+            console.log(res);
+            if( res.error !== '' )
+            {
+                setMessage('Unable to Register');
+            }
+			else
+				alert("Registered.");
+        }
+        catch(e)
+        {
+            alert(e.toString());
+            return;
+        } 
 
 	
 	/*
@@ -44,70 +60,64 @@ function SignUp(){
 		
 	};
 	*/
+	};
 
 	return (
 		<div className="login-container">
-			<div className="login-form" onSubmit={doSignup}>
-				<form className='form'>
+			<div className="login-form">
+				<form className='form' onSubmit={doSignup}>
 				<h3>Sign In</h3>
 
 				<div className="mb-3">
-				<label>Firstname</label>
-				<input
-					type="text"
-					id="signupFirstName"
-					className="form-control"
-					placeholder="Enter firstname"
-					name="firstname"
-					onChange={(event) => setFirstName(event.target.value)}
-				/>
+					<label>Firstname</label>
+					
+					<input 
+						type="text" 
+						id="fName" 
+						class="user-input-field" 
+						placeholder="First Name" 
+						ref={(c) => fname = c}/><br />
+					
 				</div>
 
 				<div className="mb-3">
 				<label>Lastname</label>
-				<input
-					type="text"
-					id="signupLastName"
-					className="form-control"
-					placeholder="Enter lastname"
-					name="lastname"
-					onChange={(event) => setLastName(event.target.value)}
-				/>
+				<input 
+						type="text" 
+						id="lName" 
+						class="user-input-field" 
+						placeholder="Last Name" 
+						ref={(c) => lname = c}/><br />
 				</div>
 
 				<div className="mb-3">
 				<label>Username</label>
-				<input
-					type="text"
-					id="signupUsername"
-					className="form-control"
-					placeholder="Enter username"
-					name="username"
-					onChange={(event) => setUserName(event.target.value)}
-				/>
+				<input 
+						type="text" 
+						id="userName" 
+						class="user-input-field" 
+						placeholder="Username" 
+						ref={(c) => username = c}/><br />
 				</div>
 
 				<div className="mb-3">
 				<label>Password</label>
 				<input
 					type="text"
-					id="signupPassword"
-					className="form-control"
-					placeholder="Enter password"
-					name="password"
-					onChange={(event) => setPassword(event.target.value)}
-				/>
+					id="password"
+					class="user-input-field" 
+					placeholder="Password"
+					ref={(c) => password = c}/><br />
 				</div>
 
 				<div className="mb-3">
 				<label>Email</label>
-				<input
-					id="signupEmail"
-					className="form-control"
-					placeholder="Enter email"
-					name="email"
-					onChange={(event) => setEmail(event.target.value)}
-				/>
+				<input 
+						type="text" 
+						id="email" 
+						class="user-input-field" 
+						placeholder="Email" 
+						ref={(c) => email = c}/><br />
 				</div>
 
 				<div className="mb-3">
@@ -124,7 +134,7 @@ function SignUp(){
 				</div>
 
 				<div className="d-grid">
-				<button onClick={doSignup}>
+				<button>
 					Submit
 				</button>
 				</div>
