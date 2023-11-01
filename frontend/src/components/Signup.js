@@ -1,9 +1,6 @@
-import React, { useEffect,useState } from 'react';
-import axios from 'axios';
-import { Link } from 'react-router-dom'
-import '../css/LoginPage.css';
+import React, { useState } from 'react';
 
-import { useNavigate } from 'react-router-dom';
+import '../css/LoginPage.css';
 
 function SignUp(){
 
@@ -24,7 +21,7 @@ function SignUp(){
 		var js = JSON.stringify(obj);
 	
 		try {
-			const response = await fetch('http://localhost:3000/api/register', {
+			const response = await fetch('http://localhost:4000/api/register', {
 				method: 'post',
 				body: js,
 				headers: { 'Content-Type': 'application/json' }
