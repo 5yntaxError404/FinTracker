@@ -11,56 +11,37 @@ function SignUp(){
 
 	const [message,setMessage] = useState('');
     
-	const doSignup = async event =>
-	{
+	const doSignup = async event => {
 		event.preventDefault();
-
-        var obj = {
-			"FirstName":fname.value,
-			"LastName":lname.value,
-			"Email":email.value,
-			"UserName":username.value,
-			"Password":password.value};
+	
+		var obj = {
+			"FirstName": fname.value,
+			"LastName": lname.value,
+			"Email": email.value,
+			"UserName": username.value,
+			"Password": password.value
+		};
 		var js = JSON.stringify(obj);
-
-		try
-        {    
-            const response = await fetch('http://localhost:3000/api/login', 
-				{method:'post',body:js,headers:{'Content-Type': 'application/json'}});
-            var res = JSON.parse(await response.text());
-            console.log(res);
-            if( res.error !== '' )
-            {
-                setMessage('Unable to Register');
-            }
-			else
-				alert("Registered.");
-        }
-        catch(e)
-        {
-            alert(e.toString());
-            return;
-        } 
-
 	
-	/*
-		useEffect(()
-		
-		{
-			await fetch('http://localhost:3000/api/register', {
-			method: "POST",
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify(obj),
-		})
-		
-		
+		try {
+			const response = await fetch('http://localhost:3000/api/register', {
+				method: 'post',
+				body: js,
+				headers: { 'Content-Type': 'application/json' }
+			});
+			var res = JSON.parse(await response.text());
+			console.log(res);
+			if (res.error !== '') {
+				setMessage('Unable to Register');
+			} else {
+				alert('Registered.');
+			}
+		} catch (e) {
+			alert(e.toString());
+			return;
+		}
+	};
 	
-		
-	};
-	*/
-	};
 
 	return (
 		<div className="login-container">
