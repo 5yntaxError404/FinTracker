@@ -8,7 +8,7 @@ const Login = (props) => {
     const [password, setPassword] = useState()
 
 	const doLogin = async() => {
-        axios.post('http://localhost:3000/api/login', {username,password})
+        axios.post('http://localhost:5000/api/login', {username,password})
         .then(result => console.log(result))
         .catch(err=> console.log(err));
     }
