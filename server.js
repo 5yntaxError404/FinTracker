@@ -14,13 +14,6 @@ const app = express();
 
 const port = 4000;
 const bcrypt = require ("bcrypt");
-
-//const port = 3000;
-
-
-
-
-
 app.use(cors());
 app.use(bodyParser.json());
 
