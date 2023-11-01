@@ -14,7 +14,7 @@ function Login() {
 			"Password": password.value
 		};
 		var js = JSON.stringify(obj);
-	
+        
 		try {
 			const response = await fetch('http://localhost:4000/api/login', {
 				method: 'post',
@@ -41,7 +41,7 @@ function Login() {
     return (
 	<div className="login-container">
         <div className="login-form">
-            <form className='form' onSubmit={doLogin}>
+            <form className='form' onSubmit={doLogin} >
             <h3>Sign In</h3>
 
             <div className="mb-3">
@@ -78,7 +78,7 @@ function Login() {
             </div>
 
             <div className="d-grid">
-            <button onClick={doLogin} type="submit" className="btn btn-primary">
+            <button onClick={doLogin} type="button" className="btn btn-primary">
                 Submit
             </button>
             </div>
