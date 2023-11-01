@@ -1,5 +1,6 @@
 // Server.js
 const express = require('express');
+const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
 const emailValidator = require('deep-email-validator');
@@ -11,15 +12,16 @@ require('dotenv/config');
 const PORT = process.env.PORT || 5000; // Heroku set port
 const app = express();
 
-const port = 3000;
+const port = 4000;
 const bcrypt = require ("bcrypt");
 
 //const port = 3000;
-app.set('port', (process.env.PORT || 5000));
 
 
 
 
+
+app.use(cors());
 app.use(bodyParser.json());
 
 const url =
@@ -35,13 +37,15 @@ async function main() {
       const db = client.db('FinanceBuddy');
       const usersCollection = db.collection('Users');
       const accCollection = db.collection('Accounts');
-
-      // Define Express.js app and routes
-      const app = express();
-      app.use(bodyParser.json());
+     
+      app.listen(port, () => {
+        console.log(`Server is running on ${port}`);
+      });
   
    // Define a variable for the user counter
 let userCounter = 665;
+
+
 
 // Register a new user
 app.post('/api/register', async (req, res) => {
@@ -75,6 +79,7 @@ app.post('/api/register', async (req, res) => {
       UserId: userCounter,
       FirstName,
       LastName,
+      UserId: userCounter,
       Email,
       UserName,
       Password,
@@ -280,8 +285,9 @@ app.delete('/api/accounts/delete', async (req, res) => {
   }
 });
   
-    app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
+      
+    app.listen(port, () => {
+      console.log(`Server is running on port ${port}`);
     });
     } finally {
       // The MongoDB client will be closed when the app is terminated
