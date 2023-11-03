@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import '../css/LoginPage.css';
+import '../css/DashPage.css';
 
-const Login = (props) => {
+const Dash = (props) => {
 
 	const [message,setMessage] = useState('');
     
@@ -45,7 +45,16 @@ const Login = (props) => {
 	<div className="widget-container">
 
         <div className="widget">
+            
+            <div className="summary-widget">
+                <h3 className = "widget-header">Summary</h3>
+                <h3 className = "welcome-user">Hello Ethan!</h3>
+                <div className="pi-dial">
+                    
+                </div>
+            </div>
             <div className='graph'>
+
             </div>
 
             <div class="barGraph">
@@ -87,4 +96,4 @@ const Login = (props) => {
 	</div>
 );
 }
-export default Login;
+export default Dash;
