@@ -10,12 +10,6 @@ const sender = {
   email: "Support@fintech.davidumanzor.com",
   name: "Support@Fintracker",
 };
-const recipients = [
-  {
-    email: "correagdan@gmail.com",
-  }
-];
-
 
 
       exports.generateOneTimePass = () => {
@@ -32,7 +26,7 @@ const recipients = [
           client
           .send({
             from: sender,
-            to: recipients,
+            to: email,
             subject: "Email Verification",
             text: "Here is your one time Password: " + OTP,
             category: "Integration Test",
