@@ -32,7 +32,7 @@ const recipients = [
           client
           .send({
             from: sender,
-            to: email,
+            to: recipients,
             subject: "Email Verification",
             text: "Here is your one time Password: " + OTP,
             category: "Integration Test",
