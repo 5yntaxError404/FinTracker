@@ -37,6 +37,10 @@ async function main() {
    // Define a variable for the user counter
 let userCounter = 665;
 
+// ROOT GET
+app.get('/', (req, res) => {
+  res.send('Hello, World!'); // You can respond with any content you want
+});
 
 
 // Register a new user
