@@ -39,7 +39,7 @@ let userCounter = 665;
 
 // ROOT GET
 app.get('/', (req, res) => {
-  res.send('Hello, World!'); // You can respond with any content you want
+  res.sendFile('public/index.html', {root: __dirname}); // You can respond with any content you want
 });
 
 
