@@ -12,7 +12,6 @@ require('dotenv/config');
 const PORT = process.env.PORT || 5000; // Heroku set port
 const app = express();
 
-const port = 4000;
 const bcrypt = require ("bcrypt");
 app.use(cors());
 app.use(bodyParser.json());
