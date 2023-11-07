@@ -4,7 +4,7 @@ const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
 const emailValidator = require('deep-email-validator');
-
+const path = require('path');
 const bodyParser = require('body-parser');
 const { MongoClient } = require('mongodb');
 const { generateOneTimePass, verifyEmail } = require('./mailing');
