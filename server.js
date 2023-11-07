@@ -9,7 +9,7 @@ const bodyParser = require('body-parser');
 const { MongoClient } = require('mongodb');
 const { generateOneTimePass, verifyEmail } = require('./mailing');
 require('dotenv/config');
-const PORT = process.env.PORT || 5000; // Heroku set PORT
+const port = process.env.PORT || 5000; // Heroku set port
 const app = express();
 
 const bcrypt = require ("bcrypt");
@@ -30,8 +30,8 @@ async function main() {
       const usersCollection = db.collection('Users');
       const accCollection = db.collection('Accounts');
      
-      app.listen(PORT, () => {
-        console.log(`Server is running on ${PORT}`);
+      app.listen(port, () => {
+        console.log(`Server is running on ${port}`);
       });
   
    // Define a variable for the user counter
@@ -278,13 +278,14 @@ app.delete('/api/accounts/delete', async (req, res) => {
 });
   
       
-    app.listen(PORT, () => {
-      console.log(`Server is running on PORT ${PORT}`);
-    });
-    } finally {
-      // The MongoDB client will be closed when the app is terminated
+    
+    }
+    catch
+    {
+      console.error(error);
     }
   }
+  
   
   main().catch(console.error);
   
