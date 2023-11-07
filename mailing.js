@@ -1,4 +1,22 @@
 const nodemailer = require ("nodemailer");
+const { MailtrapClient } = require("mailtrap");
+
+const TOKEN = "ae7c811382e1cc2249de5b2c14165367";
+const ENDPOINT = "https://send.api.mailtrap.io/";
+
+const client = new MailtrapClient({ endpoint: ENDPOINT, token: TOKEN });
+
+const sender = {
+  email: "Support@fintech.davidumanzor.com",
+  name: "Support@Fintracker",
+};
+const recipients = [
+  {
+    email: "correagdan@gmail.com",
+  }
+];
+
+
 
       exports.generateOneTimePass = () => {
         let oneTimePass = ""
@@ -9,25 +27,17 @@ const nodemailer = require ("nodemailer");
         return oneTimePass;
       }
 
-      var transport = nodemailer.createTransport({
-      host: "sandbox.smtp.mailtrap.io",
-      port: 2525,
-      auth: {
-        user: "ed0a07b9d4af53",
-        pass: "c8cd5181f1667f"
-      }
-    });
-
     async function verifyEmail(email, OTP) {
 
-      const info = await transport.sendMail({
-        from: '"Admin" <Admin@fintech.davidumanzor.com>',
-        // sender address
-        to: email,
-        subject: 'EmailTest',
-        text: 'Here is your OTP: ' + OTP
-        
-      });
+          client
+          .send({
+            from: sender,
+            to: email,
+            subject: "Email Verification",
+            text: "Here is your one time Password: " + OTP,
+            category: "Integration Test",
+          })
+          .then(console.log, console.error);
     }
 
     module.exports.verifyEmail = verifyEmail;
