@@ -4,15 +4,14 @@ const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
 const emailValidator = require('deep-email-validator');
-
+const path = require('path');
 const bodyParser = require('body-parser');
 const { MongoClient } = require('mongodb');
 const { generateOneTimePass, verifyEmail } = require('./mailing');
 require('dotenv/config');
-const PORT = process.env.PORT || 5000; // Heroku set port
+const port = process.env.PORT || 5000; // Heroku set port
 const app = express();
 
-const port = 4000;
 const bcrypt = require ("bcrypt");
 app.use(cors());
 app.use(bodyParser.json());
@@ -21,6 +20,31 @@ const url =
 process.env.DB_CONNECTION;
 
 const client = new MongoClient(url);
+
+// ROOT GET
+if (process.env.NODE_ENV === 'production')
+{
+  app.use(express.static('frontend/build'));
+  app.get('*', (req, res) =>
+  {
+    res.sendFile(path.resolve(__dirname, 'frontend', 'build', 'index.html'));
+  });
+}
+
+app.use((req, res, next) =>
+{
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader(
+  'Access-Control-Allow-Headers',
+  'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+  );
+  res.setHeader(
+  'Access-Control-Allow-Methods',
+  'GET, POST, PATCH, DELETE, OPTIONS'
+  );
+  next();
+});
+
 
 async function main() {
     try {
@@ -37,7 +61,6 @@ async function main() {
   
    // Define a variable for the user counter
 let userCounter = 665;
-
 
 
 // Register a new user
@@ -279,13 +302,14 @@ app.delete('/api/accounts/delete', async (req, res) => {
 });
   
       
-    app.listen(port, () => {
-      console.log(`Server is running on port ${port}`);
-    });
-    } finally {
-      // The MongoDB client will be closed when the app is terminated
+    
+    }
+    catch
+    {
+      console.error(error);
     }
   }
+  
   
   main().catch(console.error);
   
