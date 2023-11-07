@@ -38,9 +38,14 @@ async function main() {
 let userCounter = 665;
 
 // ROOT GET
-app.get('/', (req, res) => {
-  res.sendFile('public/index.html', {root: __dirname}); // You can respond with any content you want
-});
+if (process.env.NODE_ENV === 'production')
+{
+  app.use(express.static('frontend/build'));
+  app.get('*', (req, res) =>
+  {
+    res.sendFile(path.resolve(__dirname, 'frontend', 'build', 'index.html'));
+  });
+}
 
 
 // Register a new user
