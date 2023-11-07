@@ -21,7 +21,7 @@ function SignUp(){
 		var js = JSON.stringify(obj);
 	
 		try {
-			const response = await fetch('http://localhost:4000/api/register', {
+			const response = await fetch('https://fintracker-8ac4bb8195b3.herokuapp.com/api/register', {
 				method: 'post',
 				body: js,
 				headers: { 'Content-Type': 'application/json' }
