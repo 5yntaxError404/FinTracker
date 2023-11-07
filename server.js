@@ -21,6 +21,31 @@ process.env.DB_CONNECTION;
 
 const client = new MongoClient(url);
 
+// ROOT GET
+if (process.env.NODE_ENV === 'production')
+{
+  app.use(express.static('frontend/build'));
+  app.get('*', (req, res) =>
+  {
+    res.sendFile(path.resolve(__dirname, 'frontend', 'build', 'index.html'));
+  });
+}
+
+app.use((req, res, next) =>
+{
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader(
+  'Access-Control-Allow-Headers',
+  'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+  );
+  res.setHeader(
+  'Access-Control-Allow-Methods',
+  'GET, POST, PATCH, DELETE, OPTIONS'
+  );
+  next();
+});
+
+
 async function main() {
     try {
       await client.connect();
@@ -36,16 +61,6 @@ async function main() {
   
    // Define a variable for the user counter
 let userCounter = 665;
-
-// ROOT GET
-if (process.env.NODE_ENV === 'production')
-{
-  app.use(express.static('frontend/build'));
-  app.get('*', (req, res) =>
-  {
-    res.sendFile(path.resolve(__dirname, 'frontend', 'build', 'index.html'));
-  });
-}
 
 
 // Register a new user
