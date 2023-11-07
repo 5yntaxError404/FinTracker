@@ -16,7 +16,7 @@ function Login() {
 		var js = JSON.stringify(obj);
 	
 		try {
-			const response = await fetch('https://fintracker-8ac4bb8195b3.herokuapp.com/api/login', {
+			const response = await fetch('http://www.fintech.davidumanzor.com/api/login', {
 				method: 'post',
 				body: js,
 				headers: { 'Content-Type': 'application/json' }
