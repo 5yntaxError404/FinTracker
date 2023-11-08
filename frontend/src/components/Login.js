@@ -7,7 +7,9 @@ function Login() {
     var username,password;
     const [message,setMessage] = useState('');
 
-	const doLogin = async event => {
+	const doLogin = async event => 
+    {
+        event.preventDefault();
 
 		var obj = {
 			"UserName": username.value,
@@ -16,10 +18,13 @@ function Login() {
 		var js = JSON.stringify(obj);
 	
 		try {
-			const response = await fetch('http://localhost:4000/api/login', {
+			const response = await fetch('http://localhost:5000/api/login', {
 				method: 'post',
 				body: js,
-				headers: { 'Content-Type': 'application/json' }
+				headers: 
+                { 
+                    'Content-Type': 'application/json' 
+                }
 			});
 			var res = JSON.parse(await response.text());
 			console.log(res);
@@ -30,6 +35,17 @@ function Login() {
             } 
             else {
                 setMessage('Logged In.'); // Set a success message
+                var user =
+				{
+                    firstName:res.firstName,
+                    lastName:res.lastName,
+                    id:res.id
+                }
+
+				localStorage.setItem('user_data', JSON.stringify(user));
+
+				setMessage('');
+				window.location.href = '/dash';
                 console.log("Logged In");
             }
 		} catch (e) {
