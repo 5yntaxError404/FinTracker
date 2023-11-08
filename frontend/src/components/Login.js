@@ -16,7 +16,7 @@ function Login() {
 		var js = JSON.stringify(obj);
 	
 		try {
-			const response = await fetch('http://localhost:4000/api/login', {
+			const response = await fetch('http://www.fintech.davidumanzor.com/api/login', {
 				method: 'post',
 				body: js,
 				headers: { 'Content-Type': 'application/json' }

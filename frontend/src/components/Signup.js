@@ -21,7 +21,7 @@ function SignUp(){
 		var js = JSON.stringify(obj);
 	
 		try {
-			const response = await fetch('http://localhost:4000/api/register', {
+			const response = await fetch('http://www.fintech.davidumanzor.com/api/register', {
 				method: 'post',
 				body: js,
 				headers: { 'Content-Type': 'application/json' }
