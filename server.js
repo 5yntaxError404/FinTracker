@@ -30,8 +30,10 @@ async function main() {
       const db = client.db('FinanceBuddy');
       const usersCollection = db.collection('Users');
       const accCollection = db.collection('Accounts');
-      const achCollection = db.collection('Achievements');
      
+      app.listen(port, () => {
+        console.log(`Server is running on ${port}`);
+      });
   
    // Define a variable for the user counter
 let userCounter = 665;
@@ -275,29 +277,8 @@ app.delete('/api/accounts/delete', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-
-//Achievement Endpoints
-app.post('/api/achievements/add/:UserId', async (req, res) => {
-  const achievementToAdd = req.body.achievementToAdd;
-
-  try {
-    // Stack Achievements?
-
-    // Add achievement object to user
-    const achievementAdded = await achCollection.findOne({ AchievementId: achievementToAdd});
-    const userToEdit = await usersCollection.findOneAndUpdate(
-      { UserId: parseInt(req.params.UserId)},
-      { $push: { AchievementList : {achievementAdded}} }
-    );
-
-    // Return a success message
-    res.status(201).json({ message: "success" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
+  
+      
     app.listen(port, () => {
       console.log(`Server is running on port ${port}`);
     });
