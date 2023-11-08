@@ -53,8 +53,9 @@ async function main() {
       console.log('Connected to MongoDB');
       const db = client.db('FinanceBuddy');
       const usersCollection = db.collection('Users');
-      const accCollection = db.collection('Accounts');
-     
+      const accCollection = db.collection('budgets');
+      const achCollection = db.collection('Achievements');
+      const budCollection = db.collection('Budgets');     
       app.listen(port, () => {
         console.log(`Server is running on ${port}`);
       });
@@ -245,7 +246,6 @@ app.post('/api/accounts/add/:UserId', async (req, res) => {
   }
 });
 
-
 // Edit account information
 app.put('/api/accounts/edit/:UserId', async (req, res) => {
   const { newAccountNum, newRouteNum, newBankName} = req.body;
@@ -300,7 +300,168 @@ app.delete('/api/accounts/delete', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+///////////////////////////Budget Endpoints//////////////////////////////
+//Add new budget
+app.post('/api/budgets/add/:UserId', async (req, res) => {
+  try {
+
+    //If it is first of the month then call this to create a new budget.
+
+    const existingBudget = await budCollection.findOneAndDelete({UserIdRef : parseInt(req.params.UserId)})
+
+    const {MonthlyIncome, GoalDescription, GoalAmt, SavedAmt} = req.body;
+
+    const UserIdRef = parseInt(req.params.UserId);
+    
+    const MonthlyExpenses = {
+        rent: req.body.rent ,
+        utilities: req.body.utilities,
+        groceries: req.body.groceries,
+        insurance: req.body.insurance,
+        phone: req.body.phone,
+        car: req.body.car,
+        gas: req.body.gas,
+        fun: req.body.fun,
+        goal: req.body.goal,
+    };
+
+    var MonthlyExpensesAmt = 0;
+    for (x in MonthlyExpenses) {
+      MonthlyExpensesAmt += MonthlyExpenses[x];
+    }
+    
+    var Transactions = {
+      
+    };
+    var TransactionsAmt = 0;
+    for (x in Transactions) {
+      TransactionsAmt += Transactions[x];
+    }
+
+    var Complete = false;
+    if(GoalAmt == SavedAmt){
+      Complete = true;
+    }
+
+    const newBudget = {
+      UserIdRef,
+      MonthlyIncome,
+      MonthlyExpenses,
+      MonthlyExpensesAmt,
+      Transactions,
+      TransactionsAmt,
+      GoalDescription,
+      GoalAmt,
+      SavedAmt,
+      Complete
+    }
+
+    // Insert budget into budgets collection
+    await budCollection.insertOne(newBudget);
+
+    // Return a success message
+    res.status(201).json({ message: 'Budget added successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Update budget
+app.put('/api/budgets/transactions/:UserId', async (req, res) => {
   
+  //format of <transactionID> : <dollar ammount>
+  var Transactions = req.body;
+  var TransactionsAmt = 0;
+  try {
+
+    var transactionGrabber = await budCollection.findOne(
+      { UserIdRef: parseInt(req.params.UserId)}
+    );
+    
+    for (x in transactionGrabber.Transactions) {
+      for(y in transactionGrabber.Transactions[x].Transactions){
+        TransactionsAmt += transactionGrabber.Transactions[x].Transactions[y];
+      }
+    }  
+    
+    //make changes one by one (does not work altogether)
+    var budgetToEdit = await budCollection.findOneAndUpdate(
+      { UserIdRef: parseInt(req.params.UserId)},
+      { $push: { Transactions: {Transactions} } },
+    );
+
+    budgetToEdit = await budCollection.findOneAndUpdate(
+      { UserIdRef: parseInt(req.params.UserId)},
+      { $set: { TransactionsAmt: TransactionsAmt} },
+    );
+
+    res.status(200).json({ message: 'Updated budget Information' });
+        
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Update budget
+app.delete('/api/budgets/transactions/delete/:UserId', async (req, res) => {
+  
+  //format of <transactionID> : <dollar ammount>
+  var TransactionID = req.body.TransactionID;
+  var TransactionsAmt = 0;
+  try {
+
+    //need to figure out how to pull transactions from the db based on the ID given. Possibly change transaction format.
+    var transactionGrabber = await budCollection.findOneandUpdate(
+      { UserIdRef: parseInt(req.params.UserId)},
+      {$pull : {Transactions : JSON.stringify(TransactionID)}}
+    );
+    
+    
+    //recalculate the total transaction amt
+    for (x in transactionGrabber.Transactions) {
+      for(y in transactionGrabber.Transactions[x].Transactions){
+        TransactionsAmt += transactionGrabber.Transactions[x].Transactions[y];
+      }
+    }  
+    
+    //set new amt
+    transactionGrabber = await budCollection.findOneAndUpdate(
+      { UserIdRef: parseInt(req.params.UserId)},
+      { $set: { TransactionsAmt: TransactionsAmt} },
+    );
+
+    res.status(200).json({ message: JSON.stringify(deleted)});
+        
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+//Achievement Endpoints
+app.post('/api/achievements/add/:UserId', async (req, res) => {
+  const achievementToAdd = req.body.achievementToAdd;
+
+  try {
+    // Stack Achievements?
+
+    // Add achievement object to user
+    const achievementAdded = await achCollection.findOne({ AchievementId: achievementToAdd});
+    const userToEdit = await usersCollection.findOneAndUpdate(
+      { UserId: parseInt(req.params.UserId)},
+      { $push: { AchievementList : {achievementAdded}} }
+    );
+
+    // Return a success message
+    res.status(201).json({ message: "success" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
       
     
     }
