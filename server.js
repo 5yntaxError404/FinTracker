@@ -16,6 +16,7 @@ const bcrypt = require ("bcrypt");
 app.use(cors());
 app.use(bodyParser.json());
 
+
 const url =
 process.env.DB_CONNECTION;
 
@@ -62,6 +63,10 @@ async function main() {
    // Define a variable for the user counter
 let userCounter = 665;
 
+// JWT post
+app.get('/posts, authenticateToken', (req, res) => {
+  res.json(posts.filter(post => post.username === req.user.name));
+});
 
 // Register a new user
 app.post('/api/register', async (req, res) => {
@@ -133,16 +138,36 @@ app.post('/api/register', async (req, res) => {
           if (!user.isVerified)
             return res.status(400).json({error: 'Email not yet verified.'})
   
-          // You may implement token-based authentication here
-  
-          res.status(200).json({ message: 'Login successful' });
-        } catch (error) {
+          // JWT
+          const payload = {
+            UserName: user.UserName,
+            UserId: user.UserId,
+            // Any other user-specific data needed??
+          };
+          const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET);
+          res.status(200).json({ message: 'Login successful', accessToken: accessToken });
+          
+
+          } catch (error) {
           console.error(error);
           res.status(500).json({ error: 'Internal server error' });
         }
       });
 
-
+      function authenticateToken(req, res, next) {
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+      
+        if (token == null) return res.sendStatus(401);
+      
+        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, payload) => {
+          if (err) return res.sendStatus(403);
+      
+          req.user = payload;
+      
+          next();
+        });
+      }
 
     app.post('/api/validateEmail', async (req, res) => {
 
@@ -213,11 +238,19 @@ app.post('/api/register', async (req, res) => {
   });
 
 
-////////////////////////Account adding, editing, and deleting////////////////////////////////////
+////////////////////////Account adding, get, editing, and deleting////////////////////////////////////
 // Add new account
-app.post('/api/accounts/add/:UserId', async (req, res) => {
+app.post('/api/accounts/add/:UserId', authenticateToken, async (req, res) => {
   const { AccountNum, RouteNum, BankName} = req.body;
   try {
+
+    const user = req.user; // Get the user data from the middleware
+
+    // Check if the UserId in the URL matches the UserId from the token
+    if (parseInt(req.params.UserId) !== user.UserId) {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+
     // Check if accounts already added to a user
     const existingAccount = await accCollection.findOne({ AccountNum });
 
@@ -225,7 +258,7 @@ app.post('/api/accounts/add/:UserId', async (req, res) => {
       return res.status(400).json({ error: 'Account has already been added' });
     }
 
-    //Check if valid?
+    //Add new account
     
     const newAccount = {
       AccountNum,
@@ -239,6 +272,27 @@ app.post('/api/accounts/add/:UserId', async (req, res) => {
 
     // Return a success message
     res.status(201).json({ message: 'Account added successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.get('/api/accounts/:UserId', authenticateToken, async (req, res) => {
+  try {
+
+    const UserId = parseInt(req.params.UserId);
+
+
+    // Verify that the UserId from the request matches the authenticated user's UserId
+    if (UserId !== req.user.UserId) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
+    // Query your database to fetch the user's account information based on the UserId
+    const userAccounts = await accCollection.find({ UserIdRef: UserId }).toArray();
+
+    res.status(200).json(userAccounts);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });
