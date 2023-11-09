@@ -368,29 +368,30 @@ app.post('/api/budgets/add/:UserId', async (req, res) => {
   }
 });
 
-// Update budget
+// add transaction + update budget
 app.put('/api/budgets/transactions/:UserId', async (req, res) => {
   
-  //format of <transactionID> : <dollar ammount>
-  var Transactions = req.body;
+  var TransactionID = Math.floor(Math.random() * 999) + 1;
+  var Transactions = {
+    transactionID : TransactionID,
+    transactionAmt : req.body.transactionAmt,
+    transactionCategory : req.body.transactionCategory
+  };
   var TransactionsAmt = 0;
   try {
 
-    var transactionGrabber = await budCollection.findOne(
-      { UserIdRef: parseInt(req.params.UserId)}
-    );
-    
-    for (x in transactionGrabber.Transactions) {
-      for(y in transactionGrabber.Transactions[x].Transactions){
-        TransactionsAmt += transactionGrabber.Transactions[x].Transactions[y];
-      }
-    }  
-    
-    //make changes one by one (does not work altogether)
     var budgetToEdit = await budCollection.findOneAndUpdate(
       { UserIdRef: parseInt(req.params.UserId)},
       { $push: { Transactions: {Transactions} } },
     );
+
+    var transactionGrabber = await budCollection.findOne(
+      { UserIdRef: parseInt(req.params.UserId)}
+    );
+
+    for (x in transactionGrabber.Transactions) {
+      TransactionsAmt += transactionGrabber.Transactions[x].Transactions.transactionAmt;
+    }  
 
     budgetToEdit = await budCollection.findOneAndUpdate(
       { UserIdRef: parseInt(req.params.UserId)},
@@ -405,26 +406,33 @@ app.put('/api/budgets/transactions/:UserId', async (req, res) => {
   }
 });
 
-// Update budget
+// delete transactions
 app.delete('/api/budgets/transactions/delete/:UserId', async (req, res) => {
   
-  //format of <transactionID> : <dollar ammount>
-  var TransactionID = req.body.TransactionID;
+  var TransactionID = req.body.transactionID;
   var TransactionsAmt = 0;
   try {
 
-    //need to figure out how to pull transactions from the db based on the ID given. Possibly change transaction format.
-    var transactionGrabber = await budCollection.findOneandUpdate(
-      { UserIdRef: parseInt(req.params.UserId)},
-      {$pull : {Transactions : JSON.stringify(TransactionID)}}
+    var transactionGrabber = await budCollection.findOne(
+      { UserIdRef: parseInt(req.params.UserId)}
     );
     
-    
+    for(x in transactionGrabber.Transactions){
+      if(transactionGrabber.Transactions[x].Transactions.transactionID == TransactionID){
+        var transactionDeleter = budCollection.findOneAndUpdate(
+          { UserIdRef: parseInt(req.params.UserId)},
+          { $pull : {Transactions : transactionGrabber.Transactions[x]}}
+        );
+      }
+    }
+
+    transactionGrabber = await budCollection.findOne(
+      { UserIdRef: parseInt(req.params.UserId)}
+    );
+
     //recalculate the total transaction amt
     for (x in transactionGrabber.Transactions) {
-      for(y in transactionGrabber.Transactions[x].Transactions){
-        TransactionsAmt += transactionGrabber.Transactions[x].Transactions[y];
-      }
+      TransactionsAmt += transactionGrabber.Transactions[x].Transactions.transactionAmt;
     }  
     
     //set new amt
@@ -433,7 +441,66 @@ app.delete('/api/budgets/transactions/delete/:UserId', async (req, res) => {
       { $set: { TransactionsAmt: TransactionsAmt} },
     );
 
-    res.status(200).json({ message: JSON.stringify(deleted)});
+    res.status(200).json({ message: 'Successful deletion'});
+        
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+//edit transactions
+app.put('/api/budgets/transactions/edit/:UserId', async (req, res) => {
+  
+  var Transactions = {
+    transactionID : req.body.transactionID,
+    transactionAmt : req.body.transactionAmt,
+    transactionCategory : req.body.transactionCategory
+  };
+
+  var TransactionsAmt = 0;
+  try {
+
+    var transactionGrabber = await budCollection.findOne(
+      { UserIdRef: parseInt(req.params.UserId)}
+    );
+    
+    for(x in transactionGrabber.Transactions){
+      if(transactionGrabber.Transactions[x].Transactions.transactionID == req.body.transactionID){
+        var transactionDeleter = budCollection.findOneAndUpdate(
+          { UserIdRef: parseInt(req.params.UserId)},
+          { $pull : {Transactions : transactionGrabber.Transactions[x]}}
+        );
+      }
+    }
+
+    var Transactions = {
+      transactionID : Math.floor(Math.random() * 999) + 1,
+      transactionAmt : req.body.transactionAmt,
+      transactionCategory : req.body.transactionCategory
+    };
+
+    transactionUpdater = await budCollection.findOneAndUpdate(
+      { UserIdRef: parseInt(req.params.UserId)},
+      { $push: { Transactions: {Transactions} } },
+    );
+
+    transactionGrabber = await budCollection.findOne(
+      { UserIdRef: parseInt(req.params.UserId)}
+    );
+
+    //recalculate the total transaction amt
+    for (x in transactionGrabber.Transactions) {
+      TransactionsAmt += transactionGrabber.Transactions[x].Transactions.transactionAmt;
+    }  
+    
+    //set new amt
+    transactionGrabber = await budCollection.findOneAndUpdate(
+      { UserIdRef: parseInt(req.params.UserId)},
+      { $set: { TransactionsAmt: TransactionsAmt} },
+    );
+
+    res.status(200).json({ message: 'Successful budget update'});
         
   } catch (error) {
     console.error(error);
