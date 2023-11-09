@@ -7,6 +7,10 @@ function Login() {
     var username,password;
     const [message,setMessage] = useState('');
 
+    function parseJwt (token) {
+        return JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+    }
+
 	const doLogin = async event => 
     {
         event.preventDefault();
@@ -35,11 +39,17 @@ function Login() {
             } 
             else {
                 setMessage('Logged In.'); // Set a success message
+
+                // GET FIRSTNAME LAST
+
+                //var parsedToken = parseJwt(res.accessToken);
+
                 var user =
 				{
                     firstName:res.firstName,
                     lastName:res.lastName,
-                    id:res.id
+                    //id:parsedToken.userId,
+                    accessToken:res.accessToken
                 }
 
 				localStorage.setItem('user_data', JSON.stringify(user));
