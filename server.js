@@ -195,49 +195,57 @@ app.post('/api/register', async (req, res) => {
         res.status(500),json({ error: 'Internal Server Error'})
       }
     });
+// Edit a username
+app.put('/api/users/edit/:UserId', authenticateToken, async (req, res) => {
+  const userIdToEdit = parseInt(req.params.UserId);
+  const newUsername = req.body.UserName; // Assuming the new username is in the "UserName" field of the request body
 
-    // Edit a username
-    app.put('/api/users/edit/:UserId', async (req, res) => {
-      const userIdToEdit = parseInt(req.params.UserId);
-      const newUsername = req.body.UserName; // Assuming the new username is in the "UserName" field of the request body
-    
-      try {
-        // Check if the user exists
-        const userToEdit = await usersCollection.findOneAndUpdate(
-          { UserId: userIdToEdit },
-          { $set: { UserName: newUsername } }
-        );
-    
-        if (!userToEdit) {
-          return res.status(404).json({ error: 'User Not Found' });
-        }
-    
-        res.status(200).json({ message: 'Updated Username' });
-        
-      } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Internal server error' });
-      }
-    });
-    
-    // Delete a user by UserId
-    app.delete('/api/users/delete/:UserId', async (req, res) => {
-    const userIdToDelete = parseInt(req.params.UserId);
-  
-    try {
-      // Find and delete the user by UserId
-      const deletionResult = await usersCollection.deleteOne({ UserId: userIdToDelete });
-  
-      if (deletionResult.deletedCount === 1) {
-        res.status(200).json({ message: 'User deleted successfully' });
-      } else {
-        res.status(404).json({ error: 'User not found' });
-      }
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Internal server error' });
+  try {
+    // Verify that the UserId from the request matches the authenticated user's UserId
+    if (userIdToEdit !== req.user.UserId) {
+      return res.status(403).json({ error: 'Access denied' });
     }
-  });
+
+    // Check if the user exists
+    const userToEdit = await usersCollection.findOneAndUpdate(
+      { UserId: userIdToEdit },
+      { $set: { UserName: newUsername } }
+    );
+
+    if (!userToEdit) {
+      return res.status(404).json({ error: 'User Not Found' });
+    }
+
+    res.status(200).json({ message: 'Updated Username' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+ // Delete a user by UserId
+app.delete('/api/users/delete/:UserId', authenticateToken, async (req, res) => {
+  const userIdToDelete = parseInt(req.params.UserId);
+
+  try {
+    // Verify that the UserId from the request matches the authenticated user's UserId
+    if (userIdToDelete !== req.user.UserId) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
+    // Find and delete the user by UserId
+    const deletionResult = await usersCollection.deleteOne({ UserId: userIdToDelete });
+
+    if (deletionResult.deletedCount === 1) {
+      res.status(200).json({ message: 'User deleted successfully' });
+    } else {
+      res.status(404).json({ error: 'User not found' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 
 ////////////////////////Account adding, get, editing, and deleting////////////////////////////////////
