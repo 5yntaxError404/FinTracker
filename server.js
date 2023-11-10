@@ -195,33 +195,63 @@ app.post('/api/register', async (req, res) => {
         res.status(500),json({ error: 'Internal Server Error'})
       }
     });
-// Edit a username
-app.put('/api/users/edit/:UserId', authenticateToken, async (req, res) => {
-  const userIdToEdit = parseInt(req.params.UserId);
-  const newUsername = req.body.UserName; // Assuming the new username is in the "UserName" field of the request body
+
+
+// Edit user information// Edit user information
+// Edit user information
+app.put('/api/users/edit', authenticateToken, async (req, res) => {
+  const newUsername = req.body.UserName;
+  const newPassword = req.body.Password;
+  const newFirstName = req.body.FirstName;
+  const newLastName = req.body.LastName;
+  const newEmail = req.body.Email;
 
   try {
     // Verify that the UserId from the request matches the authenticated user's UserId
-    if (userIdToEdit !== req.user.UserId) {
-      return res.status(403).json({ error: 'Access denied' });
+    const userIdToEdit = req.user.UserId;
+
+    // Update the user's information
+    const updateFields = {};
+
+    if (newUsername) {
+      updateFields.UserName = newUsername;
     }
 
-    // Check if the user exists
-    const userToEdit = await usersCollection.findOneAndUpdate(
+    if (newPassword) {
+      updateFields.Password = newPassword;
+    }
+
+    if (newFirstName) {
+      updateFields.FirstName = newFirstName;
+    }
+
+    if (newLastName) {
+      updateFields.LastName = newLastName;
+    }
+
+    if (newEmail) {
+      updateFields.Email = newEmail;
+    }
+
+    // Find and update the user in the database
+    const updatedUser = await usersCollection.findOneAndUpdate(
       { UserId: userIdToEdit },
-      { $set: { UserName: newUsername } }
+      { $set: updateFields },
+      { returnOriginal: false }
     );
 
-    if (!userToEdit) {
+    if (updatedUser.value === null) {
       return res.status(404).json({ error: 'User Not Found' });
     }
 
-    res.status(200).json({ message: 'Updated Username' });
+    res.status(200).json({ message: 'Updated User Information' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+
 
  // Delete a user by UserId
 app.delete('/api/users/delete/:UserId', authenticateToken, async (req, res) => {
