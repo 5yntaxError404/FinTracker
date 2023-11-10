@@ -63,10 +63,12 @@ async function main() {
    // Define a variable for the user counter
 let userCounter = 665;
 
+
 // JWT post
 app.get('/posts, authenticateToken', (req, res) => {
   res.json(posts.filter(post => post.username === req.user.name));
 });
+
 
 // Register a new user
 app.post('/api/register', async (req, res) => {
@@ -402,3 +404,4 @@ app.delete('/api/accounts/delete', authenticateToken, async (req, res) => {
   
   
   main().catch(console.error);
+
