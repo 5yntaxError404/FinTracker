@@ -286,6 +286,7 @@ app.post('/api/accounts/add/:UserId', authenticateToken, async (req, res) => {
   }
 });
 
+//Get account information
 app.get('/api/accounts/:UserId', authenticateToken, async (req, res) => {
   try {
 
@@ -308,61 +309,78 @@ app.get('/api/accounts/:UserId', authenticateToken, async (req, res) => {
 });
 
 
-// Edit account information
-app.put('/api/accounts/edit/:UserId', async (req, res) => {
-  const { newAccountNum, newRouteNum, newBankName} = req.body;
+// Edit Account
+app.put('/api/accounts/edit/:UserId', authenticateToken, async (req, res) => {
+  const { oldAccountNum, newAccountNum, newRouteNum, newBankName } = req.body;
+  const userId = parseInt(req.params.UserId);
 
   try {
-    //make changes one by one (does not work altogether)
-    var accountToEdit = await accCollection.findOneAndUpdate(
-      { UserIdRef: parseInt(req.params.UserId)},
-      { $set: { AccountNum: newAccountNum } },
-    );
+    // Verify that the UserId from the request matches the authenticated user's UserId
+    if (userId !== req.user.UserId) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
 
-    accountToEdit = await accCollection.findOneAndUpdate(
-      { UserIdRef: parseInt(req.params.UserId)},
-      { $set: { RouteNum: newRouteNum } },
-    );
+    const filter = { UserIdRef: userId, AccountNum: oldAccountNum };
+    const updateFields = {};
 
-    accountToEdit = await accCollection.findOneAndUpdate(
-      { UserIdRef: parseInt(req.params.UserId)},
-      { $set: { BankName: newBankName } }
-    );
+    if (newAccountNum) {
+      updateFields.AccountNum = newAccountNum;
+    }
 
-    //makes sure changes were made
-    if (!accountToEdit) {
+    if (newRouteNum) {
+      updateFields.RouteNum = newRouteNum;
+    }
+
+    if (newBankName) {
+      updateFields.BankName = newBankName;
+    }
+
+    const updateResult = await accCollection.updateOne(filter, { $set: updateFields });
+
+    if (updateResult.matchedCount === 0) {
       return res.status(404).json({ error: 'Account Not Found in your profile' });
     }
 
-    res.status(200).json({ message: 'Updated Account Information' });
-        
+    if (updateResult.modifiedCount > 0) {
+      return res.status(200).json({ message: 'Updated Account Information' });
+    }
+
+    // No account was updated
+    return res.status(400).json({ error: 'No changes were made to the account' });
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 
 // Delete Account
-app.delete('/api/accounts/delete', async (req, res) => {
-  
+app.delete('/api/accounts/delete', authenticateToken, async (req, res) => {
   const AccountNumtoDelete = req.body.AccountNum;
 
+  if (!AccountNumtoDelete) {
+    return res.status(400).json({ error: 'Account number to delete is required' });
+  }
+
   try {
-    // Find and delete the account by account number
-    const deletionResult = await accCollection.deleteOne({ AccountNum : AccountNumtoDelete});
+    const userId = req.user.UserId;
+
+    // Find and delete the account by account number and the user's UserId
+    const deletionResult = await accCollection.deleteOne({ AccountNum: AccountNumtoDelete, UserIdRef: userId });
 
     if (deletionResult.deletedCount === 1) {
-      res.status(200).json({ message: 'Account deleted successfully' });
-    } else {
-      res.status(404).json({ error: 'Account not found' });
+      return res.status(200).json({ message: 'Account deleted successfully' });
     }
+
+    return res.status(404).json({ error: 'Account not found' });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({ error: 'Internal server error' });
   }
 });
-  
+
       
     
     }
