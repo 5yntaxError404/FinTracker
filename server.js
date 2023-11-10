@@ -287,20 +287,12 @@ app.post('/api/accounts/add/:UserId', authenticateToken, async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-
-//Get account information
-app.get('/api/accounts/:UserId', authenticateToken, async (req, res) => {
+// Get all accounts for the authenticated user
+app.get('/api/accounts', authenticateToken, async (req, res) => {
   try {
+    const UserId = req.user.UserId; // Get UserId from the JWT
 
-    const UserId = parseInt(req.params.UserId);
-
-
-    // Verify that the UserId from the request matches the authenticated user's UserId
-    if (UserId !== req.user.UserId) {
-      return res.status(403).json({ error: 'Access denied' });
-    }
-
-    // Query your database to fetch the user's account information based on the UserId
+    // Query your database to fetch all the user's account information based on the UserId
     const userAccounts = await accCollection.find({ UserIdRef: UserId }).toArray();
 
     res.status(200).json(userAccounts);
@@ -309,6 +301,28 @@ app.get('/api/accounts/:UserId', authenticateToken, async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+// Get a specific account
+app.get('/api/account', authenticateToken, async (req, res) => {
+  try {
+    const UserId = req.user.UserId; // Get UserId from the JWT
+    const { AccountNum } = req.body; // Get the AccountNum from the request body
+
+    // Query your database to fetch the specific account information based on the UserId and AccountNum
+    const specificAccount = await accCollection.findOne({ UserIdRef: UserId, AccountNum });
+
+    if (!specificAccount) {
+      return res.status(404).json({ error: 'Account Not Found' });
+    }
+
+    res.status(200).json(specificAccount);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
 
 
 // Edit Account
@@ -355,8 +369,6 @@ app.put('/api/accounts/edit/:UserId', authenticateToken, async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-
-
 
 // Delete Account
 app.delete('/api/accounts/delete', authenticateToken, async (req, res) => {
