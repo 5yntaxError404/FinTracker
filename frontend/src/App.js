@@ -7,7 +7,6 @@ import SignUpPage from './pages/SignUpPage';
 import DashPage from './pages/DashPage';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-
 function App() {
   return (
       <BrowserRouter>
@@ -23,15 +22,5 @@ function App() {
   );
 }
 
-
-/*
-function App() {
-    return (
-        <div className="App">
-            <LoginPage />
-        </div>
-    );
-  }
-  */
 
 export default App;
