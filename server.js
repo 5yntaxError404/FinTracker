@@ -303,8 +303,12 @@ app.delete('/api/accounts/delete', async (req, res) => {
 
 ///////////////////////////Budget Endpoints//////////////////////////////
 //Add new budget
-app.post('/api/budgets/add/:UserId', async (req, res) => {
+app.post('/api/budgets/add/:UserId', authenticateToken, async (req, res) => {
   try {
+
+    if(parseInt(req.params.UserId) != req.user.UserId){
+      res.status(403).json({ message: 'Access Denied' });
+    }
 
     //If it is first of the month then call this to create a new budget.
 
@@ -368,8 +372,73 @@ app.post('/api/budgets/add/:UserId', async (req, res) => {
   }
 });
 
+//Edit budget
+app.put('/api/budgets/edit/:UserId', authenticateToken, async (req, res) => {
+  try {
+
+    if(parseInt(req.params.UserId) != req.user.UserId){
+      res.status(403).json({ message: 'Access Denied' });
+    }
+
+    //If it is first of the month then call this to create a new budget.
+
+    const existingBudget = await budCollection.findOne({UserIdRef : parseInt(req.params.UserId)})
+
+    const {MonthlyIncome, GoalDescription, GoalAmt, SavedAmt} = req.body;
+
+    const UserIdRef = parseInt(req.params.UserId);
+    
+    const MonthlyExpenses = {
+        rent: req.body.rent ,
+        utilities: req.body.utilities,
+        groceries: req.body.groceries,
+        insurance: req.body.insurance,
+        phone: req.body.phone,
+        car: req.body.car,
+        gas: req.body.gas,
+        fun: req.body.fun,
+        goal: req.body.goal,
+    };
+
+    var MonthlyExpensesAmt = 0;
+    for (x in MonthlyExpenses) {
+      MonthlyExpensesAmt += MonthlyExpenses[x];
+    }
+    
+    var Transactions = existingBudget.Transactions;
+    var TransactionsAmt = existingBudget.TransactionsAmt;
+
+    var Complete = false;
+    if(GoalAmt == SavedAmt){
+      Complete = true;
+    }
+
+    const newBudget = {
+      UserIdRef,
+      MonthlyIncome,
+      MonthlyExpenses,
+      MonthlyExpensesAmt,
+      Transactions,
+      TransactionsAmt,
+      GoalDescription,
+      GoalAmt,
+      SavedAmt,
+      Complete
+    }
+
+    // Update Budget
+    await budCollection.findOneAndReplace({UserId:UserIdRef }, newBudget);
+    
+    // Return a success message
+    res.status(201).json({ message: 'Budget edited successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // add transaction + update budget
-app.put('/api/budgets/transactions/:UserId', async (req, res) => {
+app.put('/api/budgets/transactions/:UserId', authenticateToken, async (req, res) => {
   
   var TransactionID = Math.floor(Math.random() * 999) + 1;
   var Transactions = {
@@ -379,6 +448,10 @@ app.put('/api/budgets/transactions/:UserId', async (req, res) => {
   };
   var TransactionsAmt = 0;
   try {
+
+    if(parseInt(req.params.UserId) != req.user.UserId){
+      res.status(403).json({ message: 'Access Denied' });
+    }
 
     var budgetToEdit = await budCollection.findOneAndUpdate(
       { UserIdRef: parseInt(req.params.UserId)},
@@ -407,11 +480,15 @@ app.put('/api/budgets/transactions/:UserId', async (req, res) => {
 });
 
 // delete transactions
-app.delete('/api/budgets/transactions/delete/:UserId', async (req, res) => {
+app.delete('/api/budgets/transactions/delete/:UserId', authenticateToken, async (req, res) => {
   
   var TransactionID = req.body.transactionID;
   var TransactionsAmt = 0;
   try {
+
+    if(parseInt(req.params.UserId) != req.user.UserId){
+      res.status(403).json({ message: 'Access Denied' });
+    }
 
     var transactionGrabber = await budCollection.findOne(
       { UserIdRef: parseInt(req.params.UserId)}
@@ -450,7 +527,7 @@ app.delete('/api/budgets/transactions/delete/:UserId', async (req, res) => {
 });
 
 //edit transactions
-app.put('/api/budgets/transactions/edit/:UserId', async (req, res) => {
+app.put('/api/budgets/transactions/edit/:UserId', authenticateToken, async (req, res) => {
   
   var Transactions = {
     transactionID : req.body.transactionID,
@@ -460,6 +537,10 @@ app.put('/api/budgets/transactions/edit/:UserId', async (req, res) => {
 
   var TransactionsAmt = 0;
   try {
+
+    if(parseInt(req.params.UserId) != req.user.UserId){
+      res.status(403).json({ message: 'Access Denied' });
+    }
 
     var transactionGrabber = await budCollection.findOne(
       { UserIdRef: parseInt(req.params.UserId)}
@@ -509,11 +590,16 @@ app.put('/api/budgets/transactions/edit/:UserId', async (req, res) => {
 });
 
 //Achievement Endpoints
-app.post('/api/achievements/add/:UserId', async (req, res) => {
+app.post('/api/achievements/add/:UserId', authenticateToken, async (req, res) => {
   const achievementToAdd = req.body.achievementToAdd;
 
   try {
-    // Stack Achievements?
+
+    if(parseInt(req.params.UserId) != req.user.UserId){
+      res.status(403).json({ message: 'Access Denied' });
+    }
+
+    // Stack Achievements / Fire streak?
 
     // Add achievement object to user
     const achievementAdded = await achCollection.findOne({ AchievementId: achievementToAdd});
@@ -534,7 +620,7 @@ app.post('/api/achievements/add/:UserId', async (req, res) => {
     }
     catch
     {
-      console.error(error);
+      //console.error(error);
     }
   }
   
