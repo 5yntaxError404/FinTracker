@@ -1,8 +1,6 @@
 const nodemailer = require ("nodemailer");
 const { MailtrapClient } = require("mailtrap");
-
-const TOKEN = "ae7c811382e1cc2249de5b2c14165367";
-const ENDPOINT = "https://send.api.mailtrap.io/";
+require('dotenv/config');
 
 const client = new MailtrapClient({ endpoint: ENDPOINT, token: TOKEN });
 
@@ -10,7 +8,6 @@ const sender = {
   email: "Support@fintech.davidumanzor.com",
   name: "Support@Fintracker",
 };
-
 
       exports.generateOneTimePass = () => {
         let oneTimePass = ""
