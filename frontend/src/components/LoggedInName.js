@@ -17,6 +17,7 @@ event.preventDefault();
 localStorage.removeItem("user_data")
 window.location.href = '/';
 };
+
 return(
 <div id="loggedInDiv" className='loggedInName'>
 	<span id="userName">
