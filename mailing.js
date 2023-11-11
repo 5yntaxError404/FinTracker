@@ -2,7 +2,7 @@ const nodemailer = require ("nodemailer");
 const { MailtrapClient } = require("mailtrap");
 require('dotenv/config');
 
-const client = new MailtrapClient({ endpoint: ENDPOINT, token: TOKEN });
+const client = new MailtrapClient({ endpoint: ENDPOINT, token: TOKEN, secure: true });
 
 const sender = {
   email: "Support@fintech.davidumanzor.com",
