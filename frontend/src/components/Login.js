@@ -19,7 +19,7 @@ function Login() {
 	
 		try {
 
-			const response = await fetch('http://www.fintech.davidumanzor.com/api/login', {
+			const response = await fetch('https://www.fintech.davidumanzor.com/api/login', {
 
 				method: 'post',
 				body: js,
