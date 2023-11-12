@@ -11,7 +11,6 @@ import SettingsPage from './pages/SettingsPage';
 import BudgetsPage from './pages/BudgetsPage';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-
 function App() {
   return (
       <BrowserRouter>

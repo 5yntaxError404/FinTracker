@@ -16,6 +16,7 @@ const bcrypt = require ("bcrypt");
 app.use(cors());
 app.use(bodyParser.json());
 
+
 const url =
 process.env.DB_CONNECTION;
 
@@ -61,6 +62,12 @@ async function main() {
   
    // Define a variable for the user counter
 let userCounter = 665;
+
+
+// JWT post
+app.get('/posts, authenticateToken', (req, res) => {
+  res.json(posts.filter(post => post.username === req.user.name));
+});
 
 
 // Register a new user
@@ -133,16 +140,36 @@ app.post('/api/register', async (req, res) => {
           if (!user.isVerified)
             return res.status(400).json({error: 'Email not yet verified.'})
   
-          // You may implement token-based authentication here
-  
-          res.status(200).json({ message: 'Login successful' });
-        } catch (error) {
+          // JWT
+          const payload = {
+            UserName: user.UserName,
+            UserId: user.UserId,
+            // Any other user-specific data needed??
+          };
+          const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET);
+          res.status(200).json({ message: 'Login successful', accessToken: accessToken });
+          
+
+          } catch (error) {
           console.error(error);
           res.status(500).json({ error: 'Internal server error' });
         }
       });
 
-
+      function authenticateToken(req, res, next) {
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+      
+        if (token == null) return res.sendStatus(401);
+      
+        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, payload) => {
+          if (err) return res.sendStatus(403);
+      
+          req.user = payload;
+      
+          next();
+        });
+      }
 
     app.post('/api/validateEmail', async (req, res) => {
 
@@ -169,55 +196,101 @@ app.post('/api/register', async (req, res) => {
       }
     });
 
-    // Edit a username
-    app.put('/api/users/edit/:UserId', async (req, res) => {
-      const userIdToEdit = parseInt(req.params.UserId);
-      const newUsername = req.body.UserName; // Assuming the new username is in the "UserName" field of the request body
-    
-      try {
-        // Check if the user exists
-        const userToEdit = await usersCollection.findOneAndUpdate(
-          { UserId: userIdToEdit },
-          { $set: { UserName: newUsername } }
-        );
-    
-        if (!userToEdit) {
-          return res.status(404).json({ error: 'User Not Found' });
-        }
-    
-        res.status(200).json({ message: 'Updated Username' });
-        
-      } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Internal server error' });
-      }
-    });
-    
-    // Delete a user by UserId
-    app.delete('/api/users/delete/:UserId', async (req, res) => {
-    const userIdToDelete = parseInt(req.params.UserId);
-  
-    try {
-      // Find and delete the user by UserId
-      const deletionResult = await usersCollection.deleteOne({ UserId: userIdToDelete });
-  
-      if (deletionResult.deletedCount === 1) {
-        res.status(200).json({ message: 'User deleted successfully' });
-      } else {
-        res.status(404).json({ error: 'User not found' });
-      }
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Internal server error' });
+
+// Edit user information// Edit user information
+// Edit user information
+app.put('/api/users/edit', authenticateToken, async (req, res) => {
+  const newUsername = req.body.UserName;
+  const newPassword = req.body.Password;
+  const newFirstName = req.body.FirstName;
+  const newLastName = req.body.LastName;
+  const newEmail = req.body.Email;
+
+  try {
+    // Verify that the UserId from the request matches the authenticated user's UserId
+    const userIdToEdit = req.user.UserId;
+
+    // Update the user's information
+    const updateFields = {};
+
+    if (newUsername) {
+      updateFields.UserName = newUsername;
     }
-  });
+
+    if (newPassword) {
+      updateFields.Password = newPassword;
+    }
+
+    if (newFirstName) {
+      updateFields.FirstName = newFirstName;
+    }
+
+    if (newLastName) {
+      updateFields.LastName = newLastName;
+    }
+
+    if (newEmail) {
+      updateFields.Email = newEmail;
+    }
+
+    // Find and update the user in the database
+    const updatedUser = await usersCollection.findOneAndUpdate(
+      { UserId: userIdToEdit },
+      { $set: updateFields },
+      { returnOriginal: false }
+    );
+
+    if (updatedUser.value === null) {
+      return res.status(404).json({ error: 'User Not Found' });
+    }
+
+    res.status(200).json({ message: 'Updated User Information' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 
-////////////////////////Account adding, editing, and deleting////////////////////////////////////
+
+ // Delete a user by UserId
+app.delete('/api/users/delete/:UserId', authenticateToken, async (req, res) => {
+  const userIdToDelete = parseInt(req.params.UserId);
+
+  try {
+    // Verify that the UserId from the request matches the authenticated user's UserId
+    if (userIdToDelete !== req.user.UserId) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
+    // Find and delete the user by UserId
+    const deletionResult = await usersCollection.deleteOne({ UserId: userIdToDelete });
+
+    if (deletionResult.deletedCount === 1) {
+      res.status(200).json({ message: 'User deleted successfully' });
+    } else {
+      res.status(404).json({ error: 'User not found' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+////////////////////////Account adding, get, editing, and deleting////////////////////////////////////
 // Add new account
-app.post('/api/accounts/add/:UserId', async (req, res) => {
+app.post('/api/accounts/add/:UserId', authenticateToken, async (req, res) => {
   const { AccountNum, RouteNum, BankName} = req.body;
   try {
+
+    const user = req.user; // Get the user data from the middleware
+
+    // Check if the UserId in the URL matches the UserId from the token
+    if (parseInt(req.params.UserId) !== user.UserId) {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+
     // Check if accounts already added to a user
     const existingAccount = await accCollection.findOne({ AccountNum });
 
@@ -225,7 +298,7 @@ app.post('/api/accounts/add/:UserId', async (req, res) => {
       return res.status(400).json({ error: 'Account has already been added' });
     }
 
-    //Check if valid?
+    //Add new account
     
     const newAccount = {
       AccountNum,
@@ -244,65 +317,114 @@ app.post('/api/accounts/add/:UserId', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+// Get all accounts for the authenticated user
+app.get('/api/accounts', authenticateToken, async (req, res) => {
+  try {
+    const UserId = req.user.UserId; // Get UserId from the JWT
+
+    // Query your database to fetch all the user's account information based on the UserId
+    const userAccounts = await accCollection.find({ UserIdRef: UserId }).toArray();
+
+    res.status(200).json(userAccounts);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Get a specific account
+app.get('/api/account', authenticateToken, async (req, res) => {
+  try {
+    const UserId = req.user.UserId; // Get UserId from the JWT
+    const { AccountNum } = req.body; // Get the AccountNum from the request body
+
+    // Query your database to fetch the specific account information based on the UserId and AccountNum
+    const specificAccount = await accCollection.findOne({ UserIdRef: UserId, AccountNum });
+
+    if (!specificAccount) {
+      return res.status(404).json({ error: 'Account Not Found' });
+    }
+
+    res.status(200).json(specificAccount);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 
-// Edit account information
-app.put('/api/accounts/edit/:UserId', async (req, res) => {
-  const { newAccountNum, newRouteNum, newBankName} = req.body;
+
+
+// Edit Account
+app.put('/api/accounts/edit/:UserId', authenticateToken, async (req, res) => {
+  const { oldAccountNum, newAccountNum, newRouteNum, newBankName } = req.body;
+  const userId = parseInt(req.params.UserId);
 
   try {
-    //make changes one by one (does not work altogether)
-    var accountToEdit = await accCollection.findOneAndUpdate(
-      { UserIdRef: parseInt(req.params.UserId)},
-      { $set: { AccountNum: newAccountNum } },
-    );
+    // Verify that the UserId from the request matches the authenticated user's UserId
+    if (userId !== req.user.UserId) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
 
-    accountToEdit = await accCollection.findOneAndUpdate(
-      { UserIdRef: parseInt(req.params.UserId)},
-      { $set: { RouteNum: newRouteNum } },
-    );
+    const filter = { UserIdRef: userId, AccountNum: oldAccountNum };
+    const updateFields = {};
 
-    accountToEdit = await accCollection.findOneAndUpdate(
-      { UserIdRef: parseInt(req.params.UserId)},
-      { $set: { BankName: newBankName } }
-    );
+    if (newAccountNum) {
+      updateFields.AccountNum = newAccountNum;
+    }
 
-    //makes sure changes were made
-    if (!accountToEdit) {
+    if (newRouteNum) {
+      updateFields.RouteNum = newRouteNum;
+    }
+
+    if (newBankName) {
+      updateFields.BankName = newBankName;
+    }
+
+    const updateResult = await accCollection.updateOne(filter, { $set: updateFields });
+
+    if (updateResult.matchedCount === 0) {
       return res.status(404).json({ error: 'Account Not Found in your profile' });
     }
 
-    res.status(200).json({ message: 'Updated Account Information' });
-        
+    if (updateResult.modifiedCount > 0) {
+      return res.status(200).json({ message: 'Updated Account Information' });
+    }
+
+    // No account was updated
+    return res.status(400).json({ error: 'No changes were made to the account' });
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-
 
 // Delete Account
-app.delete('/api/accounts/delete', async (req, res) => {
-  
+app.delete('/api/accounts/delete', authenticateToken, async (req, res) => {
   const AccountNumtoDelete = req.body.AccountNum;
 
+  if (!AccountNumtoDelete) {
+    return res.status(400).json({ error: 'Account number to delete is required' });
+  }
+
   try {
-    // Find and delete the account by account number
-    const deletionResult = await accCollection.deleteOne({ AccountNum : AccountNumtoDelete});
+    const userId = req.user.UserId;
+
+    // Find and delete the account by account number and the user's UserId
+    const deletionResult = await accCollection.deleteOne({ AccountNum: AccountNumtoDelete, UserIdRef: userId });
 
     if (deletionResult.deletedCount === 1) {
-      res.status(200).json({ message: 'Account deleted successfully' });
-    } else {
-      res.status(404).json({ error: 'Account not found' });
+      return res.status(200).json({ message: 'Account deleted successfully' });
     }
+
+    return res.status(404).json({ error: 'Account not found' });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({ error: 'Internal server error' });
   }
 });
-  
-      
-    
+
     }
     catch
     {
@@ -312,4 +434,4 @@ app.delete('/api/accounts/delete', async (req, res) => {
   
   
   main().catch(console.error);
-  
+
