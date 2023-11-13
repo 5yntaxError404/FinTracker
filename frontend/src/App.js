@@ -10,6 +10,8 @@ import HelpPage from './pages/HelpPage';
 import SettingsPage from './pages/SettingsPage';
 import BudgetsPage from './pages/BudgetsPage';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import PasswordRecoveryPage from './components/PasswordRecovery';
+import EmailVerifiedPage from './components/EmailVerified';
 
 function App() {
   return (
@@ -24,6 +26,8 @@ function App() {
                   <Route path="/help" element={<HelpPage/>} />
                   <Route path="/settings" element={<SettingsPage/>} />
                   <Route path="/budgets" element={<BudgetsPage/>} />
+                  <Route path="/passwordrecovery" element={<PasswordRecoveryPage/>} />
+                  <Route path="/emailverified" element={<EmailVerifiedPage/>} />
               </Routes>
           </div>
       </BrowserRouter>

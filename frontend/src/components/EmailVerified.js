@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 
 // Looking for correct code to import font
 
-const EmailRecoveryPage = (props) => {
+const EmailVerifiedPage = (props) => {
 
     return (
 
@@ -20,4 +20,4 @@ const EmailRecoveryPage = (props) => {
     );
 }
 
-export default EmailRecoveryPage;
+export default EmailVerifiedPage;
