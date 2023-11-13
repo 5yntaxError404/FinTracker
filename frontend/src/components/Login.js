@@ -13,7 +13,7 @@ function Login() {
 
 	const passwordRecovery = async event =>
 	{
-		window.location.href = '/passwordrecover';
+		window.location.href = '/passwordrecovery';
 	};
 
 	const doLogin = async event => 
