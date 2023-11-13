@@ -10,8 +10,8 @@ import HelpPage from './pages/HelpPage';
 import SettingsPage from './pages/SettingsPage';
 import BudgetsPage from './pages/BudgetsPage';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import PasswordRecoveryPage from './components/PasswordRecovery';
-import EmailVerifiedPage from './components/EmailVerified';
+import PasswordRecoveryPage from './pages/PasswordRecoveryPage';
+import EmailVerifiedPage from './pages/EmailVerifiedPage';
 
 function App() {
   return (

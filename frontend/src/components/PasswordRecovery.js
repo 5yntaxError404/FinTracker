@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 // Looking for correct code to import font
 
 
-const PasswordRecoveryPage = (props) => {
+const PasswordRecovery = (props) => {
 
     return (
 
@@ -22,4 +22,4 @@ const PasswordRecoveryPage = (props) => {
     );
 }
 
-export default PasswordRecoveryPage;
+export default PasswordRecovery;
