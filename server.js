@@ -197,6 +197,25 @@ app.post('/api/register', async (req, res) => {
       }
     });
 
+//
+app.get('/api/info/:UserId', authenticateToken, async (req, res) => {
+  try {
+
+    if(parseInt(req.params.UserId) != req.user.UserId){
+      return res.status(403).json({ message: 'Access Denied' });
+    }
+
+    const UserAccount = await usersCollection.findOne({ UserId: parseInt(req.params.UserId)});
+    //Accounts gets is bugged
+    const Accounts = await accCollection.findOne({ UserIdRef: parseInt(req.params.UserId)});
+    const Budgets = await budCollection.findOne({ UserIdRef: parseInt(req.params.UserId)});
+    // Return a success message
+    res.status(201).json({UserAccount, Accounts, Budgets});
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}); 
 
 // Edit user information// Edit user information
 // Edit user information
@@ -324,7 +343,8 @@ app.get('/api/accounts', authenticateToken, async (req, res) => {
     const UserId = req.user.UserId; // Get UserId from the JWT
 
     // Query your database to fetch all the user's account information based on the UserId
-    const userAccounts = await accCollection.find({ UserIdRef: UserId }).toArray();
+    //Doesn't work because it would be an array - we can workshop this
+    const userAccounts = await accCollection.find({ UserIdRef: UserId }).toArray;
 
     res.status(200).json(userAccounts);
   } catch (error) {
@@ -432,7 +452,7 @@ app.post('/api/budgets/add/:UserId', authenticateToken, async (req, res) => {
   try {
     //If it is first of the month then call this to create a new budget.
     if(parseInt(req.params.UserId) != req.user.UserId){
-      res.status(403).json({ message: 'Access Denied' });
+      return res.status(403).json({ message: 'Access Denied' });
     }
 
     const existingBudget = await budCollection.findOneAndDelete({UserIdRef : parseInt(req.params.UserId)})
@@ -500,7 +520,7 @@ app.put('/api/budgets/edit/:UserId', authenticateToken, async (req, res) => {
   try {
 
     if(parseInt(req.params.UserId) != req.user.UserId){
-      res.status(403).json({ message: 'Access Denied' });
+      return res.status(403).json({ message: 'Access Denied' });
     }
 
     //If it is first of the month then call this to create a new budget.
@@ -575,8 +595,26 @@ app.put('/api/budgets/edit/:UserId', authenticateToken, async (req, res) => {
   }
 });
 
+app.get('/api/budgets/get/:UserId', authenticateToken, async (req, res) => {
+  try {
+
+    if(parseInt(req.params.UserId) != req.user.UserId){
+      return res.status(403).json({ message: 'Access Denied' });
+    }
+
+    const budgetGot = await budCollection.findOne({UserIdRef : parseInt(req.params.UserId)});
+
+    // Return a success message
+    res.status(201).json({ message: JSON.stringify(budgetGot) });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+/////////////////Transactions//////////////////////////////////////
 // add transaction + update budget
-app.put('/api/budgets/transactions/:UserId', authenticateToken, async (req, res) => {
+app.post('/api/budgets/transactions/:UserId', authenticateToken, async (req, res) => {
   
   var TransactionID = Math.floor(Math.random() * 999) + 1;
   var Transactions = {
@@ -588,7 +626,7 @@ app.put('/api/budgets/transactions/:UserId', authenticateToken, async (req, res)
   try {
 
     if(parseInt(req.params.UserId) != req.user.UserId){
-      res.status(403).json({ message: 'Access Denied' });
+      return res.status(403).json({ message: 'Access Denied' });
     }
 
     var budgetToEdit = await budCollection.findOneAndUpdate(
@@ -625,7 +663,7 @@ app.delete('/api/budgets/transactions/delete/:UserId', authenticateToken, async 
   try {
 
     if(parseInt(req.params.UserId) != req.user.UserId){
-      res.status(403).json({ message: 'Access Denied' });
+      return res.status(403).json({ message: 'Access Denied' });
     }
 
     var transactionGrabber = await budCollection.findOne(
@@ -677,7 +715,7 @@ app.put('/api/budgets/transactions/edit/:UserId', authenticateToken, async (req,
   try {
 
     if(parseInt(req.params.UserId) != req.user.UserId){
-      res.status(403).json({ message: 'Access Denied' });
+      return res.status(403).json({ message: 'Access Denied' });
     }
 
     var transactionGrabber = await budCollection.findOne(
@@ -727,6 +765,28 @@ app.put('/api/budgets/transactions/edit/:UserId', authenticateToken, async (req,
   }
 });
 
+//get transaction
+app.get('/api/budgets/transactions/get/:UserId', authenticateToken, async (req, res) => {
+  
+  try {
+
+    if(parseInt(req.params.UserId) != req.user.UserId){
+      return res.status(403).json({ message: 'Access Denied' });
+    }
+
+    var transactionGrabber = await budCollection.findOne(
+      { UserIdRef: parseInt(req.params.UserId)}
+    );
+
+
+    res.status(200).json(transactionGrabber.Transactions);
+        
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 //Achievement Endpoints
 app.post('/api/achievements/add/:UserId', authenticateToken, async (req, res) => {
   const achievementToAdd = req.body.achievementToAdd;
@@ -734,10 +794,8 @@ app.post('/api/achievements/add/:UserId', authenticateToken, async (req, res) =>
   try {
 
     if(parseInt(req.params.UserId) != req.user.UserId){
-      res.status(403).json({ message: 'Access Denied' });
+      return res.status(403).json({ message: 'Access Denied' });
     }
-    
-    // Stack Achievements / Fire streak?
 
     // Add achievement object to user
     const achievementAdded = await achCollection.findOne({ AchievementId: achievementToAdd});
@@ -753,7 +811,25 @@ app.post('/api/achievements/add/:UserId', authenticateToken, async (req, res) =>
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-      
+
+//Get achievements
+app.get('/api/achievements/get/:UserId', authenticateToken, async (req, res) => {
+  try {
+
+    if(parseInt(req.params.UserId) != req.user.UserId){
+      return res.status(403).json({ message: 'Access Denied' });
+    }
+
+    const achievement = await usersCollection.findOne(
+      { UserId: parseInt(req.params.UserId)});
+
+    // Return a success message
+    res.status(201).json(achievement.AchievementList);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}); 
     
     }
     catch
