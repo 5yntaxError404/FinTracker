@@ -9,22 +9,32 @@ import { Link } from 'react-router-dom';
 
 const LandingPage = (props) => {
 
-	const goToLogin = async event =>
+	const EditBudget = async event =>
 	{
 		window.location.href = '/login';
 	};
 
+    const AddBudget = async event =>
+    {
+
+    };
+
+    const RemoveBudget = async event =>
+    {
+
+    };
+
     return (
 
         <div className="landing-container">
+            
             <div className="content">
             <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono"></link>
                 <p>Struggling with keeping tabs on your expenses?</p>
                 <p>Lost in the maze of monthly bills, savings, and investment options?</p>
                 <p>Say hello to <strong>FinTrack+</strong>, the ultimate tool designed specifically to help you master your money.</p>
-                <Button className="button" onClick={goToLogin}>Get Started</Button>
-            </div>
-            <form>
+                <Button className="button">Get Started</Button>
+                <form>
                 <div class="form-row">
                     <div class="form-group col-md-6">
                     <label for="inputEmail4">Email</label>
@@ -70,6 +80,8 @@ const LandingPage = (props) => {
                 </div>
                 <button type="submit" class="btn btn-primary">Sign in</button>
                 </form>
+            </div>
+            
         </div>
 
         

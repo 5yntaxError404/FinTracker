@@ -11,6 +11,11 @@ function Login() {
         return JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
     }
 
+	const passwordRecovery = async event =>
+	{
+		window.location.href = '/passwordrecover';
+	};
+
 	const doLogin = async event => 
     {
         event.preventDefault();
@@ -111,13 +116,13 @@ function Login() {
             </button>
             </div>
             <p className="forgot-password text-right">
-            Forgot <a href="#">password?</a>
+            Forgot <a href="#" onClick={passwordRecovery}>password?</a>
             </p>
 			<p className="new-account test-right"> 
 			New <a href="/signup">account?</a>
 			</p>
         </form>
-        </div> 
+        </div>
 	</div>
 );
 }

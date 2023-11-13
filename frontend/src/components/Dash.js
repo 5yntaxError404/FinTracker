@@ -12,41 +12,6 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
 const Dash = (props) => {
 
 	const [message,setMessage] = useState('');
-    
-	const doLogin = async event =>
-	{
-        let loginEmail = document.querySelector("#loginUserName");
-	    let loginPassword = document.querySelector("#loginPassword")
-		event.preventDefault();
-		var obj = {UserName:loginEmail.value,Password:loginPassword.value};
-		//var js = JSON.stringify(obj);
-		try
-		{
-            const response = await fetch('https://www.fintech.davidumanzor.com/api/login', {
-            method: "POST",
-            headers: {
-                'Access-Control-Allow-Origin': '*'
-			},
-            body: JSON.stringify(obj),
-        })
-			var res = response.json;
-			if( res.id <= 0 )
-			{
-				setMessage('User/Password combination incorrect');
-			}
-			else
-			{
-				setMessage('Got response use Logged In')
-				//window.location.href = '/dash';
-			}
-		}
-		catch(e)
-		{
-			alert(e.toString());
-			return;
-		}
-	};
-
 
     return (
     <div className="background">
