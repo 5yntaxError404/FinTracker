@@ -253,9 +253,9 @@ app.put('/api/users/edit', authenticateToken, async (req, res) => {
 
 
 
- // Delete a user by UserId
-app.delete('/api/users/delete/:UserId', authenticateToken, async (req, res) => {
-  const userIdToDelete = parseInt(req.params.UserId);
+// Delete a user by UserId
+app.delete('/api/users/delete', authenticateToken, async (req, res) => {
+  const userIdToDelete = req.body.UserId;  // Extract UserId from the request body
 
   try {
     // Verify that the UserId from the request matches the authenticated user's UserId
