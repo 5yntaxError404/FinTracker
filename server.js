@@ -305,12 +305,10 @@ app.delete('/api/accounts/delete', async (req, res) => {
 //Add new budget
 app.post('/api/budgets/add/:UserId', authenticateToken, async (req, res) => {
   try {
-
+    //If it is first of the month then call this to create a new budget.
     if(parseInt(req.params.UserId) != req.user.UserId){
       res.status(403).json({ message: 'Access Denied' });
     }
-
-    //If it is first of the month then call this to create a new budget.
 
     const existingBudget = await budCollection.findOneAndDelete({UserIdRef : parseInt(req.params.UserId)})
 
@@ -382,8 +380,6 @@ app.put('/api/budgets/edit/:UserId', authenticateToken, async (req, res) => {
 
     //If it is first of the month then call this to create a new budget.
 
-    const existingBudget = await budCollection.findOne({UserIdRef : parseInt(req.params.UserId)})
-
     const {MonthlyIncome, GoalDescription, GoalAmt, SavedAmt} = req.body;
 
     const UserIdRef = parseInt(req.params.UserId);
@@ -404,31 +400,48 @@ app.put('/api/budgets/edit/:UserId', authenticateToken, async (req, res) => {
     for (x in MonthlyExpenses) {
       MonthlyExpensesAmt += MonthlyExpenses[x];
     }
-    
-    var Transactions = existingBudget.Transactions;
-    var TransactionsAmt = existingBudget.TransactionsAmt;
 
     var Complete = false;
     if(GoalAmt == SavedAmt){
       Complete = true;
     }
 
-    const newBudget = {
-      UserIdRef,
-      MonthlyIncome,
-      MonthlyExpenses,
-      MonthlyExpensesAmt,
-      Transactions,
-      TransactionsAmt,
-      GoalDescription,
-      GoalAmt,
-      SavedAmt,
-      Complete
-    }
-
     // Update Budget
-    await budCollection.findOneAndReplace({UserId:UserIdRef }, newBudget);
+    var editor = await budCollection.findOneAndUpdate(
+      { UserIdRef : UserIdRef },
+      { $set: { MonthlyExpenses : MonthlyExpenses }}
+    );
+
+    editor = await budCollection.findOneAndUpdate(
+      { UserIdRef : UserIdRef },
+      { $set: { MonthlyIncome : MonthlyIncome }}
+    );
+
+    editor = await budCollection.findOneAndUpdate(
+      { UserIdRef : UserIdRef },
+      { $set: { GoalDescription : GoalDescription }}
+    );
+
+    editor = await budCollection.findOneAndUpdate(
+      { UserIdRef : UserIdRef },
+      { $set: { GoalAmt : GoalAmt }}
+    );
     
+    editor = await budCollection.findOneAndUpdate(
+      { UserIdRef : UserIdRef },
+      { $set: { SavedAmt : SavedAmt }}
+    );
+
+    editor = await budCollection.findOneAndUpdate(
+      { UserIdRef : UserIdRef },
+      { $set: { MonthlyExpensesAmt : MonthlyExpensesAmt }}
+    );
+
+    editor = await budCollection.findOneAndUpdate(
+      { UserIdRef : UserIdRef },
+      { $set: { Complete : Complete }}
+    );
+
     // Return a success message
     res.status(201).json({ message: 'Budget edited successfully' });
   } catch (error) {
@@ -598,7 +611,7 @@ app.post('/api/achievements/add/:UserId', authenticateToken, async (req, res) =>
     if(parseInt(req.params.UserId) != req.user.UserId){
       res.status(403).json({ message: 'Access Denied' });
     }
-
+    
     // Stack Achievements / Fire streak?
 
     // Add achievement object to user
