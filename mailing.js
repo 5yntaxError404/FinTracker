@@ -1,16 +1,13 @@
 const nodemailer = require ("nodemailer");
 const { MailtrapClient } = require("mailtrap");
+require('dotenv/config');
 
-const TOKEN = "ae7c811382e1cc2249de5b2c14165367";
-const ENDPOINT = "https://send.api.mailtrap.io/";
-
-const client = new MailtrapClient({ endpoint: ENDPOINT, token: TOKEN });
+const client = new MailtrapClient({ endpoint: process.env.ENDPOINT, token: process.env.TOKEN });
 
 const sender = {
   email: "Support@fintech.davidumanzor.com",
   name: "Support@Fintracker",
 };
-
 
       exports.generateOneTimePass = () => {
         let oneTimePass = ""
@@ -23,10 +20,16 @@ const sender = {
 
     async function verifyEmail(email, OTP) {
 
+       const recipients = [
+        {
+          email: email,
+        }
+      ];
+
           client
           .send({
             from: sender,
-            to: email,
+            to: recipients,
             subject: "Email Verification",
             text: "Here is your one time Password: " + OTP,
             category: "Integration Test",

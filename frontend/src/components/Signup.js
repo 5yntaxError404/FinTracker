@@ -21,7 +21,9 @@ function SignUp(){
 		var js = JSON.stringify(obj);
 	
 		try {
-			const response = await fetch('http://www.fintech.davidumanzor.com/api/register', {
+
+			  const response = await fetch('https://www.fintech.davidumanzor.com/api/register', {
+
 				method: 'post',
 				body: js,
 				headers: { 'Content-Type': 'application/json' }
@@ -44,7 +46,7 @@ function SignUp(){
 		<div className="login-container">
 			<div className="login-form">
 				<form className='form' onSubmit={doSignup}>
-				<h3>Sign In</h3>
+				<h3>Sign Up</h3>
 
 				<div className="mb-3">
 					<label>Firstname</label>
@@ -81,7 +83,7 @@ function SignUp(){
 				<div className="mb-3">
 				<label>Password</label>
 				<input
-					type="text"
+					type="password"
 					id="password"
 					class="user-input-field" 
 					placeholder="Password"
