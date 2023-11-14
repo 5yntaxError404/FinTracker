@@ -114,13 +114,10 @@ app.post('/api/register', async (req, res) => {
 
     try {
       const emailToken = jwt.sign(
-        {
-          user: _.pick(user, 'id'),
-        },
         EMAIL_SECRET,
         {
           expiresIn: '1d',
-        },
+        }
       );
       const EmailURL = 'https://www.fintech.davidumanzor.com/api/validateEmail/${emailToken}';
       verifyEmail(newUser.Email,EmailUrl);
