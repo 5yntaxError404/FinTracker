@@ -120,7 +120,7 @@ app.post('/api/register', async (req, res) => {
         }
       );
       const EmailURL = 'https://www.fintech.davidumanzor.com/api/validateEmail/${emailToken}';
-      verifyEmail(newUser.Email,EmailUrl);
+      verifyEmail(newUser.Email,EmailURL);
     }
 
     catch (e)
