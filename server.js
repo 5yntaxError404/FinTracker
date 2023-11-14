@@ -6,6 +6,7 @@ const router = express.Router();
 const emailValidator = require('deep-email-validator');
 const path = require('path');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const { MongoClient } = require('mongodb');
 const { generateOneTimePass, verifyEmail } = require('./mailing');
 require('dotenv/config');
@@ -15,6 +16,7 @@ const app = express();
 const bcrypt = require ("bcrypt");
 app.use(cors());
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 
 const url =
@@ -146,8 +148,9 @@ app.post('/api/register', async (req, res) => {
             UserId: user.UserId,
             // Any other user-specific data needed??
           };
-          const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET);
-          res.status(200).json({ message: 'Login successful', accessToken: accessToken });
+          const accessToken = generateJWTToken(payload);
+          const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
+          res.status(200).json({ message: 'Login successful', accessToken: accessToken, refreshToken: refreshToken});
           
 
           } catch (error) {
@@ -170,6 +173,43 @@ app.post('/api/register', async (req, res) => {
           next();
         });
       }
+      
+      function generateJWTToken(user) {
+        const payload = {
+          UserName: user.UserName,
+          UserId: user.UserId,
+          // Any other user-specific data needed??
+        };
+        const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '30m' });
+        return accessToken;
+      }
+      
+      app.post('/api/token', (req, res) => {
+        const refreshToken = req.cookies.refreshToken;
+      
+        // Check for the presence of the refresh token
+        if (!refreshToken) {
+          return res.status(401).json({ error: 'Refresh token not provided' });
+        }
+      
+        // Verify the refresh token
+        jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
+          if (err) {
+            // Handle verification errors (invalid or expired refresh token)
+            return res.status(401).json({ error: 'Invalid refresh token' });
+          }
+      
+          // Access token is expired, generate and send a new access token
+          const newAccessToken = generateJWTToken(user);
+          res.json({ accessToken: newAccessToken });
+        });
+      });
+      
+      app.delete('/api/logout', authenticateToken, (req, res) => {
+        res.clearCookie('refreshToken');
+        res.sendStatus(204);
+      });
+      
 
     app.post('/api/validateEmail', async (req, res) => {
 
