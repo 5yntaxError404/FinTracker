@@ -113,7 +113,8 @@ app.post('/api/register', async (req, res) => {
     };
 
     try {
-      const emailToken = jwt.sign(
+      const emailToken = jwt.sign( {
+        email: newUser.Email },
         process.env.ACCESS_TOKEN_SECRET,
         {
           expiresIn: '1d',
