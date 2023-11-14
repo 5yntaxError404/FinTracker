@@ -6,7 +6,6 @@ const router = express.Router();
 const emailValidator = require('deep-email-validator');
 const path = require('path');
 const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser');
 const { MongoClient } = require('mongodb');
 const { generateOneTimePass, verifyEmail } = require('./mailing');
 require('dotenv/config');
@@ -16,7 +15,6 @@ const app = express();
 const bcrypt = require ("bcrypt");
 app.use(cors());
 app.use(bodyParser.json());
-app.use(cookieParser());
 
 
 const url =
@@ -56,7 +54,7 @@ async function main() {
       console.log('Connected to MongoDB');
       const db = client.db('FinanceBuddy');
       const usersCollection = db.collection('Users');
-      const accCollection = db.collection('budgets');
+      const accCollection = db.collection('Accounts');
       const achCollection = db.collection('Achievements');
       const budCollection = db.collection('Budgets');     
       app.listen(port, () => {
@@ -149,9 +147,8 @@ app.post('/api/register', async (req, res) => {
             UserId: user.UserId,
             // Any other user-specific data needed??
           };
-          const accessToken = generateJWTToken(payload);
-          const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
-          res.status(200).json({ message: 'Login successful', accessToken: accessToken, refreshToken: refreshToken});
+          const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET);
+          res.status(200).json({ message: 'Login successful', accessToken: accessToken });
           
 
           } catch (error) {
@@ -175,6 +172,45 @@ app.post('/api/register', async (req, res) => {
         });
       }
       
+      
+      function generateJWTToken(user) {
+        const payload = {
+          UserName: user.UserName,
+          UserId: user.UserId,
+          // Any other user-specific data needed??
+        };
+        const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '30m' });
+        return accessToken;
+      }
+      
+      app.post('/api/token', (req, res) => {
+        const refreshToken = req.cookies.refreshToken;
+      
+        // Check for the presence of the refresh token
+        if (!refreshToken) {
+          return res.status(401).json({ error: 'Refresh token not provided' });
+        }
+      
+        // Verify the refresh token
+        jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
+          if (err) {
+            // Handle verification errors (invalid or expired refresh token)
+            return res.status(401).json({ error: 'Invalid refresh token' });
+          }
+      
+          // Access token is expired, generate and send a new access token
+          const newAccessToken = generateJWTToken(user);
+          res.json({ accessToken: newAccessToken });
+        });
+      });
+      
+      app.delete('/api/logout', authenticateToken, (req, res) => {
+        res.clearCookie('refreshToken');
+        res.sendStatus(204);
+      });
+      
+
+
       function generateJWTToken(user) {
         const payload = {
           UserName: user.UserName,
@@ -245,12 +281,20 @@ app.get('/api/info/:UserId', authenticateToken, async (req, res) => {
       return res.status(403).json({ message: 'Access Denied' });
     }
 
+    var msg = "";
+    let dateobj = new Date();
+
+    if(dateobj.getDate() == 1){
+      msg = "It's the first of the month, review your budget!";
+    }else{
+      msg = "The budget does not require immediate updating.";
+    }
+
     const UserAccount = await usersCollection.findOne({ UserId: parseInt(req.params.UserId)});
-    //Accounts gets is bugged
-    const Accounts = await accCollection.findOne({ UserIdRef: parseInt(req.params.UserId)});
+    const UserBankAccounts = await accCollection.find({ UserIdRef: parseInt(req.params.UserId)}).toArray();
     const Budgets = await budCollection.findOne({ UserIdRef: parseInt(req.params.UserId)});
     // Return a success message
-    res.status(201).json({UserAccount, Accounts, Budgets});
+    res.status(201).json({UserAccount, Budgets, UserBankAccounts, msg});
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });
@@ -377,6 +421,7 @@ app.post('/api/accounts/add/:UserId', authenticateToken, async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 // Get all accounts for the authenticated user
 app.get('/api/accounts', authenticateToken, async (req, res) => {
   try {
@@ -397,10 +442,10 @@ app.get('/api/accounts', authenticateToken, async (req, res) => {
 app.get('/api/account', authenticateToken, async (req, res) => {
   try {
     const UserId = req.user.UserId; // Get UserId from the JWT
-    const { AccountNum } = req.body; // Get the AccountNum from the request body
+    const AccountNum = req.body.AccountNum; // Get the AccountNum from the request body
 
     // Query your database to fetch the specific account information based on the UserId and AccountNum
-    const specificAccount = await accCollection.findOne({ UserIdRef: UserId, AccountNum });
+    const specificAccount = await accCollection.findOne({ AccountNum: AccountNum });
 
     if (!specificAccount) {
       return res.status(404).json({ error: 'Account Not Found' });
