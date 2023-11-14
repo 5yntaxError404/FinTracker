@@ -112,8 +112,26 @@ app.post('/api/register', async (req, res) => {
       isVerified: false
     };
 
+    try {
+      const emailToken = jwt.sign(
+        {
+          user: _.pick(user, 'id'),
+        },
+        EMAIL_SECRET,
+        {
+          expiresIn: '1d',
+        },
+      );
+      const Email_url = 'https://www.fintech.davidumanzor.com/api/validateEmail/${emailToken}';
+      verifyEmail(newUser.Email,Email_url);
+    }
+
+    catch (e)
+    {
+      console.log(e)
+    }
     
-    verifyEmail(newUser.Email,oneTimePass);
+    
     // Insert the user document into the "Users" collection
     await usersCollection.insertOne(newUser);
 
@@ -209,20 +227,14 @@ app.post('/api/register', async (req, res) => {
         res.sendStatus(204);
       });
       
-    app.post('/api/validateEmail', async (req, res) => {
-
-      let  { UserName, VerificationToken } = req.body;
-      VerificationToken = bcrypt.hash(VerificationToken, 8)
+    app.post('/api/validateEmail:token', async (req, res) => {
 
       try 
       {
-          const user = await usersCollection.findOne({UserName, VerificationToken});
-
-          if (!user)
-            return res.status(401).json({error: 'Invalid OTP or User. Please try again.'})
-          
+          const { user: { id } } = jwt.verify(req.params.token, EMAIL_SECRET);
+           
           const verified = await usersCollection.findOneAndUpdate(
-            { isVerified: false },
+            { _id: id },
             { $set: { isVerified: true } }
           );
           res.status(200).json({ message: 'Email Verified'})
@@ -232,6 +244,8 @@ app.post('/api/register', async (req, res) => {
         console.error(error);
         res.status(500),json({ error: 'Internal Server Error'})
       }
+
+      return res.redirect('https://www.fintech.davidumanzor.com/Login')
     });
 
 app.get('/api/info/:UserId', authenticateToken, async (req, res) => {
