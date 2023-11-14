@@ -210,7 +210,7 @@ app.post('/api/register', async (req, res) => {
         res.sendStatus(204);
       });
       
-      app.post('/api/validateEmail/:token', async (req, res) => {
+      app.get('/api/validateEmail/:token', async (req, res) => {
 
         try {
           const tok = jwt.verify(req.params.token, EMAIL_SECRET);
