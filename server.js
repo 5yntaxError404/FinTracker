@@ -211,43 +211,6 @@ app.post('/api/register', async (req, res) => {
       
 
 
-      function generateJWTToken(user) {
-        const payload = {
-          UserName: user.UserName,
-          UserId: user.UserId,
-          // Any other user-specific data needed??
-        };
-        const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '30m' });
-        return accessToken;
-      }
-      
-      app.post('/api/token', (req, res) => {
-        const refreshToken = req.cookies.refreshToken;
-      
-        // Check for the presence of the refresh token
-        if (!refreshToken) {
-          return res.status(401).json({ error: 'Refresh token not provided' });
-        }
-      
-        // Verify the refresh token
-        jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
-          if (err) {
-            // Handle verification errors (invalid or expired refresh token)
-            return res.status(401).json({ error: 'Invalid refresh token' });
-          }
-      
-          // Access token is expired, generate and send a new access token
-          const newAccessToken = generateJWTToken(user);
-          res.json({ accessToken: newAccessToken });
-        });
-      });
-      
-      app.delete('/api/logout', authenticateToken, (req, res) => {
-        res.clearCookie('refreshToken');
-        res.sendStatus(204);
-      });
-      
-
     app.post('/api/validateEmail', async (req, res) => {
 
       let  { UserName, VerificationToken } = req.body;
