@@ -1,18 +1,18 @@
-// src/LandingPage.js
+// src/AccountsPage.js
 import React from 'react';
 import '../css/LandingPage.css';
 import Button from 'react-bootstrap/Button';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
-import Dash from '../components/Dash';
+import Accounts from '../components/Accounts';
 
-const DashPage = (props) => {
+const AccountsPage = (props) => {
     return (
     <div>
     <Header />
-    <Dash />
+    <Accounts/>
     </div>
     );
 }
 
-export default DashPage;
+export default AccountsPage;
