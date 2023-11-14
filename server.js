@@ -111,11 +111,13 @@ app.post('/api/register', async (req, res) => {
       isVerified: false
     };
 
-    
+    if(!checkPassComplexity(Password)){
+      return res.status(402).json({ message: 'Password is too weak. It must be at least 8 characters long with a digit, special characte, an uppercase character and a lowercase character.' });
+    }
+
     verifyEmail(newUser.Email,oneTimePass);
     // Insert the user document into the "Users" collection
     await usersCollection.insertOne(newUser);
-
 
     // Return a success message
     res.status(201).json({ message: 'User registered successfully' });
@@ -124,6 +126,22 @@ app.post('/api/register', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+function checkPassComplexity(pass){
+    
+    const minLength = 8;
+    const hasUppercase = /[A-Z]/.test(pass);
+    const hasLowercase = /[a-z]/.test(pass);
+    const hasDigit = /\d/.test(pass);
+    const hasSpecialChar = /[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]/.test(pass);
+  
+    // Check against complexity criteria
+    const isLengthValid = pass.length >= minLength;
+    const meetsComplexityCriteria = hasUppercase && hasLowercase && hasDigit && hasSpecialChar;
+  
+    // Return true if the password is sufficiently complex
+    return isLengthValid && meetsComplexityCriteria;
+}
 
   
       // Authenticate a user
