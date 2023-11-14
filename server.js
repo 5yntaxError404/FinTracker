@@ -6,6 +6,7 @@ const router = express.Router();
 const emailValidator = require('deep-email-validator');
 const path = require('path');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const { MongoClient } = require('mongodb');
 const { generateOneTimePass, verifyEmail } = require('./mailing');
 require('dotenv/config');
@@ -15,6 +16,7 @@ const app = express();
 const bcrypt = require ("bcrypt");
 app.use(cors());
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 
 const url =
@@ -63,7 +65,6 @@ async function main() {
   
    // Define a variable for the user counter
 let userCounter = 665;
-
 
 // JWT post
 app.get('/posts, authenticateToken', (req, res) => {
@@ -125,8 +126,7 @@ app.post('/api/register', async (req, res) => {
   }
 });
 
-  
-      // Authenticate a user
+// Authenticate a user
       app.post('/api/login', async (req, res) => {
         const { UserName, Password } = req.body;
   
@@ -147,8 +147,9 @@ app.post('/api/register', async (req, res) => {
             UserId: user.UserId,
             // Any other user-specific data needed??
           };
-          const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET);
-          res.status(200).json({ message: 'Login successful', accessToken: accessToken });
+          const accessToken = generateJWTToken(payload);
+          const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
+          res.status(200).json({ message: 'Login successful', accessToken: accessToken, refreshToken: refreshToken});
           
 
           } catch (error) {
@@ -172,45 +173,6 @@ app.post('/api/register', async (req, res) => {
         });
       }
       
-      
-      function generateJWTToken(user) {
-        const payload = {
-          UserName: user.UserName,
-          UserId: user.UserId,
-          // Any other user-specific data needed??
-        };
-        const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '30m' });
-        return accessToken;
-      }
-      
-      app.post('/api/token', (req, res) => {
-        const refreshToken = req.cookies.refreshToken;
-      
-        // Check for the presence of the refresh token
-        if (!refreshToken) {
-          return res.status(401).json({ error: 'Refresh token not provided' });
-        }
-      
-        // Verify the refresh token
-        jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
-          if (err) {
-            // Handle verification errors (invalid or expired refresh token)
-            return res.status(401).json({ error: 'Invalid refresh token' });
-          }
-      
-          // Access token is expired, generate and send a new access token
-          const newAccessToken = generateJWTToken(user);
-          res.json({ accessToken: newAccessToken });
-        });
-      });
-      
-      app.delete('/api/logout', authenticateToken, (req, res) => {
-        res.clearCookie('refreshToken');
-        res.sendStatus(204);
-      });
-      
-
-
       function generateJWTToken(user) {
         const payload = {
           UserName: user.UserName,
@@ -273,7 +235,169 @@ app.post('/api/register', async (req, res) => {
       }
     });
 
-//
+app.get('/api/info/:UserId', authenticateToken, async (req, res) => {
+  try {
+
+    if(parseInt(req.params.UserId) != req.user.UserId){
+      return res.status(403).json({ message: 'Access Denied' });
+    }
+
+    var msg = "";
+    let dateobj = new Date();
+
+    if(dateobj.getDate() == 1){
+      msg = "It's the first of the month, review your budget!";
+    }else{
+      msg = "The budget does not require immediate updating.";
+    }
+
+    const UserAccount = await usersCollection.findOne({ UserId: parseInt(req.params.UserId)});
+    const UserBankAccounts = await accCollection.find({ UserIdRef: parseInt(req.params.UserId)}).toArray();
+    const Budgets = await budCollection.findOne({ UserIdRef: parseInt(req.params.UserId)});
+    // Return a success message
+    res.status(201).json({UserAccount, Budgets, UserBankAccounts, msg});
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}); 
+
+// Edit user information// Edit user information
+// Edit user information
+app.put('/api/users/edit', authenticateToken, async (req, res) => {
+  const newUsername = req.body.UserName;
+  const newPassword = req.body.Password;
+  const newFirstName = req.body.FirstName;
+  const newLastName = req.body.LastName;
+  const newEmail = req.body.Email;
+
+  try {
+    // Verify that the UserId from the request matches the authenticated user's UserId
+    const userIdToEdit = req.user.UserId;
+
+    // Update the user's information
+    const updateFields = {};
+
+    if (newUsername) {
+      updateFields.UserName = newUsername;
+    }
+
+    if (newPassword) {
+      updateFields.Password = newPassword;
+    }
+
+    if (newFirstName) {
+      updateFields.FirstName = newFirstName;
+    }
+
+    if (newLastName) {
+      updateFields.LastName = newLastName;
+    }
+
+    if (newEmail) {
+      updateFields.Email = newEmail;
+    }
+
+    // Find and update the user in the database
+    const updatedUser = await usersCollection.findOneAndUpdate(
+      { UserId: userIdToEdit },
+      { $set: updateFields },
+      { returnOriginal: false }
+    );
+
+    if (updatedUser.value === null) {
+      return res.status(404).json({ error: 'User Not Found' });
+    }
+
+    res.status(200).json({ message: 'Updated User Information' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+
+// Delete a user by UserId
+app.delete('/api/users/delete', authenticateToken, async (req, res) => {
+  const userIdToDelete = req.body.UserId;  // Extract UserId from the request body
+
+  try {
+    // Verify that the UserId from the request matches the authenticated user's UserId
+    if (userIdToDelete !== req.user.UserId) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
+    // Find and delete the user by UserId
+    const deletionResult = await usersCollection.deleteOne({ UserId: userIdToDelete });
+
+    if (deletionResult.deletedCount === 1) {
+      res.status(200).json({ message: 'User deleted successfully' });
+    } else {
+      res.status(404).json({ error: 'User not found' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+////////////////////////Account adding, get, editing, and deleting////////////////////////////////////
+// Add new account
+app.post('/api/accounts/add/:UserId', authenticateToken, async (req, res) => {
+  const { AccountNum, RouteNum, BankName} = req.body;
+  try {
+
+    const user = req.user; // Get the user data from the middleware
+
+    // Check if the UserId in the URL matches the UserId from the token
+    if (parseInt(req.params.UserId) !== user.UserId) {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+
+    // Check if accounts already added to a user
+    const existingAccount = await accCollection.findOne({ AccountNum });
+
+    if (existingAccount) {
+      return res.status(400).json({ error: 'Account has already been added' });
+    }
+
+    //Add new account
+    
+    const newAccount = {
+      AccountNum,
+      RouteNum,
+      BankName,
+      UserIdRef : parseInt(req.params.UserId)
+    };
+
+    // Insert account into accounts collection
+    await accCollection.insertOne(newAccount);
+
+    // Return a success message
+    res.status(201).json({ message: 'Account added successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Get all accounts for the authenticated user
+app.get('/api/accounts', authenticateToken, async (req, res) => {
+  try {
+    const UserId = req.user.UserId; // Get UserId from the JWT
+
+    // Query your database to fetch all the user's account information based on the UserId
+    //Doesn't work because it would be an array - we can workshop this
+    const userAccounts = await accCollection.find({ UserIdRef: UserId }).toArray;
+
+    res.status(200).json(userAccounts);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 app.get('/api/info/:UserId', authenticateToken, async (req, res) => {
   try {
 
@@ -925,3 +1049,4 @@ app.get('/api/achievements/get/:UserId', authenticateToken, async (req, res) => 
   
   
   main().catch(console.error);
+
