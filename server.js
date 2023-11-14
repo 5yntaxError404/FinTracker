@@ -91,48 +91,33 @@ app.post('/api/register', async (req, res) => {
     
     var check = await usersCollection.findOne({ UserId: userCounter });
 
-    do{
+    do {
       // Increment the user counter and use it as UserId
       userCounter += 1;
       check = await usersCollection.findOne({ UserId: userCounter });
 
-    }while(check) //make sure there is no dup userIDs
+    } while (check); //make sure there is no dup userIDs
 
-    const oneTimePass = generateOneTimePass()
-    
+    const oneTimePass = generateOneTimePass();
+
     const newUser = {
       UserId: userCounter,
       FirstName,
       LastName,
-      UserId: userCounter,
       Email,
       UserName,
       Password,
-      VerificationToken: bcrypt.hash(oneTimePass, 8),
+      VerificationToken: jwt.sign({ email: Email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1d' }),
+      OneTimePass: oneTimePass,
       isVerified: false
     };
 
-    try {
-      const emailToken = jwt.sign( {
-        email: newUser.Email },
-        process.env.ACCESS_TOKEN_SECRET,
-        {
-          expiresIn: '1d',
-        }
-      );
-      const EmailURL = `https://www.fintech.davidumanzor.com/api/validateEmail/${emailToken}`;
-      verifyEmail(newUser.Email,EmailURL);
-    }
-
-    catch (e)
-    {
-      console.log(e)
-    }
-    
-    
     // Insert the user document into the "Users" collection
     await usersCollection.insertOne(newUser);
 
+    const emailToken = newUser.VerificationToken;
+    const EmailURL = `https://www.fintech.davidumanzor.com/api/validateEmail/${emailToken}`;
+    verifyEmail(Email, EmailURL);
 
     // Return a success message
     res.status(201).json({ message: 'User registered successfully' });
@@ -225,26 +210,25 @@ app.post('/api/register', async (req, res) => {
         res.sendStatus(204);
       });
       
-    app.post('/api/validateEmail:token', async (req, res) => {
+      app.post('/api/validateEmail/:token', async (req, res) => {
 
-      try 
-      {
+        try {
           const { user: { id } } = jwt.verify(req.params.token, EMAIL_SECRET);
-           
+      
           const verified = await usersCollection.findOneAndUpdate(
             { _id: id },
             { $set: { isVerified: true } }
           );
-          res.status(200).json({ message: 'Email Verified'})
-        
-      }
-      catch (error) {
-        console.error(error);
-        res.status(500),json({ error: 'Internal Server Error'})
-      }
-
-      return res.redirect('https://www.fintech.davidumanzor.com/Login')
-    });
+          res.status(200).json({ message: 'Email Verified' });
+      
+        } catch (error) {
+          console.error(error);
+          res.status(500).json({ error: 'Internal Server Error' });
+        }
+      
+        return res.redirect('https://www.fintech.davidumanzor.com/Login');
+      });
+      
 
 app.get('/api/info/:UserId', authenticateToken, async (req, res) => {
   try {
