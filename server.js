@@ -122,8 +122,8 @@ app.post('/api/register', async (req, res) => {
           expiresIn: '1d',
         },
       );
-      const Email_url = 'https://www.fintech.davidumanzor.com/api/validateEmail/${emailToken}';
-      verifyEmail(newUser.Email,Email_url);
+      const EmailURL = 'https://www.fintech.davidumanzor.com/api/validateEmail/${emailToken}';
+      verifyEmail(newUser.Email,EmailUrl);
     }
 
     catch (e)
