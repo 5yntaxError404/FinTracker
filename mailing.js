@@ -30,7 +30,7 @@ const sender = {
             from: sender,
             to: recipients,
             subject: "Email Verification",
-            html: 'Please click this email to confirm your account: <a href="${Link}">${Link}</a>',
+            html: 'Please click this email to confirm your account: ' + Link,
             category: "Integration Test",
           })
           .then(console.log, console.error);
