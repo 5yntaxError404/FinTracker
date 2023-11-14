@@ -581,9 +581,7 @@ app.post('/api/budgets/add/:UserId', authenticateToken, async (req, res) => {
       MonthlyExpensesAmt += MonthlyExpenses[x];
     }
     
-    var Transactions = {
-      
-    };
+    var Transactions = [];
     var TransactionsAmt = 0;
     for (x in Transactions) {
       TransactionsAmt += Transactions[x];
@@ -708,7 +706,7 @@ app.get('/api/budgets/get/:UserId', authenticateToken, async (req, res) => {
     const budgetGot = await budCollection.findOne({UserIdRef : parseInt(req.params.UserId)});
 
     // Return a success message
-    res.status(201).json({ message: JSON.stringify(budgetGot) });
+    res.status(201).json({budgetGot});
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });
@@ -719,7 +717,7 @@ app.get('/api/budgets/get/:UserId', authenticateToken, async (req, res) => {
 // add transaction + update budget
 app.post('/api/budgets/transactions/:UserId', authenticateToken, async (req, res) => {
   
-  var TransactionID = Math.floor(Math.random() * 999) + 1;
+  var TransactionID = Math.floor(Math.random() * 99999) + 1;
   var Transactions = {
     transactionID : TransactionID,
     transactionAmt : req.body.transactionAmt,
@@ -835,7 +833,7 @@ app.put('/api/budgets/transactions/edit/:UserId', authenticateToken, async (req,
     }
 
     var Transactions = {
-      transactionID : Math.floor(Math.random() * 999) + 1,
+      transactionID : Math.floor(Math.random() * 99999) + 1,
       transactionAmt : req.body.transactionAmt,
       transactionCategory : req.body.transactionCategory
     };
