@@ -209,7 +209,6 @@ app.post('/api/register', async (req, res) => {
         res.sendStatus(204);
       });
       
-
     app.post('/api/validateEmail', async (req, res) => {
 
       let  { UserName, VerificationToken } = req.body;
