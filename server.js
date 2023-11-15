@@ -208,11 +208,12 @@ app.post('/api/register', async (req, res) => {
       });
       
       app.get('/api/validateEmail/:token', async (req, res) => {
-        const tok = bcrypt.hash(req.params.token, 8)
+        let { VerificationToken } = req.body;
+        VerificationToken = bcrypt.hash(req.params.token, 8)
 
         try {
           usersCollection.findOneAndUpdate(
-            { VerificationToken: tok },
+            { VerificationToken },
             { $set: { isVerified: true } }
           );
           res.status(200).json({ message: 'Email Verified' });
