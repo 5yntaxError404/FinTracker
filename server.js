@@ -213,7 +213,7 @@ app.post('/api/register', async (req, res) => {
       app.get('/api/validateEmail/:token', async (req, res) => {
 
         try {
-          const tok = jwt.verify(req.params.token, EMAIL_SECRET);
+          const tok = jwt.verify(req.params.token, process.env.ACCESS_TOKEN_SECRET);
           await usersCollection.findOneAndUpdate({VerificationToken: req.params.token}, {$set: {isVerified: true}});
           res.status(200).json({ message: 'Email Verified' });
       
