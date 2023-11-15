@@ -211,28 +211,27 @@ app.post('/api/register', async (req, res) => {
         const token = req.params.token;
       
         try {
-          console.log(`Updating user with EmailToken: ${token}`);
-          
+          console.log('Route hit'); // Log at the beginning of the route
+      
           const result = await usersCollection.findOneAndUpdate(
             { EmailToken: token },
-            { $set: { isVerified: true } },
-            { returnDocument: 'after' } // return the updated document
+            { $set: { isVerified: true } }
           );
       
-          console.log('Result of the update operation:', result);
+          console.log('After findOneAndUpdate'); // Log after the update operation
+          console.log('Update Result:', result); // Log the result of the update operation
       
           if (result.ok === 1) {
             return res.status(200).json({ message: 'Email Verified' });
           } else {
+            console.error('Failed to update user');
             return res.status(500).json({ error: 'Failed to update user' });
           }
         } catch (error) {
           console.error(error);
-          res.status(500).json({ error: 'Internal Server Error' });
+          return res.status(500).json({ error: 'Internal Server Error' });
         }
       });
-      
-      
       
       
 
