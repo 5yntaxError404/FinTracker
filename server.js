@@ -98,8 +98,8 @@ app.post('/api/register', async (req, res) => {
 
     } while (check); //make sure there is no dup userIDs
 
-    const oneTimePass = generateOneTimePass();
-    const EmailURL = `https://www.fintech.davidumanzor.com/api/validateEmail/${123}`;
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+    const EmailURL = `https://www.fintech.davidumanzor.com/verify-email?token=${verificationToken}`;
     const newUser = {
       UserId: userCounter,
       FirstName,
@@ -107,14 +107,14 @@ app.post('/api/register', async (req, res) => {
       Email,
       UserName,
       Password,
-      EmailToken: 123,
+      verificationToken,
       isVerified: false
     };
 
     // Insert the user document into the "Users" collection
     await usersCollection.insertOne(newUser);
     
-    verifyEmail(Email, EmailURL);
+    verifyEmail(newUser.Email, EmailURL);
 
     // Return a success message
     res.status(201).json({ message: 'User registered successfully' });
@@ -207,29 +207,25 @@ app.post('/api/register', async (req, res) => {
         res.sendStatus(204);
       });
       
-      app.get('/api/validateEmail/:token', async (req, res) => {
-        const token = req.params.token;
+      app.get('/verify-email', async (req, res) => {
+        const { token } = req.query;
       
+        // Find the user with the given token in MongoDB
         try {
-          console.log('Route hit'); // Log at the beginning of the route
       
-          const result = await usersCollection.findOneAndUpdate(
-            { EmailToken: token },
-            { $set: { isVerified: true } }
-          );
+          const user = await Users.findOne({ verificationToken: token });
       
-          console.log('After findOneAndUpdate'); // Log after the update operation
-          console.log('Update Result:', result); // Log the result of the update operation
-      
-          if (result.ok === 1) {
-            return res.status(200).json({ message: 'Email Verified' });
-          } else {
-            console.error('Failed to update user');
-            return res.status(500).json({ error: 'Failed to update user' });
+          if (!user) {
+            return res.status(404).json({ error: 'Invalid verification token' });
           }
+      
+          // Mark the user as verified and update the record in MongoDB
+          await Users.updateOne({ _id: user._id }, { $set: { verified: true } });
+      
+          return res.json({ message: 'Email verification successful' });
         } catch (error) {
           console.error(error);
-          return res.status(500).json({ error: 'Internal Server Error' });
+          return res.status(500).json({ error: 'Internal server error' });
         }
       });
       
