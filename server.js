@@ -220,7 +220,7 @@ app.post('/api/register', async (req, res) => {
           }
       
           // Mark the user as verified and update the record in MongoDB
-          await usersCollection.updateOne({ _id: user._id }, { $set: { isVerified: true } });
+          await usersCollection.updateOne({ userId: user.UserId }, { $set: { isVerified: true } });
       
           return res.json({ message: 'Email verification successful' });
         } catch (error) {
