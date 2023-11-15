@@ -11,7 +11,7 @@ const sender = {
 
       exports.generateOneTimePass = () => {
         let oneTimePass = ""
-        for (let i = 0; i < 4; i++){
+        for (let i = 0; i < 64; i++){
           const randVal = Math.round(Math.random() * 9)
           oneTimePass = oneTimePass + randVal
         }
