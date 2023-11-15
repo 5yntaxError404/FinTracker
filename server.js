@@ -12,7 +12,7 @@ const { generateOneTimePass, verifyEmail } = require('./mailing');
 require('dotenv/config');
 const port = process.env.PORT || 5000; // Heroku set port
 const app = express();
-
+const crypto = require('crypto');
 const bcrypt = require ("bcrypt");
 app.use(cors());
 app.use(bodyParser.json());
