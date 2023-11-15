@@ -208,22 +208,27 @@ app.post('/api/register', async (req, res) => {
       });
       
       app.get('/api/validateEmail/:token', async (req, res) => {
-        const verificationToken = req.params.token;
+        const token = req.params.token;
       
-        const result = await usersCollection.updateOne(
-          { EmailToken: tok },
-          { $set: { isVerified: true } }
-        );
-        
-        if (result.matchedCount > 0) {
-          // The update was successful, and at least one document was matched
-          res.status(200).json({ message: 'Email Verified' });
-        } else {
-          // No document matched the filter criteria
-          res.status(404).json({ error: 'User not found' });
+        try {
+          const result = await usersCollection.findOneAndUpdate(
+            { EmailToken: token },
+            { $set: { isVerified: true } }
+          );
+      
+          console.log(result); // Log the result of the update operation
+      
+          if (result.ok === 1) {
+            return res.status(200).json({ message: 'Email Verified' });
+          } else {
+            return res.status(500).json({ error: 'Failed to update user' });
+          }
+        } catch (error) {
+          console.error(error);
+          res.status(500).json({ error: 'Internal Server Error' });
         }
-        
       });
+      
       
       
 
