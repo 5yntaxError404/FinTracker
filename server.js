@@ -211,12 +211,15 @@ app.post('/api/register', async (req, res) => {
         const token = req.params.token;
       
         try {
+          console.log(`Updating user with EmailToken: ${token}`);
+          
           const result = await usersCollection.findOneAndUpdate(
             { EmailToken: token },
-            { $set: { isVerified: true } }
+            { $set: { isVerified: true } },
+            { returnDocument: 'after' } // return the updated document
           );
       
-          console.log(result); // Log the result of the update operation
+          console.log('Result of the update operation:', result);
       
           if (result.ok === 1) {
             return res.status(200).json({ message: 'Email Verified' });
@@ -228,6 +231,7 @@ app.post('/api/register', async (req, res) => {
           res.status(500).json({ error: 'Internal Server Error' });
         }
       });
+      
       
       
       
