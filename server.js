@@ -208,22 +208,27 @@ app.post('/api/register', async (req, res) => {
       });
       
       app.get('/api/validateEmail/:token', async (req, res) => {
-        const tok = req.params.token
-
+        const verificationToken = req.params.token;
+      
         try {
-          usersCollection.findOneAndUpdate(
-            { VerificationToken: tok },
+          const result = await usersCollection.findOneAndUpdate(
+            { EmailToken: verificationToken },
             { $set: { isVerified: true } }
           );
-          res.status(200).json({ message: 'Email Verified' });
       
+          if (result.value) {
+            // Email verification successful
+            // You can choose to send a response or redirect from the client side
+            res.status(200).json({ message: 'Email Verified' });
+          } else {
+            res.status(404).json({ error: 'Verification token not found' });
+          }
         } catch (error) {
           console.error(error);
           res.status(500).json({ error: 'Internal Server Error' });
         }
-      
-        return res.redirect('/Login');
       });
+      
       
 
 app.get('/api/info/:UserId', authenticateToken, async (req, res) => {
