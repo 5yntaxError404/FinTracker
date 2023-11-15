@@ -209,25 +209,28 @@ app.post('/api/register', async (req, res) => {
       
       app.get('/verify-email', async (req, res) => {
         const { token } = req.query;
+        console.log('Verification token:', token);
       
-        // Find the user with the given token in MongoDB
         try {
-      
           const user = await usersCollection.findOne({ verificationToken: token });
       
           if (!user) {
+            console.log('User not found for verification token:', token);
             return res.status(404).json({ error: 'Invalid verification token' });
           }
       
-          // Mark the user as verified and update the record in MongoDB
-          await usersCollection.updateOne({ userId: user.UserId }, { $set: { isVerified: true } });
+          console.log('Found user for verification:', user);
+      
+          const result = await usersCollection.updateOne({ _id: user._id }, { $set: { isVerified: true } });
+          console.log('MongoDB update result:', result);
       
           return res.json({ message: 'Email verification successful' });
         } catch (error) {
-          console.error(error);
+          console.error('Error during email verification:', error);
           return res.status(500).json({ error: 'Internal server error' });
         }
       });
+      
       
       
 
