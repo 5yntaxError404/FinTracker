@@ -99,7 +99,7 @@ app.post('/api/register', async (req, res) => {
     } while (check); //make sure there is no dup userIDs
 
     const oneTimePass = generateOneTimePass();
-    const EmailURL = `https://www.fintech.davidumanzor.com/api/validateEmail/${oneTimePass}`;
+    const EmailURL = `https://www.fintech.davidumanzor.com/api/validateEmail/${123}`;
     const newUser = {
       UserId: userCounter,
       FirstName,
@@ -107,7 +107,7 @@ app.post('/api/register', async (req, res) => {
       Email,
       UserName,
       Password,
-      EmailToken: bcrypt.hash(oneTimePass, 8),
+      EmailToken: 123,
       isVerified: false
     };
 
@@ -208,12 +208,11 @@ app.post('/api/register', async (req, res) => {
       });
       
       app.get('/api/validateEmail/:token', async (req, res) => {
-        let { VerificationToken } = req.body;
-        VerificationToken = bcrypt.hash(req.params.token, 8)
+        const tok = req.params.token
 
         try {
           usersCollection.findOneAndUpdate(
-            { VerificationToken },
+            { VerificationToken: tok },
             { $set: { isVerified: true } }
           );
           res.status(200).json({ message: 'Email Verified' });
