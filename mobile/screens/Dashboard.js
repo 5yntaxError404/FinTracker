@@ -170,7 +170,7 @@ const Dashboard = ({ navigation }) => {
         //delete
         try {
             const response = await fetch('http://192.168.1.29:5000/api/accounts/delete', {
-                method: 'DEL',
+                method: 'DELETE',
                 headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${getAccessToken()}`,
