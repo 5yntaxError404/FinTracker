@@ -208,10 +208,11 @@ app.post('/api/register', async (req, res) => {
       });
       
       app.get('/api/validateEmail/:token', async (req, res) => {
+        const tok = bcrypt.hash(req.params.token, 8)
 
         try {
           await usersCollection.findOneAndUpdate(
-            { VerificationToken: bcrypt.hash(req.params.token, 8) },
+            { VerificationToken: tok },
             { $set: { isVerified: true } }
           );
           res.status(200).json({ message: 'Email Verified' });
@@ -221,7 +222,7 @@ app.post('/api/register', async (req, res) => {
           res.status(500).json({ error: 'Internal Server Error' });
         }
       
-        return res.redirect('https://www.fintech.davidumanzor.com/Login');
+        return res.redirect('/Login');
       });
       
 
