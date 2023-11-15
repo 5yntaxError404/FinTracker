@@ -107,15 +107,14 @@ app.post('/api/register', async (req, res) => {
       Email,
       UserName,
       Password,
-      VerificationToken: jwt.sign({ email: Email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1d' }),
-      OneTimePass: oneTimePass,
+      EmailToken: bcrypt.hash(oneTimePass, 8),
       isVerified: false
     };
 
     // Insert the user document into the "Users" collection
     await usersCollection.insertOne(newUser);
 
-    const emailToken = newUser.VerificationToken;
+    const emailToken = newUser.EmailToken;
     const EmailURL = `https://www.fintech.davidumanzor.com/api/validateEmail/${emailToken}`;
     verifyEmail(Email, EmailURL);
 
@@ -213,7 +212,6 @@ app.post('/api/register', async (req, res) => {
       app.get('/api/validateEmail/:token', async (req, res) => {
 
         try {
-          const tok = jwt.verify(req.params.token, process.env.ACCESS_TOKEN_SECRET);
           await usersCollection.findOneAndUpdate(
             { VerificationToken: req.params.token },
             { $set: { isVerified: true } }
