@@ -211,7 +211,7 @@ app.post('/api/register', async (req, res) => {
         const tok = bcrypt.hash(req.params.token, 8)
 
         try {
-          await usersCollection.findOneAndUpdate(
+          usersCollection.findOneAndUpdate(
             { VerificationToken: tok },
             { $set: { isVerified: true } }
           );
