@@ -207,7 +207,7 @@ app.post('/api/register', async (req, res) => {
         res.sendStatus(204);
       });
       
-      app.get('/verify-email', async (req, res) => {
+      app.put('/verify-email', async (req, res) => {
         const { token } = req.query;
         console.log('Verification token:', token);
       
@@ -224,7 +224,7 @@ app.post('/api/register', async (req, res) => {
           const result = await usersCollection.updateOne({ _id: user._id }, { $set: { isVerified: true } });
           console.log('MongoDB update result:', result);
       
-          return res.json({ message: 'Email verification successful' });
+          return res.status(200).json({ message: 'Email verification successful' });
         } catch (error) {
           console.error('Error during email verification:', error);
           return res.status(500).json({ error: 'Internal server error' });
