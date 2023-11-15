@@ -213,14 +213,14 @@ app.post('/api/register', async (req, res) => {
         // Find the user with the given token in MongoDB
         try {
       
-          const user = await Users.findOne({ verificationToken: token });
+          const user = await usersCollection.findOne({ verificationToken: token });
       
           if (!user) {
             return res.status(404).json({ error: 'Invalid verification token' });
           }
       
           // Mark the user as verified and update the record in MongoDB
-          await Users.updateOne({ _id: user._id }, { $set: { verified: true } });
+          await usersCollection.updateOne({ _id: user._id }, { $set: { verified: true } });
       
           return res.json({ message: 'Email verification successful' });
         } catch (error) {
