@@ -28,6 +28,7 @@ function App() {
                   <Route path="/budgets" element={<BudgetsPage/>} />
                   <Route path="/passwordrecovery" element={<PasswordRecoveryPage/>} />
                   <Route path="/emailverified" element={<EmailVerifiedPage/>} />
+                  <Route path="/verify-email" />
               </Routes>
           </div>
       </BrowserRouter>
