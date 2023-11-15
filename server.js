@@ -207,7 +207,7 @@ app.post('/api/register', async (req, res) => {
         res.sendStatus(204);
       });
       
-      app.put('/verify-email', async (req, res) => {
+      app.post('/verify-email', async (req, res) => {
         const { token } = req.query;
         console.log('Verification token:', token);
       
