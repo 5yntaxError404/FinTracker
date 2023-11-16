@@ -8,13 +8,19 @@ function Login() {
     const [message,setMessage] = useState('');
 
     function parseJwt (token) {
-        return JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+        var base64Url = token.split('.')[1];
+        var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+    
+        return JSON.parse(jsonPayload);
     }
 
-	const passwordRecovery = async event =>
-	{
-		window.location.href = '/passwordrecovery';
-	};
+    const passwordRecovery = async event =>
+        {
+            window.location.href = '/passwordrecovery';
+        };
 
 	const doLogin = async event => 
     {
@@ -47,23 +53,52 @@ function Login() {
             else {
                 setMessage('Logged In.'); // Set a success message
 
-                // GET FIRSTNAME LAST
-
-                //var parsedToken = parseJwt(res.accessToken);
-
+                var parsedToken = parseJwt(res.accessToken);
+                console.log(parsedToken);
                 var user =
-				{
-                    firstName:res.firstName,
-                    lastName:res.lastName,
-                    //id:parsedToken.userId,
-                    accessToken:res.accessToken
+                {
+                    accessToken:parsedToken.accessToken,
+                    UserId:parsedToken.UserId
                 }
 
-				localStorage.setItem('user_data', JSON.stringify(user));
+                localStorage.setItem('user', JSON.stringify(user));
 
-				setMessage('');
-				window.location.href = '/dash';
-                console.log("Logged In");
+                try {
+                    console.log("Making Get Call");
+                    const user_response = await fetch('https://www.fintech.davidumanzor.com/api/users/get/', {
+                        method: 'get',
+                        headers:
+                        {
+                            'Content-Type':'application/json'
+                        }
+                    });
+                    console.log("Made get call");
+                    //console.log(user_response.text());
+                    var userInfo = JSON.parse(await user_response.text());
+                    console.log("Parsed Info")
+                    console.log(userInfo);
+                    // GET FIRSTNAME LAST//
+                    console.log("Attempting Parse Token")
+                    var parsedToken = parseJwt(res.accessToken);
+                    
+                    var user_data=
+                    {
+                        firstName:userInfo.firstName,
+                        lastName:userInfo.lastName,
+                        accessToken:parsedToken.accessToken
+                    }
+    
+                    localStorage.setItem('user', JSON.stringify(user_data));
+    
+                    setMessage('');
+                    window.location.href = '/dash';
+                    console.log("Logged In");
+                }
+                catch (e) {
+                    alert(e.toString());
+                    return;
+                }
+
             }
 		} catch (e) {
 			alert(e.toString());
@@ -122,7 +157,7 @@ function Login() {
 			New <a href="/signup">account?</a>
 			</p>
         </form>
-        </div>
+        </div> 
 	</div>
 );
 }

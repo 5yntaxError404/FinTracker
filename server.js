@@ -352,6 +352,24 @@ app.get('/api/account', authenticateToken, async (req, res) => {
   }
 });
 
+app.get('/api/users/get/', authenticateToken, async (req, res) => {
+  try {
+    const UserId = req.user.UserId; // Get UserId from the JWT
+    // const { UserId } = req.body; // Get the AccountNum from the request body
+    console.log(UserId);
+    // Query your database to fetch the specific account information based on the UserId and AccountNum
+    const UserInfo = await usersCollection.findOne({ UserId });
+
+    if (!UserInfo) {
+      return res.status(404).json({ error: 'User Not Found' });
+    }
+
+    res.status(200).json(UserInfo);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 
 
