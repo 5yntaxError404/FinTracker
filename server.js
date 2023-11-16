@@ -99,7 +99,7 @@ app.post('/api/register', async (req, res) => {
     } while (check); //make sure there is no dup userIDs
 
     const verificationToken = crypto.randomBytes(32).toString('hex');
-    const EmailURL = `https://www.fintech.davidumanzor.com/verify-email?token=${verificationToken}`;
+    const EmailURL = `https://www.fintech.davidumanzor.com/emailverification?token=${verificationToken}`;
     const newUser = {
       UserId: userCounter,
       FirstName,

@@ -27,7 +27,7 @@ function App() {
                   <Route path="/settings" element={<SettingsPage/>} />
                   <Route path="/budgets" element={<BudgetsPage/>} />
                   <Route path="/passwordrecovery" element={<PasswordRecoveryPage/>} />
-                  <Route path="/emailverified" element={<EmailVerifiedPage/>} />
+                  <Route path="/EmailVerification" element={<EmailVerificationPage/>} />
                   <Route path="/verify-email" />
               </Routes>
           </div>
