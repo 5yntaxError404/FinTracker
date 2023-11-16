@@ -31,17 +31,19 @@ const EmailVerification = () => {
   
       verifyEmail();
     }, []); // Run the effect only once when the component mounts
-}
-return (
 
-    <div className="landing-container">
-        <div className="content">
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono"></link>
-            <p>Verifying...</p>
-           
+    return (
+
+        <div className="landing-container">
+            <div className="content">
+            <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono"></link>
+                <p>Verifying...</p>
+               
+            </div>
         </div>
-    </div>
-);
+    );
+}
+
 
 
 export default EmailVerification;
