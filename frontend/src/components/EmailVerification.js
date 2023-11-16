@@ -14,7 +14,7 @@ const EmailVerification = () => {
   
         if (verificationToken) {
           try {
-            const response = await fetch(`https://yourapi.com/verify-email?token=${verificationToken}`);
+            const response = await fetch(`https://www.fintech.davidumanzor.com/verify-email?token=${verificationToken}`);
             if (response.ok) {
               const data = await response.json();
               alert(data.message); // Display a success message
