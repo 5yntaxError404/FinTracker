@@ -18,7 +18,7 @@ const EmailVerification = () => {
               const data = await response.json();
               alert(data.message); // Display a success message
             } else {
-              throw new Error('Email verification failed.');
+              throw new Error('Email verification failed. verification token: ' + verificationToken);
             }
           } catch (error) {
             console.error(error);
