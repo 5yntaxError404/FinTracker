@@ -12,7 +12,7 @@ const { generateOneTimePass, verifyEmail } = require('./mailing');
 require('dotenv/config');
 const port = process.env.PORT || 5000; // Heroku set port
 const app = express();
-const crypto = require('crypto');
+
 const bcrypt = require ("bcrypt");
 app.use(cors());
 app.use(bodyParser.json());
@@ -91,30 +91,32 @@ app.post('/api/register', async (req, res) => {
     
     var check = await usersCollection.findOne({ UserId: userCounter });
 
-    do {
+    do{
       // Increment the user counter and use it as UserId
       userCounter += 1;
       check = await usersCollection.findOne({ UserId: userCounter });
 
-    } while (check); //make sure there is no dup userIDs
+    }while(check) //make sure there is no dup userIDs
 
-    const verificationToken = crypto.randomBytes(32).toString('hex');
-    const EmailURL = `https://www.fintech.davidumanzor.com/emailverification?token=${verificationToken}`;
+    const oneTimePass = generateOneTimePass()
+    
     const newUser = {
       UserId: userCounter,
       FirstName,
       LastName,
+      UserId: userCounter,
       Email,
       UserName,
       Password,
-      verificationToken,
+      VerificationToken: bcrypt.hash(oneTimePass, 8),
       isVerified: false
     };
 
+    
+    verifyEmail(newUser.Email,oneTimePass);
     // Insert the user document into the "Users" collection
     await usersCollection.insertOne(newUser);
-    
-    verifyEmail(newUser.Email, EmailURL);
+
 
     // Return a success message
     res.status(201).json({ message: 'User registered successfully' });
@@ -207,32 +209,30 @@ app.post('/api/register', async (req, res) => {
         res.sendStatus(204);
       });
       
-      app.get('/verify-email', async (req, res) => {
-        const { token } = req.query;
-        console.log('Verification token:', token);
-      
-        try {
-          const user = await usersCollection.findOne({ verificationToken: token });
-      
-          if (!user) {
-            console.log('User not found for verification token:', token);
-            return res.status(404).json({ error: 'Invalid verification token' });
-          }
-      
-          console.log('Found user for verification:', user);
-      
-          const result = await usersCollection.updateOne({ _id: user._id }, { $set: { isVerified: true } });
-          console.log('MongoDB update result:', result);
-      
-          return res.status(200).json({ message: 'Email verification successful' });
-        } catch (error) {
-          console.error('Error during email verification:', error);
-          return res.status(500).json({ error: 'Internal server error' });
-        }
-      });
-      
-      
-      
+    app.post('/api/validateEmail', async (req, res) => {
+
+      let  { UserName, VerificationToken } = req.body;
+      VerificationToken = bcrypt.hash(VerificationToken, 8)
+
+      try 
+      {
+          const user = await usersCollection.findOne({UserName, VerificationToken});
+
+          if (!user)
+            return res.status(401).json({error: 'Invalid OTP or User. Please try again.'})
+          
+          const verified = await usersCollection.findOneAndUpdate(
+            { isVerified: false },
+            { $set: { isVerified: true } }
+          );
+          res.status(200).json({ message: 'Email Verified'})
+        
+      }
+      catch (error) {
+        console.error(error);
+        res.status(500),json({ error: 'Internal Server Error'})
+      }
+    });
 
 app.get('/api/info/:UserId', authenticateToken, async (req, res) => {
   try {

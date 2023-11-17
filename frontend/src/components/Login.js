@@ -7,15 +7,6 @@ function Login() {
     var username,password;
     const [message,setMessage] = useState('');
 
-    function parseJwt (token) {
-        return JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
-    }
-
-	const passwordRecovery = async event =>
-	{
-		window.location.href = '/passwordrecovery';
-	};
-
 	const doLogin = async event => 
     {
         event.preventDefault();
@@ -46,17 +37,11 @@ function Login() {
             } 
             else {
                 setMessage('Logged In.'); // Set a success message
-
-                // GET FIRSTNAME LAST
-
-                //var parsedToken = parseJwt(res.accessToken);
-
                 var user =
 				{
                     firstName:res.firstName,
                     lastName:res.lastName,
-                    //id:parsedToken.userId,
-                    accessToken:res.accessToken
+                    id:res.id
                 }
 
 				localStorage.setItem('user_data', JSON.stringify(user));
@@ -116,13 +101,13 @@ function Login() {
             </button>
             </div>
             <p className="forgot-password text-right">
-            Forgot <a href="#" onClick={passwordRecovery}>password?</a>
+            Forgot <a href="#">password?</a>
             </p>
 			<p className="new-account test-right"> 
 			New <a href="/signup">account?</a>
 			</p>
         </form>
-        </div>
+        </div> 
 	</div>
 );
 }
