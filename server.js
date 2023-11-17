@@ -114,10 +114,17 @@ app.post('/api/register', async (req, res) => {
       isVerified: false
     };
 
+
+    if(!checkPassComplexity(Password)){
+      return res.status(402).json({ message: 'Password is too weak. It must be at least 8 characters long with a digit, special characte, an uppercase character and a lowercase character.' });
+    }
+
+
+
     verifyEmail(newUser.Email,EmailURL);
+
     // Insert the user document into the "Users" collection
     await usersCollection.insertOne(newUser);
-
 
     // Return a success message
     res.status(201).json({ message: 'User registered successfully' });
@@ -127,7 +134,26 @@ app.post('/api/register', async (req, res) => {
   }
 });
 
-// Authenticate a user
+
+function checkPassComplexity(pass){
+    
+    const minLength = 8;
+    const hasUppercase = /[A-Z]/.test(pass);
+    const hasLowercase = /[a-z]/.test(pass);
+    const hasDigit = /\d/.test(pass);
+    const hasSpecialChar = /[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]/.test(pass);
+  
+    // Check against complexity criteria
+    const isLengthValid = pass.length >= minLength;
+    const meetsComplexityCriteria = hasUppercase && hasLowercase && hasDigit && hasSpecialChar;
+  
+    // Return true if the password is sufficiently complex
+    return isLengthValid && meetsComplexityCriteria;
+}
+
+  
+
+
       app.post('/api/login', async (req, res) => {
         const { UserName, Password } = req.body;
   
@@ -563,7 +589,7 @@ app.get('/api/accounts', authenticateToken, async (req, res) => {
 });
 
 // Get a specific account
-app.get('/api/account', authenticateToken, async (req, res) => {
+app.post('/api/account', authenticateToken, async (req, res) => {
   try {
     const UserId = req.user.UserId; // Get UserId from the JWT
     const AccountNum = req.body.AccountNum; // Get the AccountNum from the request body
@@ -687,9 +713,7 @@ app.post('/api/budgets/add/:UserId', authenticateToken, async (req, res) => {
       MonthlyExpensesAmt += MonthlyExpenses[x];
     }
     
-    var Transactions = {
-      
-    };
+    var Transactions = [];
     var TransactionsAmt = 0;
     for (x in Transactions) {
       TransactionsAmt += Transactions[x];
@@ -814,7 +838,7 @@ app.get('/api/budgets/get/:UserId', authenticateToken, async (req, res) => {
     const budgetGot = await budCollection.findOne({UserIdRef : parseInt(req.params.UserId)});
 
     // Return a success message
-    res.status(201).json({ message: JSON.stringify(budgetGot) });
+    res.status(201).json({budgetGot});
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });
@@ -825,7 +849,7 @@ app.get('/api/budgets/get/:UserId', authenticateToken, async (req, res) => {
 // add transaction + update budget
 app.post('/api/budgets/transactions/:UserId', authenticateToken, async (req, res) => {
   
-  var TransactionID = Math.floor(Math.random() * 999) + 1;
+  var TransactionID = Math.floor(Math.random() * 99999) + 1;
   var Transactions = {
     transactionID : TransactionID,
     transactionAmt : req.body.transactionAmt,
@@ -941,7 +965,7 @@ app.put('/api/budgets/transactions/edit/:UserId', authenticateToken, async (req,
     }
 
     var Transactions = {
-      transactionID : Math.floor(Math.random() * 999) + 1,
+      transactionID : Math.floor(Math.random() * 99999) + 1,
       transactionAmt : req.body.transactionAmt,
       transactionCategory : req.body.transactionCategory
     };
