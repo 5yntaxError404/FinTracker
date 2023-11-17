@@ -50,7 +50,7 @@ const sender = {
            from: sender,
            to: recipients,
            subject: "Password Reset",
-           text: "Hello" + name + ",\n\n" + "You have requested a password reset. You may reset it here: " + OTP + "\n\n If you did not request this, please ignore this email.",
+           text: "Hello,\n\n" + "You have requested a password reset. You may reset it here: " + OTP + "\n\n If you did not request this, please ignore this email.",
            category: "Password Reset",
          })
          .then(console.log, console.error);

@@ -255,12 +255,12 @@ app.post('/api/register', async (req, res) => {
           console.error('Error during forgot-password-email:', error);
           return res.status(500).json({ error: 'Internal server error' });
         }
-        const name = user.FirstName;
+      
         const VerificationToken = crypto.randomBytes(32).toString('hex');
         usersCollection.updateOne( { _id: user._id }, { $set: {EmailToken: VerificationToken}});
         const EmailURL = `https://www.fintech.davidumanzor.com/EmailVerification?token=${VerificationToken}`;
 
-        forgotPassword(name, Email, EmailURL);
+        forgotPassword(Email, EmailURL);
     
       })
 
