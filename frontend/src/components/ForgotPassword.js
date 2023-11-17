@@ -4,25 +4,21 @@ import '../css/LoginPage.css';
 
 function ForgotMyPassword(){
 
-	var password, confirmPass;
+	var email;
 
 	const [message,setMessage] = useState('');
     
-	const resetMyPassword = async event => {
-
-        if (password != confirmPass)
-            return;
+	const startPasswordReset = async event => {
 
 		event.preventDefault();
-        const verificationToken = new URLSearchParams(window.location.search).get('token');
-	
+       
 		var obj = {
-			"Password": password.value,
+			"Email": email.value,
 		};
 		var js = JSON.stringify(obj);
 	
 		try {
-			  const response = await fetch(`https://www.fintech.davidumanzor.com/reset-password?token=${verificationToken}`, {
+			  const response = await fetch(`https://www.fintech.davidumanzor.com/forgot-password-email`, {
 				method: 'post',
 				body: js,
 				headers: { 'Content-Type': 'application/json' }
@@ -30,9 +26,9 @@ function ForgotMyPassword(){
 			var res = JSON.parse(await response.text());
 			console.log(res);
 			if (res.error !== '') {
-				setMessage('Unable to Register');
+				setMessage('Unable to send Password Reset Email.');
 			} else {
-				alert('Registered.');
+				alert('Password Reset Email Sent.');
 			}
 		} catch (e) {
 			alert(e.toString());
@@ -44,27 +40,17 @@ function ForgotMyPassword(){
 	return (
 		<div className="login-container">
 			<div className="login-form">
-				<form className='form' onSubmit={resetMyPassword}>
+				<form className='form' onSubmit={startPasswordReset}>
 				<h3>Reset Your Password</h3>
 
 				<div className="mb-3">
-				<label>Password</label>
+				<label>Email</label>
 				<input
-					type="password"
-					id="password"
+					type="text"
+					id="email"
 					class="user-input-field" 
-					placeholder="Password"
-					ref={(c) => password = c}/><br />
-				</div>
-
-				<div className="mb-3">
-				<label>Confirm Password</label>
-				<input 
-						type="password" 
-						id="confirmPass" 
-						class="user-input-field" 
-						placeholder="Confirm Password" 
-						ref={(c) => confirmPass = c}/><br />
+					placeholder="Email"
+					ref={(c) => email = c}/><br />
 				</div>
 
 				<div className="d-grid">
