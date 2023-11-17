@@ -22,7 +22,7 @@ const EmailVerification = () => {
             }
           } catch (error) {
             console.error(error);
-            alert('Email verification failed.');
+            alert('Email verification failed. verification token: ' + verificationToken);
           }
         } else {
           alert('Invalid verification link.');
