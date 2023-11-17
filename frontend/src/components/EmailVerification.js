@@ -13,13 +13,11 @@ const EmailVerification = () => {
   
         if (verificationToken) {
           try {
-            const response = await fetch(`https://www.fintech.davidumanzor.com/verify-email?token=${verificationToken}`);
-            if (response.ok) {
-              const data = await response.json();
-              alert(data.message); // Display a success message
-            } else {
-              throw new Error('Email verification failed. verification token: ' + verificationToken);
-            }
+            const response = await fetch(`https://www.fintech.davidumanzor.com/EmailVerification?token=${verificationToken}`, {
+
+				method: 'post',
+				headers: { 'Content-Type': 'application/json' }
+			});
           } catch (error) {
             console.error(error);
             alert('Email verification failed. verification token: ' + verificationToken);
