@@ -13,7 +13,7 @@ const EmailVerification = () => {
   
         if (verificationToken) {
           try {
-            const response = await fetch(`https://www.fintech.davidumanzor.com/EmailVerification?token=${verificationToken}`, {
+            const response = await fetch(`https://www.fintech.davidumanzor.com/verify-email?token=${verificationToken}`, {
 
 				method: 'post',
 				headers: { 'Content-Type': 'application/json' }
