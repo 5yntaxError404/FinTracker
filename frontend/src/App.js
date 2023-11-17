@@ -5,6 +5,7 @@ import LoginPage from './pages/LoginPage';
 import LandingPage from './pages/LandingPage';
 import SignUpPage from './pages/SignUpPage';
 import DashPage from './pages/DashPage';
+import EmailVerificationPage from './pages/EmailVerificationPage';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
                   <Route path="/login" element={<LoginPage />} />
                   <Route path="/signup" element={<SignUpPage />} />
                   <Route path="/dash" element={<DashPage />} />
+                  <Route path="/EmailVerification" element={<EmailVerificationPage/>} />
               </Routes>
           </div>
       </BrowserRouter>
