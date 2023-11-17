@@ -457,7 +457,7 @@ app.get('/api/accounts', authenticateToken, async (req, res) => {
 });
 
 // Get a specific account
-app.get('/api/account', authenticateToken, async (req, res) => {
+app.post('/api/account', authenticateToken, async (req, res) => {
   try {
     const UserId = req.user.UserId; // Get UserId from the JWT
     const AccountNum = req.body.AccountNum; // Get the AccountNum from the request body
