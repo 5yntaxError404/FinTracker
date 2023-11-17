@@ -8,7 +8,7 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const { MongoClient } = require('mongodb');
-const { generateOneTimePass, verifyEmail } = require('./mailing');
+const { generateOneTimePass, verifyEmail, forgotPassword } = require('./mailing');
 require('dotenv/config');
 const port = process.env.PORT || 5000; // Heroku set port
 const app = express();
@@ -72,7 +72,7 @@ app.get('/posts, authenticateToken', (req, res) => {
 });
 
 
-// Register a new user
+// REGISTRATION 
 app.post('/api/register', async (req, res) => {
   const { FirstName, LastName, Email, UserName, Password } = req.body;
 
@@ -127,7 +127,9 @@ app.post('/api/register', async (req, res) => {
   }
 });
 
-// Authenticate a user
+// END OF REGISTRATION
+
+// AUTHENTICATION ENDPOINTS
       app.post('/api/login', async (req, res) => {
         const { UserName, Password } = req.body;
   
@@ -234,9 +236,38 @@ app.post('/api/register', async (req, res) => {
         }
       });
 
-      app.post('/forgot-password', async (req, res) => {
+      app.post('/forgot-password-email', async (req, res) => {
+
+        const { email } = req.body;
+
+        try {
+          const user = await usersCollection.findOne({ Email: email });
+
+          if (!user) {
+            console.log('User Email Not Found:', email);
+            return res.status(404).json({ error: 'No Account with that Email Record.' });
+          }
+      
+          console.log('Email Sent To:', user);
+        }
+
+        catch (error) {
+          console.error('Error during forgot-password-email:', error);
+          return res.status(500).json({ error: 'Internal server error' });
+        }
+        const name = user.FirstName;
+        const VerificationToken = crypto.randomBytes(32).toString('hex');
+        usersCollection.updateOne( { _id: user._id }, { $set: {EmailToken: VerificationToken}});
+        const EmailURL = `https://www.fintech.davidumanzor.com/EmailVerification?token=${VerificationToken}`;
+
+        forgotPassword(name, email, EmailURL);
+    
+      })
+
+
+      app.post('/reset-password', async (req, res) => {
         const { token } = req.query;
-        const { pwd } = req.body;
+        const { Password } = req.body;
         console.log('ForgotPassword Token Received:',token);
         
         try {
@@ -249,7 +280,7 @@ app.post('/api/register', async (req, res) => {
       
           console.log('Found user for verification:', user);
       
-          const result = await usersCollection.updateOne({ _id: user._id }, { $set: { Password: pwd } });
+          const result = await usersCollection.updateOne({ _id: user._id }, { $set: { Password: Password } });
           console.log('MongoDB update result:', result);
       
           return res.status(200).json({ message: 'Email verification successful' });
