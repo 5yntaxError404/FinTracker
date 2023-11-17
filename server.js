@@ -215,7 +215,7 @@ app.post('/api/register', async (req, res) => {
         console.log('Verification token received:', token);
       
         try {
-          const user = await usersCollection.findOne({ verificationToken: token });
+          const user = await usersCollection.findOne({ VerificationToken: token });
       
           if (!user) {
             console.log('User not found for verification token:', token);
