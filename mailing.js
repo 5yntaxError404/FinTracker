@@ -31,10 +31,30 @@ const sender = {
             from: sender,
             to: recipients,
             subject: "Email Verification",
-            text: "Here is your one time Password: " + OTP,
-            category: "Integration Test",
+            text: "Please Click the Following Link to Verify: " + OTP,
+            category: "Email Verification",
           })
           .then(console.log, console.error);
     }
 
+    async function forgotPassword(email, OTP) {
+
+      const recipients = [
+       {
+         email: email,
+       }
+     ];
+
+         client
+         .send({
+           from: sender,
+           to: recipients,
+           subject: "Password Reset",
+           text: "You may reset your password here: " + OTP,
+           category: "Password Reset",
+         })
+         .then(console.log, console.error);
+   }
+
     module.exports.verifyEmail = verifyEmail;
+    module.exports.forgotPassword = forgotPassword;

@@ -233,6 +233,32 @@ app.post('/api/register', async (req, res) => {
           return res.status(500).json({ error: 'Internal server error' });
         }
       });
+
+      app.post('/forgot-password', async (req, res) => {
+        const { token } = req.query;
+        const { pwd } = req.body;
+        console.log('ForgotPassword Token Received:',token);
+        
+        try {
+          const user = await usersCollection.findOne({ ForgotPasswordToken: token });
+      
+          if (!user) {
+            console.log('User not found for verification token:', token);
+            return res.status(404).json({ error: 'Invalid verification token' });
+          }
+      
+          console.log('Found user for verification:', user);
+      
+          const result = await usersCollection.updateOne({ _id: user._id }, { $set: { Password: pwd } });
+          console.log('MongoDB update result:', result);
+      
+          return res.status(200).json({ message: 'Email verification successful' });
+        } catch (error) {
+          console.error('Error during email verification:', error);
+          return res.status(500).json({ error: 'Internal server error' });
+        }
+      });
+     
       
 
 app.get('/api/info/:UserId', authenticateToken, async (req, res) => {
