@@ -11,27 +11,26 @@ const sender = {
 
       exports.generateOneTimePass = () => {
         let oneTimePass = ""
-        for (let i = 0; i < 4; i++){
+        for (let i = 0; i < 64; i++){
           const randVal = Math.round(Math.random() * 9)
           oneTimePass = oneTimePass + randVal
         }
         return oneTimePass;
       }
 
-    async function verifyEmail(email, OTP) {
+    async function verifyEmail(email, Link) {
 
        const recipients = [
         {
           email: email,
         }
       ];
-
           client
           .send({
             from: sender,
             to: recipients,
             subject: "Email Verification",
-            text: "Here is your one time Password: " + OTP,
+            html: 'Please click this email to confirm your account: ' + Link,
             category: "Integration Test",
           })
           .then(console.log, console.error);
