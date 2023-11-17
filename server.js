@@ -212,7 +212,7 @@ app.post('/api/register', async (req, res) => {
       
       app.post('/verify-email', async (req, res) => {
         const { token } = req.query;
-        console.log('Verification token:', token);
+        console.log('Verification token received:', token);
       
         try {
           const user = await usersCollection.findOne({ verificationToken: token });
@@ -233,6 +233,7 @@ app.post('/api/register', async (req, res) => {
           return res.status(500).json({ error: 'Internal server error' });
         }
       });
+      
 
 app.get('/api/info/:UserId', authenticateToken, async (req, res) => {
   try {
