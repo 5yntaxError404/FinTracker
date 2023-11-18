@@ -7,6 +7,8 @@ import SignUpPage from './pages/SignUpPage';
 import DashPage from './pages/DashPage';
 import EmailVerificationPage from './pages/EmailVerificationPage';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 
 function App() {
   return (
@@ -18,6 +20,8 @@ function App() {
                   <Route path="/signup" element={<SignUpPage />} />
                   <Route path="/dash" element={<DashPage />} />
                   <Route path="/EmailVerification" element={<EmailVerificationPage/>} />
+                  <Route path="/ForgotPassword" element={<ForgotPasswordPage/>} />
+                  <Route path="/ResetPassword" element={<ResetPasswordPage/>} />
               </Routes>
           </div>
       </BrowserRouter>

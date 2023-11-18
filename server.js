@@ -8,7 +8,7 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const { MongoClient } = require('mongodb');
-const { generateOneTimePass, verifyEmail } = require('./mailing');
+const { generateOneTimePass, verifyEmail, forgotPassword } = require('./mailing');
 require('dotenv/config');
 const port = process.env.PORT || 5000; // Heroku set port
 const app = express();
@@ -72,7 +72,7 @@ app.get('/posts, authenticateToken', (req, res) => {
 });
 
 
-// Register a new user
+// REGISTRATION 
 app.post('/api/register', async (req, res) => {
   const { FirstName, LastName, Email, UserName, Password } = req.body;
 
@@ -135,6 +135,11 @@ app.post('/api/register', async (req, res) => {
 });
 
 
+// END OF REGISTRATION
+
+// AUTHENTICATION ENDPOINTS
+
+
 function checkPassComplexity(pass){
     
     const minLength = 8;
@@ -150,8 +155,6 @@ function checkPassComplexity(pass){
     // Return true if the password is sufficiently complex
     return isLengthValid && meetsComplexityCriteria;
 }
-
-  
 
 
       app.post('/api/login', async (req, res) => {
@@ -252,6 +255,12 @@ function checkPassComplexity(pass){
       
           const result = await usersCollection.updateOne({ _id: user._id }, { $set: { isVerified: true } });
           console.log('MongoDB update result:', result);
+
+          const tokenUpdateResult = await usersCollection.updateOne(
+            { _id: user._id },
+            { $set: { VerificationToken: null } }
+          );
+          console.log('MongoDB token update result:', tokenUpdateResult);
       
           return res.status(200).json({ message: 'Email verification successful' });
         } catch (error) {
@@ -259,6 +268,77 @@ function checkPassComplexity(pass){
           return res.status(500).json({ error: 'Internal server error' });
         }
       });
+
+      app.post('/forgot-password-email', async (req, res) => {
+
+        const { Email } = req.body;
+
+        try {
+          const user = await usersCollection.findOne({ Email: Email });
+
+          if (!user) {
+            console.log('User Email Not Found:', Email);
+            return res.status(404).json({ error: 'No Account with that Email Record.' });
+          }
+
+          const name = user.FirstName;
+          const VerificationToken = crypto.randomBytes(32).toString('hex');
+          usersCollection.updateOne( { _id: user._id }, { $set: {ResetPasswordToken: VerificationToken}});
+          const EmailURL = `https://www.fintech.davidumanzor.com/ResetPassword?token=${VerificationToken}`;
+
+        forgotPassword(name, Email, EmailURL);
+      
+          console.log('Email Sent To:', user);
+        }
+
+        catch (error) {
+          console.error('Error during forgot-password-email:', error);
+          return res.status(500).json({ error: 'Internal server error' });
+        }
+        
+    
+      })
+
+
+      app.post('/reset-password', async (req, res) => {
+        const token  = req.query.token.trim();
+        const { Password } = req.body;
+        console.log('Reset Password Token Received:', token);
+      
+        try {
+          const user = await usersCollection.findOne({ ResetPasswordToken: token });
+      
+          if (!user) {
+            console.log('User not found for verification token:', token);
+            return res.status(404).json({ error: 'Invalid verification token' });
+          }
+      
+          console.log('Found user for verification:', user);
+      
+          // Update password
+          const passwordUpdateResult = await usersCollection.updateOne(
+            { _id: user._id },
+            { $set: { Password: Password } }
+          );
+          console.log('MongoDB password update result:', passwordUpdateResult);
+      
+          // Nullify reset password token
+          const tokenUpdateResult = await usersCollection.updateOne(
+            { _id: user._id },
+            { $set: { ResetPasswordToken: null } }
+          );
+          console.log('MongoDB token update result:', tokenUpdateResult);
+      
+          // You can check if both updates were successful and handle accordingly
+      
+          return res.status(200).json({ message: 'Password reset successful' });
+        } catch (error) {
+          console.error('Error during password reset:', error);
+          return res.status(500).json({ error: 'Internal server error' });
+        }
+      });
+      
+     
       
 
 app.get('/api/info/:UserId', authenticateToken, async (req, res) => {
