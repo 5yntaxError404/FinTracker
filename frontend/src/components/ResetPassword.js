@@ -17,7 +17,7 @@ function ResetMyPassword(){
             return;
 
         var obj = {
-            "Password": Password.value,
+            "Password": Password.value
         };
 
         var js = JSON.stringify(obj);
