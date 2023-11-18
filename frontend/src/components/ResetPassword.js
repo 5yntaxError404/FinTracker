@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import '../css/LoginPage.css';
 
-function ForgotMyPassword(){
+function ResetMyPassword(){
 
 	var Password, confirmPassword;
 
@@ -73,4 +73,4 @@ function ForgotMyPassword(){
 		</div>
 	);
 }
-export default ForgotMyPassword;
+export default ResetMyPassword;

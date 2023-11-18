@@ -20,6 +20,7 @@ function App() {
                   <Route path="/dash" element={<DashPage />} />
                   <Route path="/EmailVerification" element={<EmailVerificationPage/>} />
                   <Route path="/ForgotPassword" element={<ForgotPasswordPage/>} />
+                  <Route path="/ResetPassword" element={<ForgotPasswordPage/>} />
               </Routes>
           </div>
       </BrowserRouter>
