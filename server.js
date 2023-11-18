@@ -228,6 +228,12 @@ app.post('/api/register', async (req, res) => {
       
           const result = await usersCollection.updateOne({ _id: user._id }, { $set: { isVerified: true } });
           console.log('MongoDB update result:', result);
+
+          const tokenUpdateResult = await usersCollection.updateOne(
+            { _id: user._id },
+            { $set: { VerificationToken: null } }
+          );
+          console.log('MongoDB token update result:', tokenUpdateResult);
       
           return res.status(200).json({ message: 'Email verification successful' });
         } catch (error) {
