@@ -14,7 +14,7 @@ function ResetMyPassword(){
 
         const verificationToken = new URLSearchParams(window.location.search).get('token');
         if (Password != confirmPassword)
-            return;
+            alert('Passwords must match')
 
         var obj = {
             "Password": Password.value
