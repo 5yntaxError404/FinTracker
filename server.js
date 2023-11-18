@@ -270,8 +270,8 @@ app.post('/api/register', async (req, res) => {
       app.post('/reset-password', async (req, res) => {
         const { token } = req.query;
         const { Password } = req.body;
-        console.log('ForgotPassword Token Received:',token);
-        
+        console.log('Reset Password Token Received:', token);
+      
         try {
           const user = await usersCollection.findOne({ ResetPasswordToken: token });
       
@@ -282,18 +282,29 @@ app.post('/api/register', async (req, res) => {
       
           console.log('Found user for verification:', user);
       
-          const result = await usersCollection.updateOne({ _id: user._id }, { $set: { Password: Password } });
-          console.log('MongoDB update result:', result);
-
-          result = await usersCollection.updateOne({ _id: user._id }, { $set: { ResetPasswordToken: null } });
-          console.log('MongoDB update result:', result);
+          // Update password
+          const passwordUpdateResult = await usersCollection.updateOne(
+            { _id: user._id },
+            { $set: { Password: Password } }
+          );
+          console.log('MongoDB password update result:', passwordUpdateResult);
       
-          return res.status(200).json({ message: 'Email verification successful' });
+          // Nullify reset password token
+          const tokenUpdateResult = await usersCollection.updateOne(
+            { _id: user._id },
+            { $set: { ResetPasswordToken: null } }
+          );
+          console.log('MongoDB token update result:', tokenUpdateResult);
+      
+          // You can check if both updates were successful and handle accordingly
+      
+          return res.status(200).json({ message: 'Password reset successful' });
         } catch (error) {
-          console.error('Error during email verification:', error);
+          console.error('Error during password reset:', error);
           return res.status(500).json({ error: 'Internal server error' });
         }
       });
+      
      
       
 
