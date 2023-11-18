@@ -22,21 +22,23 @@ function ResetMyPassword(){
 
         var js = JSON.stringify(obj);
   
-        if (verificationToken) {
-          try {
+        try {
             const response = await fetch(`https://www.fintech.davidumanzor.com/reset-password?token=${verificationToken}`, {
-
-				method: 'post',
-                body: js,
-				headers: { 'Content-Type': 'application/json' }
-			});
-          } catch (error) {
-            console.error(error);
-            alert('Reset Password failed. verification token: ' + verificationToken);
+              method: 'post',
+              body: js,
+              headers: { 'Content-Type': 'application/json' }
+          });
+          var res = JSON.parse(await response.text());
+          console.log(res);
+          if (res.error !== '') {
+              setMessage('Unable to reset password.');
+          } else {
+              alert('Password Reset.');
           }
-        } else {
-          alert('Invalid verification link.');
-        }
+      } catch (e) {
+          alert(e.toString());
+          return;
+      }
       };
 	
 
