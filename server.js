@@ -314,6 +314,10 @@ function checkPassComplexity(pass){
           }
       
           console.log('Found user for verification:', user);
+
+          if(!checkPassComplexity(Password)){
+            return res.status(402).json({ message: 'Password is too weak. It must be at least 8 characters long with a digit, special characte, an uppercase character and a lowercase character.' });
+          }
       
           // Update password
           const passwordUpdateResult = await usersCollection.updateOne(
