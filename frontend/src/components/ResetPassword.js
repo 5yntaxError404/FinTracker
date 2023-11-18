@@ -23,7 +23,8 @@ function ResetMyPassword(){
         var js = JSON.stringify(obj);
   
         try {
-            const response = await fetch(`https://www.fintech.davidumanzor.com/reset-password?token=${verificationToken}`, {
+            const response = await fetch(`https://www.fintech.davidumanzor.com/reset-password?token=${verificationToken}`, 
+            {
               method: 'post',
               body: js,
               headers: { 'Content-Type': 'application/json' }
