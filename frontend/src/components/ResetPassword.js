@@ -21,7 +21,7 @@ function ResetMyPassword(){
   
         if (verificationToken) {
           try {
-            const response = await fetch(`https://www.fintech.davidumanzor.com/verify-email?token=${verificationToken}`, {
+            const response = await fetch(`https://www.fintech.davidumanzor.com/reset-password?token=${verificationToken}`, {
 
                 body: js,
 				method: 'post',
