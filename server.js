@@ -268,7 +268,7 @@ app.post('/api/register', async (req, res) => {
 
 
       app.post('/reset-password', async (req, res) => {
-        const { token } = req.query;
+        const token  = req.query.token.trim();
         const { Password } = req.body;
         console.log('Reset Password Token Received:', token);
       
