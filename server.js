@@ -250,7 +250,7 @@ app.post('/api/register', async (req, res) => {
 
           const name = user.FirstName;
           const VerificationToken = crypto.randomBytes(32).toString('hex');
-          usersCollection.updateOne( { _id: user._id }, { $set: {EmailToken: VerificationToken}});
+          usersCollection.updateOne( { _id: user._id }, { $set: {ResetPasswordToken: VerificationToken}});
           const EmailURL = `https://www.fintech.davidumanzor.com/ResetPassword?token=${VerificationToken}`;
 
         forgotPassword(name, Email, EmailURL);
@@ -273,7 +273,7 @@ app.post('/api/register', async (req, res) => {
         console.log('ForgotPassword Token Received:',token);
         
         try {
-          const user = await usersCollection.findOne({ ForgotPasswordToken: token });
+          const user = await usersCollection.findOne({ ResetPasswordToken: token });
       
           if (!user) {
             console.log('User not found for verification token:', token);
@@ -283,6 +283,9 @@ app.post('/api/register', async (req, res) => {
           console.log('Found user for verification:', user);
       
           const result = await usersCollection.updateOne({ _id: user._id }, { $set: { Password: Password } });
+          console.log('MongoDB update result:', result);
+
+          result = await usersCollection.updateOne({ _id: user._id }, { $set: { ResetPasswordToken: null } });
           console.log('MongoDB update result:', result);
       
           return res.status(200).json({ message: 'Email verification successful' });
