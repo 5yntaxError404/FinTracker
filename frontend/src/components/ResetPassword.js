@@ -8,14 +8,17 @@ function ResetMyPassword(){
 
 	const [message,setMessage] = useState('');
     
-	const resetPassword = async () => {
+	const resetPassword = async event => {
+        
+        event.preventDefault();
+
         const verificationToken = new URLSearchParams(window.location.search).get('token');
         if (Password != confirmPassword)
             return;
 
         var obj = {
-            "Password": Password
-        }
+            "Password": Password.value,
+        };
 
         var js = JSON.stringify(obj);
   
@@ -23,8 +26,8 @@ function ResetMyPassword(){
           try {
             const response = await fetch(`https://www.fintech.davidumanzor.com/reset-password?token=${verificationToken}`, {
 
-                body: js,
 				method: 'post',
+                body: js,
 				headers: { 'Content-Type': 'application/json' }
 			});
           } catch (error) {
