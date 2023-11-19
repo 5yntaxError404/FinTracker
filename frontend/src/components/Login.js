@@ -55,43 +55,68 @@ function Login() {
 
                 var parsedToken = parseJwt(res.accessToken);
                 console.log(parsedToken);
-                var user =
+                var userinfo =
                 {
-                    accessToken:parsedToken.accessToken,
+                    accessToken:res.accessToken,
                     UserId:parsedToken.UserId
                 }
+                const UserId = 667;
+                var accessToken = res.accessToken;
+                localStorage.setItem('user', JSON.stringify(userinfo));
 
-                localStorage.setItem('user', JSON.stringify(user));
-
+                console.log(localStorage.getItem('user'));
+                
                 try {
                     console.log("Making Get Call");
-                    const user_response = await fetch('https://www.fintech.davidumanzor.com/api/users/get/', {
-                        method: 'get',
-                        headers:
-                        {
-                            'Content-Type':'application/json'
+                    const accessToken = res.accessToken;
+                    const userId = 667; // Replace with the actual user ID
+                    
+                    var obj = {
+                        "AccountNum": 777,
+                    };
+                    var js = JSON.stringify(obj);
+
+                    // Make a GET request to the endpoint with JWT included in the headers
+                    fetch('https://www.fintech.davidumanzor.com/api/account/', {
+                    method: 'POST',
+                    body: js,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ${accessToken}', // Include the JWT token in the Authorization header
+                    },
+                    credentials: 'same-origin', // Adjust based on your authentication setup
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            console.log(response)
+                        throw new Error('Network response was not ok');
                         }
-                    });
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Handle the data received from the server
+                        console.log(data);
+                        // Use the data in your frontend as needed
+                    })
+                    .catch(error => {
+                        console.error('There was a problem with the fetch operation:', error);
+                    
+                        // Check if error.response exists before accessing its properties
+                        if (error.response && error.response.status) {
+                          console.log('Response status:', error.response.status);
+                          console.log('Response text:', error.response.statusText);
+                        } else {
+                          console.log('Error response is undefined or does not have expected properties.');
+                        }
+                      });
                     console.log("Made get call");
                     //console.log(user_response.text());
-                    var userInfo = JSON.parse(await user_response.text());
-                    console.log("Parsed Info")
-                    console.log(userInfo);
+                    //var userInfo = JSON.parse(await user_response.text());
                     // GET FIRSTNAME LAST//
-                    console.log("Attempting Parse Token")
-                    var parsedToken = parseJwt(res.accessToken);
-                    
-                    var user_data=
-                    {
-                        firstName:userInfo.firstName,
-                        lastName:userInfo.lastName,
-                        accessToken:parsedToken.accessToken
-                    }
-    
-                    localStorage.setItem('user', JSON.stringify(user_data));
+                    //console.log(userInfo);
     
                     setMessage('');
-                    window.location.href = '/dash';
+                    //window.location.href = '/dash';
                     console.log("Logged In");
                 }
                 catch (e) {

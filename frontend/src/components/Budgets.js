@@ -11,12 +11,98 @@ const LandingPage = (props) => {
 
 	const EditBudget = async event =>
 	{
-		window.location.href = '/login';
+        event.preventDefault();
+
+        var rent, utilities, groceries, insurance, phone, car, gas, fun, goal;
+        const [message,setMessage] = '';
+
+		var obj = {
+            rent: rent.value,
+            utilities: utilities.value,
+            groceries: groceries.value,
+            insurance: insurance.value,
+            phone: phone.value,
+            car: car.value,
+            gas: gas.value,
+            fun: fun.value,
+            goal: goal.value,
+		};
+		var js = JSON.stringify(obj);
+	
+		try {
+
+			const response = await fetch('https://www.fintech.davidumanzor.com/api/budgets/edit/:UserId', {
+
+				method: 'post',
+				body: js,
+				headers: 
+                { 
+                    'Content-Type': 'application/json' 
+                }
+			});
+			var res = JSON.parse(await response.text());
+			console.log(res);
+
+			 if (res.error) {
+                setMessage('Unable to Login'); // Set an error message
+                console.log("Some error");
+            } 
+            else {
+                setMessage('Budget Edited.'); // Set a success message
+
+            }
+		} catch (e) {
+			alert(e.toString());
+			return;
+		}
 	};
 
     const AddBudget = async event =>
     {
+        event.preventDefault();
 
+        var rent, utilities, groceries, insurance, phone, car, gas, fun, goal;
+        const [message,setMessage] = '';
+
+		var obj = {
+            rent: rent.value,
+            utilities: utilities.value,
+            groceries: groceries.value,
+            insurance: insurance.value,
+            phone: phone.value,
+            car: car.value,
+            gas: gas.value,
+            fun: fun.value,
+            goal: goal.value,
+		};
+		var js = JSON.stringify(obj);
+	
+		try {
+
+			const response = await fetch('https://www.fintech.davidumanzor.com/api/budgets/add/:UserId', {
+
+				method: 'post',
+				body: js,
+				headers: 
+                { 
+                    'Content-Type': 'application/json' 
+                }
+			});
+			var res = JSON.parse(await response.text());
+			console.log(res);
+
+			 if (res.error) {
+                setMessage('Unable to Login'); // Set an error message
+                console.log("Some error");
+            } 
+            else {
+                setMessage('Budget Added.'); // Set a success message
+
+            }
+		} catch (e) {
+			alert(e.toString());
+			return;
+		}
     };
 
     const RemoveBudget = async event =>
