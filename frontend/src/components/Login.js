@@ -77,37 +77,31 @@ function Login() {
                     var js = JSON.stringify(obj);
 
                     // Make a GET request to the endpoint with JWT included in the headers
-                    fetch('https://www.fintech.davidumanzor.com/api/account/', {
-                    method: 'POST',
-                    body: js,
+                    fetch('https://www.fintech.davidumanzor.com/api/accounts/', {
+                    method: 'GET',
+                    // body: js,
                     headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ${accessToken}', // Include the JWT token in the Authorization header
+                        // 'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${accessToken}` // Include the JWT token in the Authorization header
                     },
                     credentials: 'same-origin', // Adjust based on your authentication setup
                     })
                     .then(response => {
                         if (!response.ok) {
                             console.log(response)
-                        throw new Error('Network response was not ok');
+                            throw new Error('Network response was not ok');
                         }
                         return response.json();
-                    })
-                    .then(data => {
-                        // Handle the data received from the server
+                      })
+                      .then(text => {
+                        console.log(text);
+                        return JSON.parse(text);
+                      })
+                      .then(data => {
                         console.log(data);
-                        // Use the data in your frontend as needed
-                    })
-                    .catch(error => {
+                      })
+                      .catch(error => {
                         console.error('There was a problem with the fetch operation:', error);
-                    
-                        // Check if error.response exists before accessing its properties
-                        if (error.response && error.response.status) {
-                          console.log('Response status:', error.response.status);
-                          console.log('Response text:', error.response.statusText);
-                        } else {
-                          console.log('Error response is undefined or does not have expected properties.');
-                        }
                       });
                     console.log("Made get call");
                     //console.log(user_response.text());
@@ -116,7 +110,7 @@ function Login() {
                     //console.log(userInfo);
     
                     setMessage('');
-                    //window.location.href = '/dash';
+                    // window.location.href = '/dash';
                     console.log("Logged In");
                 }
                 catch (e) {

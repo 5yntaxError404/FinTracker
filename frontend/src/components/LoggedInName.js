@@ -4,13 +4,16 @@ import '../css/DashPage.css';
 
 function LoggedInName()
 {
+/*
 var _ud = localStorage.getItem('user_data');
-var ud = JSON.parse(_ud);
+// var ud = JSON.parse(_ud);
 var userId = ud.userId;
-var firstName = ud.firstName;
-var lastName = ud.lastName;
+// var firstName = ud.firstName;
+//var lastName = ud.lastName;
 var accessToken = ud.accessToken; //REQUIRED FOR LOGGING
-
+*/
+var firstName = null
+var lastName = null
 const doLogout = event =>
 {
 event.preventDefault();

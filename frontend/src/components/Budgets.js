@@ -1,6 +1,7 @@
 // src/LandingPage.js
 import React from 'react';
 import '../css/LandingPage.css';
+import '../css/BudgetsPage.css';
 import Button from 'react-bootstrap/Button';
 import { Link } from 'react-router-dom';
 
@@ -120,40 +121,40 @@ const LandingPage = (props) => {
                 <p>Lost in the maze of monthly bills, savings, and investment options?</p>
                 <p>Say hello to <strong>FinTrack+</strong>, the ultimate tool designed specifically to help you master your money.</p>
                 <Button className="button">Get Started</Button>
-                <form>
+                <form className='addBudgetForm'>
                 <div class="form-row">
                     <div class="form-group col-md-6">
-                    <label for="inputEmail4">Email</label>
-                    <input type="email" class="form-control" id="inputEmail4" placeholder="Email"/>
+                    <label for="inputRent">Rent</label>
+                    <input type="number" class="form-control" id="inputEmail4"/>
                     </div>
                     <div class="form-group col-md-6">
-                    <label for="inputPassword4">Password</label>
-                    <input type="password" class="form-control" id="inputPassword4" placeholder="Password"/>
+                    <label for="inputUtilities">Utilities</label>
+                    <input type="number" class="form-control" id="inputPassword4"/>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="inputAddress">Address</label>
-                    <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St"/>
+                    <label for="inputGroceries">Groceries</label>
+                    <input type="number" class="form-control" id="inputAddress"/>
                 </div>
                 <div class="form-group">
-                    <label for="inputAddress2">Address 2</label>
-                    <input type="text" class="form-control" id="inputAddress2" placeholder="Apartment, studio, or floor"/>
+                    <label for="inputInsurance">Insurance</label>
+                    <input type="number" class="form-control" id="inputAddress2"/>
                 </div>
                 <div class="form-row">
                     <div class="form-group col-md-6">
-                    <label for="inputCity">City</label>
-                    <input type="text" class="form-control" id="inputCity"/>
+                    <label for="inputPhone">Phone</label>
+                    <input type="number" class="form-control" id="inputCity"/>
                     </div>
                     <div class="form-group col-md-4">
-                    <label for="inputState">State</label>
-                    <select id="inputState" class="form-control">
+                    <label for="inputState">Car</label>
+                    <select id="number" class="form-control">
                         <option selected>Choose...</option>
                         <option>...</option>
                     </select>
                     </div>
                     <div class="form-group col-md-2">
-                    <label for="inputZip">Zip</label>
-                    <input type="text" class="form-control" id="inputZip"/>
+                    <label for="inputZip">Fun</label>
+                    <input type="number" class="form-control" id="inputZip"/>
                     </div>
                 </div>
                 <div class="form-group">
@@ -164,7 +165,7 @@ const LandingPage = (props) => {
                     </label>
                     </div>
                 </div>
-                <button type="submit" class="btn btn-primary">Sign in</button>
+                <button type="submit" class="btn btn-primary">Add Budget</button>
                 </form>
             </div>
             
