@@ -76,27 +76,24 @@ function Login() {
                     try {
                         console.log("Making Get Call");
                         let infoResponse;
+                        let requestInit = {
+                            method: 'GET',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${accessToken}`
+                            }
+                        }
                         if (process.env.NODE_ENV === "production") {
                             infoResponse = await fetch(
-                                "https://www.fintech.davidumanzor.com/api/info/" + userinfo.UserId, 
-                            {
-                                method: 'GET',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'Authorization': `Bearer ${accessToken}`
-                                }
-                            });
+                                "https://www.fintech.davidumanzor.com/api/info/" + userinfo.UserId,
+                                requestInit
+                                );
                         } 
                         else {
                             infoResponse = await fetch(
                                 "http://localhost:5000/api/info/" + userinfo.UserId, 
-                            {
-                                method: 'GET',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'Authorization': `Bearer ${accessToken}`
-                                }
-                            });
+                                requestInit
+                                );
                         };
         
                         if (!infoResponse.ok) {
@@ -105,7 +102,7 @@ function Login() {
                         }
         
                         const data = await infoResponse.json();
-                        console.log("Parsed JSON data:", data);
+                        console.log("Parsed JSON data: " + data);
                   
                 } catch (error) {
                 console.error('There was a problem with the fetch operation:', error);
