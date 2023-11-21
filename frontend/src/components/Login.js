@@ -7,48 +7,110 @@ function Login() {
     var username,password;
     const [message,setMessage] = useState('');
 
-	const doLogin = async event => 
-    {
-        event.preventDefault();
+    function parseJwt (token) {
+        var base64Url = token.split('.')[1];
+        var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+    
+        return JSON.parse(jsonPayload);
+    }
 
-		var obj = {
-			"UserName": username.value,
-			"Password": password.value
-		};
-		var js = JSON.stringify(obj);
-	
-		try {
+    const passwordRecovery = async event =>
+        {
+            window.location.href = '/passwordrecovery';
+        };
 
-			const response = await fetch('https://www.fintech.davidumanzor.com/api/login', {
+        const doLogin = async event => {
+            event.preventDefault();
+        
+            const obj = {
+                "UserName": username.value,
+                "Password": password.value
+            };
+        
+            try {
+                let response;
 
-				method: 'post',
-				body: js,
-				headers: 
-                { 
-                    'Content-Type': 'application/json' 
+                if (process.env.NODE_ENV === "production") {
+                    response = await fetch("https://www.fintech.davidumanzor.com/api/login", {
+                        method: 'POST',
+                        body: JSON.stringify(obj),
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    });
+                  } 
+                else {
+                response = await fetch("http://localhost:5000/api/login", {
+                    method: 'POST',
+                    body: JSON.stringify(obj),
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                };
+        
+                const res = await response.json();
+                console.log(res);
+        
+                if (res.error) {
+                    setMessage('Unable to Login');
+                    console.log("Some error");
+                } else {
+                    setMessage('Logged In.');
+        
+                    const parsedToken = parseJwt(res.accessToken);
+                    console.log(parsedToken);
+        
+                    const userinfo = {
+                        accessToken: res.accessToken,
+                        UserId: parsedToken.UserId
+                    };
+                    const accessToken = res.accessToken;
+                    localStorage.setItem('user', JSON.stringify(userinfo));
+        
+                    console.log(localStorage.getItem('user'));
+        
+                    try {
+                        console.log("Making Get Call");
+                        let infoResponse;
+                        let requestInit = {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${accessToken}`
+                            },
+                            credentials: 'same-origin',
+                        }
+                        if (process.env.NODE_ENV === "production") {
+                            infoResponse = await fetch(
+                                'https://www.fintech.davidumanzor.com/api/info/' + userinfo.UserId,
+                                requestInit
+                                );
+                            console.log("Made Call in Production");
+                        } 
+                        else {
+                            infoResponse = await fetch(
+                                'http://localhost:5000/api/info/' + userinfo.UserId, 
+                                requestInit
+                                );
+                            console.log("Made Call in Local");
+                        };
+
+                        if (!infoResponse.ok) {
+                            console.log(infoResponse.status, infoResponse.statusText);
+                            throw new Error('Network response was not ok');
+                        }
+        
+                        const data = await infoResponse.json();
+                        console.log("Parsed JSON data:", data);
+                  
+                } catch (error) {
+                console.error('There was a problem with the fetch operation:', error);
                 }
-			});
-			var res = JSON.parse(await response.text());
-			console.log(res);
 
-			 if (res.error) {
-                setMessage('Unable to Login'); // Set an error message
-                console.log("Some error");
-            } 
-            else {
-                setMessage('Logged In.'); // Set a success message
-                var user =
-				{
-                    firstName:res.firstName,
-                    lastName:res.lastName,
-                    id:res.id
-                }
-
-				localStorage.setItem('user_data', JSON.stringify(user));
-
-				setMessage('');
-				window.location.href = '/dash';
-                console.log("Logged In");
             }
 		} catch (e) {
 			alert(e.toString());

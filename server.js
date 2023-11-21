@@ -12,9 +12,10 @@ const { generateOneTimePass, verifyEmail, forgotPassword } = require('./mailing'
 require('dotenv/config');
 const port = process.env.PORT || 5000; // Heroku set port
 const app = express();
+const bcrypt = require ("bcrypt");
+app.use(cors({origin: ["http://localhost:3000", "https://www.fintech.davidumanzor.com"]}));
 const crypto = require('crypto');
 // const bcrypt = require ("bcrypt"); -- may need this. delete later if not.
-app.use(cors());
 app.use(bodyParser.json());
 app.use(cookieParser());
 
@@ -345,7 +346,7 @@ function checkPassComplexity(pass){
      
       
 
-app.get('/api/info/:UserId', authenticateToken, async (req, res) => {
+app.post('/api/info/:UserId', authenticateToken, async (req, res) => {
   try {
 
     if(parseInt(req.params.UserId) != req.user.UserId){
@@ -692,6 +693,24 @@ app.post('/api/account', authenticateToken, async (req, res) => {
   }
 });
 
+app.get('/api/users/get/', authenticateToken, async (req, res) => {
+  try {
+    const UserId = req.user.UserId; // Get UserId from the JWT
+    // const { UserId } = req.body; // Get the AccountNum from the request body
+    console.log(UserId);
+    // Query your database to fetch the specific account information based on the UserId and AccountNum
+    const UserInfo = await usersCollection.findOne({ UserId });
+
+    if (!UserInfo) {
+      return res.status(404).json({ error: 'User Not Found' });
+    }
+
+    res.status(200).json(UserInfo);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 
 

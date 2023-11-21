@@ -22,7 +22,7 @@ function SignUp(){
 	
 		try {
 
-			  const response = await fetch('https://www.fintech.davidumanzor.com/api/register', {
+			  const response = await fetch('https://localhost:3000/api/register', {
 
 				method: 'post',
 				body: js,

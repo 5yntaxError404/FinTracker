@@ -1,16 +1,16 @@
-// src/LandingPage.js
+// src/AccountsPage.js
 import React from 'react';
 import '../css/LandingPage.css';
 import Header from '../components/Header';
-import Landing from '../components/Landing';
+import Help from '../components/Help';
 
-const LandingPage = (props) => {
+const HelpPage = (props) => {
     return (
         <div>
     <Header />
-    <Landing />
+    <Help/>
     </div>
     );
 }
 
-export default LandingPage;
+export default HelpPage;
