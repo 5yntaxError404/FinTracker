@@ -25,14 +25,14 @@ function AccountsPage() {
     {
         event.preventDefault();
 
-        let AccountNum = document.getElementById("inputAccountNum");
-        let RouteNum = document.getElementById("inputRouteNum");
-        let BankName = document.getElementById("inputBankName");
+        let AccountNum = document.getElementById("inputAccountNum").value;
+        let RouteNum = document.getElementById("inputRouteNum").value;
+        let BankName = document.getElementById("inputBankName").value;
 
 		var obj = {
-            AccountNum: AccountNum.value,
-            RouteNum: RouteNum.value,
-            BankName: BankName.value,
+            AccountNum: AccountNum,
+            RouteNum: RouteNum,
+            BankName: BankName,
 		};
 		var js = JSON.stringify(obj);
         
@@ -114,6 +114,7 @@ function AccountsPage() {
         const NewAccountNum = parseInt(document.getElementById("inputAccountNum").value);
         const NewRouteNum = parseInt(document.getElementById("inputRouteNum").value);
         const NewBankName = document.getElementById("inputBankName").value;
+        
 		var obj = {
             newAccountNum: NewAccountNum,
             newRouteNum: NewRouteNum,
