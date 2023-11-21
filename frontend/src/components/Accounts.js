@@ -123,13 +123,75 @@ function AccountsPage() {
 
     const EditAccount = async () => 
     {
+        try {
+            const userinfo = JSON.parse(localStorage.getItem('user'));
+            console.log(userinfo);
+            console.log(userinfo.UserId);
+            
+            const response = await fetch(
+                `${base_url}/api/accounts/`,
+                {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${userinfo.accessToken}`
+                },
+                credentials: 'same-origin',
+            });
 
-    }
+			var res = JSON.parse(await response.text());
+			console.log(res);
+
+			if (res.error) {
+                setMessage('Unable to get accounts'); // Set an error message
+                console.log('Some error');
+            } 
+            else {
+                setAccounts(res);
+                setMessage('Success');
+            }
+            
+		} catch (e) {
+			alert(e.toString());
+			return;
+		}
+    };
 
     const deleteAccount = async () => 
     {
+        try {
+            const userinfo = JSON.parse(localStorage.getItem('user'));
+            console.log(userinfo);
+            console.log(userinfo.UserId);
+            
+            const response = await fetch(
+                `${base_url}/api/accounts/`,
+                {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${userinfo.accessToken}`
+                },
+                credentials: 'same-origin',
+            });
 
-    }
+			var res = JSON.parse(await response.text());
+			console.log(res);
+
+			if (res.error) {
+                setMessage('Unable to get accounts'); // Set an error message
+                console.log('Some error');
+            } 
+            else {
+                setAccounts(res);
+                setMessage('Success');
+            }
+            
+		} catch (e) {
+			alert(e.toString());
+			return;
+		}
+    };
 
     return (
 
@@ -143,8 +205,13 @@ function AccountsPage() {
                                 <p>Bank Name: {accounts.BankName}</p>
                                 <p>Account Number: {accounts.AccountNum}</p>
                                 <p>Routing Number: {accounts.RouteNum}</p>
-                                {/* Button to delete account */}
-                                <button onClick={() => deleteAccount(accounts._id)}> Delete Account </button>
+                                <Col>
+                                <button className="account_button" onClick={() => EditAccount(accounts._id)}> Edit Account</button>
+                                </Col>
+                                <Col>
+                                <button className="account_button" onClick={() => deleteAccount(accounts._id)}> Delete Account </button>
+                                </Col>
+                                
                             </Row>
                         ))}
                     </Col>
@@ -153,43 +220,17 @@ function AccountsPage() {
                         <form className='addBudgetForm'>
                         <div className="form-row">
                             <div className="form-group">
-                            <label htmlFor="inputRent">Rent</label>
-                            <input type="number" className="form-control" id="inputRent"/>
+                            <label htmlFor="inputAccountNum">Account Number</label>
+                            <input type="number" className="form-control" id="inputAccountNum"/>
                             </div>
                             <div className="form-group">
-                            <label htmlFor="inputUtilities">Utilities</label>
-                            <input type="number" className="form-control" id="inputUtilities"/>
+                            <label htmlFor="inputRouteNum">Route Number</label>
+                            <input type="number" className="form-control" id="inputRouteNum"/>
                             </div>
                         </div>
                         <div className="form-group">
-                            <label htmlFor="inputGroceries">Groceries</label>
-                            <input type="number" className="form-control" id="inputGroceries"/>
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="inputInsurance">Insurance</label>
-                            <input type="number" className="form-control" id="inputInsurance"/>
-                        </div>
-                        <div className="form-row">
-                            <div className="form-group">
-                                <label htmlFor="inputPhone">Phone</label>
-                                <input type="number" className="form-control" id="inputPhone"/>
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="inputCar">Car</label>
-                                <input type="number" className="form-control" id="inputCar"/>
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="inputGas">Gas</label>
-                                <input type="number" className="form-control" id="inputGas"/>
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="inputFun">Fun</label>
-                                <input type="number" className="form-control" id="inputFun"/>
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="inputGoal">Goal</label>
-                                <input type="number" className="form-control" id="inputGoal"/>
-                            </div>
+                            <label htmlFor="inputBankName">Bank Name</label>
+                            <input type="number" className="form-control" id="inputBankName"/>
                         </div>
                         <button type="submit" className="btn btn-primary" onClick={addAccount}>Add Budget</button>
                         </form>
