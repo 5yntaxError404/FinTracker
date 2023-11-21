@@ -62,7 +62,15 @@ const LandingPage = (props) => {
     {
         event.preventDefault();
 
-        var rent, utilities, groceries, insurance, phone, car, gas, fun, goal;
+        let rent = document.getElementById("inputRent");
+        let utilities = document.getElementById("inputUtilities");
+        let groceries = document.getElementById("inputGroceries");
+        let insurance = document.getElementById("inputInsurance");
+        let phone = document.getElementById("inputPhone");
+        let car = document.getElementById("inputCar");
+        let gas = document.getElementById("inputGas");
+        let fun = document.getElementById("inputFun");
+        let goal = document.getElementById("inputGoal");
         const [message,setMessage] = '';
 
 		var obj = {
@@ -79,14 +87,17 @@ const LandingPage = (props) => {
 		var js = JSON.stringify(obj);
         
 		try {
-            const userinfo = localStorage('user');
+            const userinfo = JSON.parse(localStorage.getItem('user'));
+            console.log(userinfo);
+            console.log(userinfo.UserId);
             let response;
             let requestInit = {
-                method: 'GET',
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${userinfo.accessToken}`
                 },
+                body: js,
                 credentials: 'same-origin',
             }
 
@@ -110,7 +121,7 @@ const LandingPage = (props) => {
 			console.log(res);
 
 			 if (res.error) {
-                setMessage('Unable to Login'); // Set an error message
+                setMessage('Unable to add Budget'); // Set an error message
                 console.log("Some error");
             } 
             else {
@@ -137,51 +148,46 @@ const LandingPage = (props) => {
             <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono"></link>
                 <form className='addBudgetForm'>
                 <div class="form-row">
-                    <div class="form-group col-md-6">
+                    <div class="form-group">
                     <label for="inputRent">Rent</label>
-                    <input type="number" class="form-control" id="inputEmail4"/>
+                    <input type="number" class="form-control" id="inputRent"/>
                     </div>
-                    <div class="form-group col-md-6">
+                    <div class="form-group">
                     <label for="inputUtilities">Utilities</label>
-                    <input type="number" class="form-control" id="inputPassword4"/>
+                    <input type="number" class="form-control" id="inputUtilities"/>
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputGroceries">Groceries</label>
-                    <input type="number" class="form-control" id="inputAddress"/>
+                    <input type="number" class="form-control" id="inputGroceries"/>
                 </div>
                 <div class="form-group">
                     <label for="inputInsurance">Insurance</label>
-                    <input type="number" class="form-control" id="inputAddress2"/>
+                    <input type="number" class="form-control" id="inputInsurance"/>
                 </div>
                 <div class="form-row">
-                    <div class="form-group col-md-6">
-                    <label for="inputPhone">Phone</label>
-                    <input type="number" class="form-control" id="inputCity"/>
+                    <div class="form-group">
+                        <label for="inputPhone">Phone</label>
+                        <input type="number" class="form-control" id="inputPhone"/>
                     </div>
-                    <div class="form-group col-md-4">
-                    <label for="inputCar">Car</label>
-                    <select id="number" class="form-control">
-                    </select>
+                    <div class="form-group">
+                        <label for="inputCar">Car</label>
+                        <input type="number" class="form-control" id="inputCar"/>
                     </div>
-                    <div class="form-group col-md-2">
-                    <label for="inputFun">Fun</label>
-                    <input type="number" class="form-control" id="inputZip"/>
+                    <div class="form-group">
+                        <label for="inputGas">Gas</label>
+                        <input type="number" class="form-control" id="inputGas"/>
                     </div>
-                    <div class="form-group col-md-2">
-                    <label for="inputGoal">Goal</label>
-                    <input type="number" class="form-control" id="inputZip"/>
+                    <div class="form-group">
+                        <label for="inputFun">Fun</label>
+                        <input type="number" class="form-control" id="inputFun"/>
                     </div>
-                </div>
-                <div class="form-group">
-                    <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="gridCheck"/>
-                    <label class="form-check-label" for="gridCheck">
-                        Check me out
-                    </label>
+                    <div class="form-group">
+                        <label for="inputGoal">Goal</label>
+                        <input type="number" class="form-control" id="inputGoal"/>
                     </div>
                 </div>
-                <button type="submit" class="btn btn-primary">Add Budget</button>
+                <button type="submit" class="btn btn-primary" onClick={AddBudget}>Add Budget</button>
                 </form>
             </div>
             
