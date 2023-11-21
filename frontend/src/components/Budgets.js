@@ -77,20 +77,18 @@ const LandingPage = (props) => {
             goal: goal.value,
 		};
 		var js = JSON.stringify(obj);
-        /*
+        
 		try {
-            
+            const userinfo = localStorage('user');
             let response;
             let requestInit = {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${accessToken}`
+                    'Authorization': `Bearer ${userinfo.accessToken}`
                 },
                 credentials: 'same-origin',
             }
-
-            userinfo = localStorage("UserInfo");
 
             if (process.env.NODE_ENV === "production") {
                 response = await fetch(
@@ -123,7 +121,7 @@ const LandingPage = (props) => {
 			alert(e.toString());
 			return;
 		}
-        */
+        
     };
 
     const RemoveBudget = async event =>
@@ -137,10 +135,6 @@ const LandingPage = (props) => {
             
             <div className="content">
             <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono"></link>
-                <p>Struggling with keeping tabs on your expenses?</p>
-                <p>Lost in the maze of monthly bills, savings, and investment options?</p>
-                <p>Say hello to <strong>FinTrack+</strong>, the ultimate tool designed specifically to help you master your money.</p>
-                <Button className="button">Get Started</Button>
                 <form className='addBudgetForm'>
                 <div class="form-row">
                     <div class="form-group col-md-6">
@@ -166,14 +160,16 @@ const LandingPage = (props) => {
                     <input type="number" class="form-control" id="inputCity"/>
                     </div>
                     <div class="form-group col-md-4">
-                    <label for="inputState">Car</label>
+                    <label for="inputCar">Car</label>
                     <select id="number" class="form-control">
-                        <option selected>Choose...</option>
-                        <option>...</option>
                     </select>
                     </div>
                     <div class="form-group col-md-2">
-                    <label for="inputZip">Fun</label>
+                    <label for="inputFun">Fun</label>
+                    <input type="number" class="form-control" id="inputZip"/>
+                    </div>
+                    <div class="form-group col-md-2">
+                    <label for="inputGoal">Goal</label>
                     <input type="number" class="form-control" id="inputZip"/>
                     </div>
                 </div>
