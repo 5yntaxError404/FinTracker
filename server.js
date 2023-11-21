@@ -8,13 +8,14 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const { MongoClient } = require('mongodb');
-const { generateOneTimePass, verifyEmail } = require('./mailing');
+const { generateOneTimePass, verifyEmail, forgotPassword } = require('./mailing');
 require('dotenv/config');
 const port = process.env.PORT || 5000; // Heroku set port
 const app = express();
-
 const bcrypt = require ("bcrypt");
 app.use(cors({origin: ["http://localhost:3000", "https://www.fintech.davidumanzor.com"]}));
+const crypto = require('crypto');
+// const bcrypt = require ("bcrypt"); -- may need this. delete later if not.
 app.use(bodyParser.json());
 app.use(cookieParser());
 
@@ -72,7 +73,7 @@ app.get('/posts, authenticateToken', (req, res) => {
 });
 
 
-// Register a new user
+// REGISTRATION 
 app.post('/api/register', async (req, res) => {
   const { FirstName, LastName, Email, UserName, Password } = req.body;
 
@@ -98,7 +99,9 @@ app.post('/api/register', async (req, res) => {
 
     }while(check) //make sure there is no dup userIDs
 
-    const oneTimePass = generateOneTimePass()
+    //const oneTimePass = generateOneTimePass() -- may use this later on.
+    const VerificationToken = crypto.randomBytes(32).toString('hex');
+    const EmailURL = `https://www.fintech.davidumanzor.com/EmailVerification?token=${VerificationToken}`;
     
     const newUser = {
       UserId: userCounter,
@@ -108,15 +111,21 @@ app.post('/api/register', async (req, res) => {
       Email,
       UserName,
       Password,
-      VerificationToken: bcrypt.hash(oneTimePass, 8),
+      VerificationToken,
       isVerified: false
     };
 
-    
-    verifyEmail(newUser.Email,oneTimePass);
+
+    if(!checkPassComplexity(Password)){
+      return res.status(402).json({ message: 'Password is too weak. It must be at least 8 characters long with a digit, special characte, an uppercase character and a lowercase character.' });
+    }
+
+
+
+    verifyEmail(newUser.Email,EmailURL);
+
     // Insert the user document into the "Users" collection
     await usersCollection.insertOne(newUser);
-
 
     // Return a success message
     res.status(201).json({ message: 'User registered successfully' });
@@ -126,7 +135,29 @@ app.post('/api/register', async (req, res) => {
   }
 });
 
-// Authenticate a user
+
+// END OF REGISTRATION
+
+// AUTHENTICATION ENDPOINTS
+
+
+function checkPassComplexity(pass){
+    
+    const minLength = 8;
+    const hasUppercase = /[A-Z]/.test(pass);
+    const hasLowercase = /[a-z]/.test(pass);
+    const hasDigit = /\d/.test(pass);
+    const hasSpecialChar = /[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]/.test(pass);
+  
+    // Check against complexity criteria
+    const isLengthValid = pass.length >= minLength;
+    const meetsComplexityCriteria = hasUppercase && hasLowercase && hasDigit && hasSpecialChar;
+  
+    // Return true if the password is sufficiently complex
+    return isLengthValid && meetsComplexityCriteria;
+}
+
+
       app.post('/api/login', async (req, res) => {
         const { UserName, Password } = req.body;
   
@@ -209,30 +240,111 @@ app.post('/api/register', async (req, res) => {
         res.sendStatus(204);
       });
       
-    app.post('/api/validateEmail', async (req, res) => {
+      app.post('/verify-email', async (req, res) => {
+        const { token } = req.query;
+        console.log('Verification token received:', token);
+      
+        try {
+          const user = await usersCollection.findOne({ VerificationToken: token });
+      
+          if (!user) {
+            console.log('User not found for verification token:', token);
+            return res.status(404).json({ error: 'Invalid verification token' });
+          }
+      
+          console.log('Found user for verification:', user);
+      
+          const result = await usersCollection.updateOne({ _id: user._id }, { $set: { isVerified: true } });
+          console.log('MongoDB update result:', result);
 
-      let  { UserName, VerificationToken } = req.body;
-      VerificationToken = bcrypt.hash(VerificationToken, 8)
-
-      try 
-      {
-          const user = await usersCollection.findOne({UserName, VerificationToken});
-
-          if (!user)
-            return res.status(401).json({error: 'Invalid OTP or User. Please try again.'})
-          
-          const verified = await usersCollection.findOneAndUpdate(
-            { isVerified: false },
-            { $set: { isVerified: true } }
+          const tokenUpdateResult = await usersCollection.updateOne(
+            { _id: user._id },
+            { $set: { VerificationToken: null } }
           );
-          res.status(200).json({ message: 'Email Verified'})
+          console.log('MongoDB token update result:', tokenUpdateResult);
+      
+          return res.status(200).json({ message: 'Email verification successful' });
+        } catch (error) {
+          console.error('Error during email verification:', error);
+          return res.status(500).json({ error: 'Internal server error' });
+        }
+      });
+
+      app.post('/forgot-password-email', async (req, res) => {
+
+        const { Email } = req.body;
+
+        try {
+          const user = await usersCollection.findOne({ Email: Email });
+
+          if (!user) {
+            console.log('User Email Not Found:', Email);
+            return res.status(404).json({ error: 'No Account with that Email Record.' });
+          }
+
+          const name = user.FirstName;
+          const VerificationToken = crypto.randomBytes(32).toString('hex');
+          usersCollection.updateOne( { _id: user._id }, { $set: {ResetPasswordToken: VerificationToken}});
+          const EmailURL = `https://www.fintech.davidumanzor.com/ResetPassword?token=${VerificationToken}`;
+
+        forgotPassword(name, Email, EmailURL);
+      
+          console.log('Email Sent To:', user);
+        }
+
+        catch (error) {
+          console.error('Error during forgot-password-email:', error);
+          return res.status(500).json({ error: 'Internal server error' });
+        }
         
-      }
-      catch (error) {
-        console.error(error);
-        res.status(500),json({ error: 'Internal Server Error'})
-      }
-    });
+    
+      })
+
+
+      app.post('/reset-password', async (req, res) => {
+        const token  = req.query.token.trim();
+        const { Password } = req.body;
+        console.log('Reset Password Token Received:', token);
+      
+        try {
+          const user = await usersCollection.findOne({ ResetPasswordToken: token });
+      
+          if (!user) {
+            console.log('User not found for verification token:', token);
+            return res.status(404).json({ error: 'Invalid verification token' });
+          }
+      
+          console.log('Found user for verification:', user);
+
+          if(!checkPassComplexity(Password)){
+            return res.status(402).json({ message: 'Password is too weak. It must be at least 8 characters long with a digit, special characte, an uppercase character and a lowercase character.' });
+          }
+      
+          // Update password
+          const passwordUpdateResult = await usersCollection.updateOne(
+            { _id: user._id },
+            { $set: { Password: Password } }
+          );
+          console.log('MongoDB password update result:', passwordUpdateResult);
+      
+          // Nullify reset password token
+          const tokenUpdateResult = await usersCollection.updateOne(
+            { _id: user._id },
+            { $set: { ResetPasswordToken: null } }
+          );
+          console.log('MongoDB token update result:', tokenUpdateResult);
+      
+          // You can check if both updates were successful and handle accordingly
+      
+          return res.status(200).json({ message: 'Password reset successful' });
+        } catch (error) {
+          console.error('Error during password reset:', error);
+          return res.status(500).json({ error: 'Internal server error' });
+        }
+      });
+      
+     
+      
 
 app.post('/api/info/:UserId', authenticateToken, async (req, res) => {
   try {
@@ -562,7 +674,7 @@ app.get('/api/accounts', authenticateToken, async (req, res) => {
 });
 
 // Get a specific account
-app.get('/api/account', authenticateToken, async (req, res) => {
+app.post('/api/account', authenticateToken, async (req, res) => {
   try {
     const UserId = req.user.UserId; // Get UserId from the JWT
     const AccountNum = req.body.AccountNum; // Get the AccountNum from the request body
@@ -704,9 +816,7 @@ app.post('/api/budgets/add/:UserId', authenticateToken, async (req, res) => {
       MonthlyExpensesAmt += MonthlyExpenses[x];
     }
     
-    var Transactions = {
-      
-    };
+    var Transactions = [];
     var TransactionsAmt = 0;
     for (x in Transactions) {
       TransactionsAmt += Transactions[x];
@@ -831,7 +941,7 @@ app.get('/api/budgets/get/:UserId', authenticateToken, async (req, res) => {
     const budgetGot = await budCollection.findOne({UserIdRef : parseInt(req.params.UserId)});
 
     // Return a success message
-    res.status(201).json({ message: JSON.stringify(budgetGot) });
+    res.status(201).json({budgetGot});
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });
@@ -842,7 +952,7 @@ app.get('/api/budgets/get/:UserId', authenticateToken, async (req, res) => {
 // add transaction + update budget
 app.post('/api/budgets/transactions/:UserId', authenticateToken, async (req, res) => {
   
-  var TransactionID = Math.floor(Math.random() * 999) + 1;
+  var TransactionID = Math.floor(Math.random() * 99999) + 1;
   var Transactions = {
     transactionID : TransactionID,
     transactionAmt : req.body.transactionAmt,
@@ -958,7 +1068,7 @@ app.put('/api/budgets/transactions/edit/:UserId', authenticateToken, async (req,
     }
 
     var Transactions = {
-      transactionID : Math.floor(Math.random() * 999) + 1,
+      transactionID : Math.floor(Math.random() * 99999) + 1,
       transactionAmt : req.body.transactionAmt,
       transactionCategory : req.body.transactionCategory
     };

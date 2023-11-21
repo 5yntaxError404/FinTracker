@@ -119,7 +119,7 @@ function SignUp(){
 				</button>
 				</div>
 				<p className="forgot-password text-right">
-				Forgot <a href="#">password?</a>
+				Forgot <a href="/ForgotPassword">password?</a>
 				</p>
 				<p className="new-account test-right"> 
 				Have an <a href="/login">account?</a>

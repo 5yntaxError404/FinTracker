@@ -9,9 +9,10 @@ import AccountsPage from './pages/AccountsPage';
 import HelpPage from './pages/HelpPage';
 import SettingsPage from './pages/SettingsPage';
 import BudgetsPage from './pages/BudgetsPage';
+import EmailVerificationPage from './pages/EmailVerificationPage';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import PasswordRecoveryPage from './pages/PasswordRecoveryPage';
-import EmailVerifiedPage from './pages/EmailVerifiedPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 
 function App() {
   return (
@@ -21,13 +22,14 @@ function App() {
                   <Route exact path="/" element={<LandingPage />} />
                   <Route path="/login" element={<LoginPage />} />
                   <Route path="/signup" element={<SignUpPage />} />
-                  <Route path="/dash" element={<DashPage />} />
+                  <Route path="/dash" element={<DashPage />} />       
                   <Route path="/accounts" element={<AccountsPage />} />
                   <Route path="/help" element={<HelpPage/>} />
                   <Route path="/settings" element={<SettingsPage/>} />
                   <Route path="/budgets" element={<BudgetsPage/>} />
-                  <Route path="/passwordrecovery" element={<PasswordRecoveryPage/>} />
-                  <Route path="/emailverified" element={<EmailVerifiedPage/>} />
+                  <Route path="/EmailVerification" element={<EmailVerificationPage/>} />
+                  <Route path="/ForgotPassword" element={<ForgotPasswordPage/>} />
+                  <Route path="/ResetPassword" element={<ResetPasswordPage/>} />
               </Routes>
           </div>
       </BrowserRouter>
