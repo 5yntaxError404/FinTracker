@@ -25,26 +25,14 @@ function AccountsPage() {
     {
         event.preventDefault();
 
-        let rent = document.getElementById("inputRent");
-        let utilities = document.getElementById("inputUtilities");
-        let groceries = document.getElementById("inputGroceries");
-        let insurance = document.getElementById("inputInsurance");
-        let phone = document.getElementById("inputPhone");
-        let car = document.getElementById("inputCar");
-        let gas = document.getElementById("inputGas");
-        let fun = document.getElementById("inputFun");
-        let goal = document.getElementById("inputGoal");
+        let AccountNum = document.getElementById("inputAccountNum");
+        let RouteNum = document.getElementById("inputRouteNum");
+        let BankName = document.getElementById("inputBankName");
 
 		var obj = {
-            rent: rent.value,
-            utilities: utilities.value,
-            groceries: groceries.value,
-            insurance: insurance.value,
-            phone: phone.value,
-            car: car.value,
-            gas: gas.value,
-            fun: fun.value,
-            goal: goal.value,
+            AccountNum: AccountNum.value,
+            RouteNum: RouteNum.value,
+            BankName: BankName.value,
 		};
 		var js = JSON.stringify(obj);
         
@@ -55,7 +43,7 @@ function AccountsPage() {
             console.log(userinfo.UserId);
 
             const response = await fetch(
-                `${base_url}/api/accounts/`,
+                `${base_url}/api/accounts/add/${userinfo.UserId}`,
                 {
                 method: 'POST',
                 headers: {
@@ -74,8 +62,8 @@ function AccountsPage() {
                 console.log("Some error");
             } 
             else {
-                setAccounts(obj);
                 setMessage('Success');
+                GetAccounts();
             }
 
 		} catch (e) {
@@ -230,7 +218,7 @@ function AccountsPage() {
                         </div>
                         <div className="form-group">
                             <label htmlFor="inputBankName">Bank Name</label>
-                            <input type="number" className="form-control" id="inputBankName"/>
+                            <input type="text" className="form-control" id="inputBankName"/>
                         </div>
                         <button type="submit" className="btn btn-primary" onClick={addAccount}>Add Budget</button>
                         </form>
