@@ -6,22 +6,10 @@ import '../css/BudgetsPage.css';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import ProgressBar from 'react-bootstrap/ProgressBar';
 
 // Looking for correct code to import font
 
-
 const BudgetPage = (props) => {
-
-    const rentRef = React.useRef(null);
-    const utilitiesRef = React.useRef(null);
-    const groceriesRef = React.useRef(null);
-    const insuranceRef = React.useRef(null);
-    const phoneRef = React.useRef(null);
-    const carRef = React.useRef(null);
-    const gasRef = React.useRef(null);
-    const funRef = React.useRef(null);
-    const goalRef = React.useRef(null);
 
     const [budget, setBudget] = useState({
         rent: 0,
@@ -36,53 +24,6 @@ const BudgetPage = (props) => {
     })
     const [message,setMessage] = '';
 
-	const EditBudget = async event =>
-	{
-        event.preventDefault();
-
-        var rent, utilities, groceries, insurance, phone, car, gas, fun, goal;
-
-		var obj = {
-            rent: rent.value,
-            utilities: utilities.value,
-            groceries: groceries.value,
-            insurance: insurance.value,
-            phone: phone.value,
-            car: car.value,
-            gas: gas.value,
-            fun: fun.value,
-            goal: goal.value,
-		};
-		var js = JSON.stringify(obj);
-	
-		try {
-
-			const response = await fetch('https://www.fintech.davidumanzor.com/api/budgets/edit/:UserId', {
-
-				method: 'post',
-				body: js,
-				headers: 
-                { 
-                    'Content-Type': 'application/json' 
-                }
-			});
-			var res = JSON.parse(await response.text());
-			console.log(res);
-
-			 if (res.error) {
-                setMessage('Unable to Login'); // Set an error message
-                console.log("Some error");
-            } 
-            else {
-                setMessage('Budget Edited.'); // Set a success message
-
-            }
-		} catch (e) {
-			alert(e.toString());
-			return;
-		}
-	};
-
     const AddBudget = async event =>
     {
         event.preventDefault();
@@ -96,6 +37,7 @@ const BudgetPage = (props) => {
         let gas = document.getElementById("inputGas");
         let fun = document.getElementById("inputFun");
         let goal = document.getElementById("inputGoal");
+
         const [message,setMessage] = '';
 
 		var obj = {
@@ -140,7 +82,6 @@ const BudgetPage = (props) => {
                     );
                 console.log("Made Call in Local");
             };
-            
 
 			var res = JSON.parse(await response.text());
 			console.log(res);
@@ -150,8 +91,7 @@ const BudgetPage = (props) => {
                 console.log("Some error");
             } 
             else {
-                setMessage('Budget Added.'); // Set a success message
-
+                setBudget(obj);
             }
 		} catch (e) {
 			alert(e.toString());
@@ -160,14 +100,8 @@ const BudgetPage = (props) => {
         
     };
 
-    const RemoveBudget = async event =>
+    const GetBudget = async () =>
     {
-
-    };
-
-    const GetBudget = async event =>
-    {
-        event.preventDefault();
 
         const [message,setMessage] = '';
         try {
