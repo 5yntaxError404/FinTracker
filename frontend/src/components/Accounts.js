@@ -145,21 +145,24 @@ function AccountsPage() {
 		}
     };
 
-    const deleteAccount = async () => 
+    const deleteAccount = async (id) => 
     {
         try {
             const userinfo = JSON.parse(localStorage.getItem('user'));
             console.log(userinfo);
             console.log(userinfo.UserId);
+
+            const js = JSON.stringify({AccountNum: id})
             
             const response = await fetch(
-                `${base_url}/api/accounts/`,
+                `${base_url}/api/accounts/delete/`,
                 {
-                method: 'POST',
+                method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${userinfo.accessToken}`
                 },
+                body: js,
                 credentials: 'same-origin',
             });
 
@@ -167,12 +170,12 @@ function AccountsPage() {
 			console.log(res);
 
 			if (res.error) {
-                setMessage('Unable to get accounts'); // Set an error message
+                setMessage('Unable to delete account'); // Set an error message
                 console.log('Some error');
             } 
             else {
-                setAccounts(res);
                 setMessage('Success');
+                GetAccounts();
             }
             
 		} catch (e) {
@@ -197,7 +200,7 @@ function AccountsPage() {
                                 <button className="account_button" onClick={() => EditAccount(accounts._id)}> Edit Account</button>
                                 </Col>
                                 <Col>
-                                <button className="account_button" onClick={() => deleteAccount(accounts._id)}> Delete Account </button>
+                                <button className="account_button" onClick={() => deleteAccount(accounts.AccountNum)}> Delete Account </button>
                                 </Col>
                                 
                             </Row>

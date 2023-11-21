@@ -38,7 +38,7 @@
 }
 
 .account {
-    top: 43vh;
+    top: 95%;
     position: relative;
     height: 50vh;
     background-image: linear-gradient(to bottom right, #211522, #613659);
