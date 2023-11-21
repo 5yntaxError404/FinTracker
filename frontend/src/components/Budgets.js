@@ -1,5 +1,5 @@
 // src/BudgetPage.js
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import '../css/LandingPage.css';
 import '../css/BudgetsPage.css';
 
@@ -9,8 +9,9 @@ import Col from 'react-bootstrap/Col';
 
 // Looking for correct code to import font
 
-const BudgetPage = (props) => {
+function BudgetPage() {
 
+    // Constants needed for the page
     const [budget, setBudget] = useState({
         rent: 0,
         utilities: 0,
@@ -22,8 +23,13 @@ const BudgetPage = (props) => {
         fun: 0,
         goal: 0
     })
-    const [message,setMessage] = '';
+    const [message,setMessage] = useState('');
+    
+    const base_url = process.env.NODE_ENV === "production"
+    ? `https://www.fintech.davidumanzor.com`
+    : `http://localhost:5000`;
 
+    // Adds and Edits Budget in DB and updates webpage
     const AddBudget = async event =>
     {
         event.preventDefault();
@@ -37,8 +43,6 @@ const BudgetPage = (props) => {
         let gas = document.getElementById("inputGas");
         let fun = document.getElementById("inputFun");
         let goal = document.getElementById("inputGoal");
-
-        const [message,setMessage] = '';
 
 		var obj = {
             rent: rent.value,
@@ -55,10 +59,13 @@ const BudgetPage = (props) => {
         
 		try {
             const userinfo = JSON.parse(localStorage.getItem('user'));
+
             console.log(userinfo);
             console.log(userinfo.UserId);
-            let response;
-            let requestInit = {
+
+            const response = await fetch(
+                `${base_url}/api/budgets/add/${userinfo.UserId}`,
+                {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -66,73 +73,44 @@ const BudgetPage = (props) => {
                 },
                 body: js,
                 credentials: 'same-origin',
-            }
-
-            if (process.env.NODE_ENV === "production") {
-                response = await fetch(
-                    "https://www.fintech.davidumanzor.com/api/budgets/add/" + userinfo.UserId,
-                    requestInit
-                    );
-                console.log("Made Call in Production");
-            } 
-            else {
-                response = await fetch(
-                    "http://localhost:5000/api/budgets/add/" + userinfo.UserId, 
-                    requestInit
-                    );
-                console.log("Made Call in Local");
-            };
+            });
 
 			var res = JSON.parse(await response.text());
 			console.log(res);
 
-			 if (res.error) {
+			if (res.error) {
                 setMessage('Unable to add Budget'); // Set an error message
                 console.log("Some error");
             } 
             else {
                 setBudget(obj);
+                setMessage('Success');
             }
+
 		} catch (e) {
 			alert(e.toString());
 			return;
 		}
-        
     };
 
+    // Obtains budget from DB and updates webpage
     const GetBudget = async () =>
     {
-
-        const [message,setMessage] = '';
         try {
             const userinfo = JSON.parse(localStorage.getItem('user'));
             console.log(userinfo);
             console.log(userinfo.UserId);
-            let response;
-            let requestInit = {
+            
+            const response = await fetch(
+                `${base_url}/api/budgets/get/${userinfo.UserId}`,
+                {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${userinfo.accessToken}`
                 },
                 credentials: 'same-origin',
-            }
-
-            if (process.env.NODE_ENV === "production") {
-                response = await fetch(
-                    "https://www.fintech.davidumanzor.com/api/budgets/get/" + userinfo.UserId,
-                    requestInit
-                    );
-                console.log("Made Call in Production");
-            } 
-            else {
-                response = await fetch(
-                    "http://localhost:5000/api/budgets/get/" + userinfo.UserId, 
-                    requestInit
-                    );
-                console.log("Made Call in Local");
-            };
-            
+            });
 
 			var res = JSON.parse(await response.text());
 			console.log(res);
@@ -141,19 +119,17 @@ const BudgetPage = (props) => {
 
 			if (res.error) {
                 setMessage('Unable to get Budget'); // Set an error message
-                console.log("Some error");
+                console.log('Some error');
             } 
             else {
-                //setMessage('Budget Got');
-                const budget = res.budgetGot.MonthlyExpenses;
-                setBudget(budget);
+                setBudget(res.budgetGot.MonthlyExpenses);
+                setMessage('Success');
             }
             
 		} catch (e) {
 			alert(e.toString());
 			return;
 		}
-        
     };
 
     return (
