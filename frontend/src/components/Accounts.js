@@ -109,21 +109,34 @@ function AccountsPage() {
 		}
     };
 
-    const EditAccount = async () => 
+    const EditAccount = async (AccountNum) => 
     {
-        try {
+        const NewAccountNum = parseInt(document.getElementById("inputAccountNum").value);
+        const NewRouteNum = parseInt(document.getElementById("inputRouteNum").value);
+        const NewBankName = document.getElementById("inputBankName").value;
+		var obj = {
+            newAccountNum: NewAccountNum,
+            newRouteNum: NewRouteNum,
+            newBankName: NewBankName,
+            oldAccountNum: AccountNum,
+		};
+		var js = JSON.stringify(obj);
+        
+		try {
             const userinfo = JSON.parse(localStorage.getItem('user'));
+
             console.log(userinfo);
             console.log(userinfo.UserId);
-            
+
             const response = await fetch(
-                `${base_url}/api/accounts/`,
+                `${base_url}/api/accounts/edit/${userinfo.UserId}`,
                 {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${userinfo.accessToken}`
                 },
+                body: js,
                 credentials: 'same-origin',
             });
 
@@ -132,13 +145,13 @@ function AccountsPage() {
 
 			if (res.error) {
                 setMessage('Unable to get accounts'); // Set an error message
-                console.log('Some error');
+                console.log("Some error");
             } 
             else {
-                setAccounts(res);
                 setMessage('Success');
+                GetAccounts();
             }
-            
+
 		} catch (e) {
 			alert(e.toString());
 			return;
@@ -197,7 +210,7 @@ function AccountsPage() {
                                 <p>Account Number: {accounts.AccountNum}</p>
                                 <p>Routing Number: {accounts.RouteNum}</p>
                                 <Col>
-                                <button className="account_button" onClick={() => EditAccount(accounts._id)}> Edit Account</button>
+                                <button className="account_button" onClick={() => EditAccount(accounts.AccountNum)}> Edit Account</button>
                                 </Col>
                                 <Col>
                                 <button className="account_button" onClick={() => deleteAccount(accounts.AccountNum)}> Delete Account </button>
