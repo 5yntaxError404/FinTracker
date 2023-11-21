@@ -87,7 +87,14 @@ function Login() {
                         if (process.env.NODE_ENV === "production") {
                             infoResponse = await fetch(
                                 "https://www.fintech.davidumanzor.com/api/info/" + userinfo.UserId,
-                                requestInit
+                                {
+                                    method: 'GET',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'Authorization': `Bearer ${accessToken}`
+                                    },
+                                    credentials: 'same-origin',
+                                }
                                 );
                             console.log("Made Call in Production");
                         } 
