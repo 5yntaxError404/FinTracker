@@ -77,18 +77,37 @@ const LandingPage = (props) => {
             goal: goal.value,
 		};
 		var js = JSON.stringify(obj);
-	
+        /*
 		try {
+            
+            let response;
+            let requestInit = {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${accessToken}`
+                },
+                credentials: 'same-origin',
+            }
 
-			const response = await fetch('https://www.fintech.davidumanzor.com/api/budgets/add/:UserId', {
+            userinfo = localStorage("UserInfo");
 
-				method: 'post',
-				body: js,
-				headers: 
-                { 
-                    'Content-Type': 'application/json' 
-                }
-			});
+            if (process.env.NODE_ENV === "production") {
+                response = await fetch(
+                    "https://www.fintech.davidumanzor.com/api/budgets/add/" + userinfo.UserId,
+                    requestInit
+                    );
+                console.log("Made Call in Production");
+            } 
+            else {
+                response = await fetch(
+                    "http://localhost:5000/api/budgets/add/" + userinfo.UserId, 
+                    requestInit
+                    );
+                console.log("Made Call in Local");
+            };
+            
+
 			var res = JSON.parse(await response.text());
 			console.log(res);
 
@@ -104,6 +123,7 @@ const LandingPage = (props) => {
 			alert(e.toString());
 			return;
 		}
+        */
     };
 
     const RemoveBudget = async event =>

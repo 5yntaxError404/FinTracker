@@ -234,7 +234,7 @@ app.post('/api/register', async (req, res) => {
       }
     });
 
-app.get('/api/info/:UserId', authenticateToken, async (req, res) => {
+app.post('/api/info/:UserId', authenticateToken, async (req, res) => {
   try {
 
     if(parseInt(req.params.UserId) != req.user.UserId){

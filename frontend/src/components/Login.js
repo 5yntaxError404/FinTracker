@@ -77,7 +77,7 @@ function Login() {
                         console.log("Making Get Call");
                         let infoResponse;
                         let requestInit = {
-                            method: 'GET',
+                            method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
                                 'Authorization': `Bearer ${accessToken}`
@@ -86,21 +86,14 @@ function Login() {
                         }
                         if (process.env.NODE_ENV === "production") {
                             infoResponse = await fetch(
-                                "https://www.fintech.davidumanzor.com/api/info/" + userinfo.UserId,
-                                {
-                                    method: 'GET',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                        'Authorization': `Bearer ${accessToken}`
-                                    },
-                                    credentials: 'same-origin',
-                                }
+                                'https://www.fintech.davidumanzor.com/api/info/' + userinfo.UserId,
+                                requestInit
                                 );
                             console.log("Made Call in Production");
                         } 
                         else {
                             infoResponse = await fetch(
-                                "http://localhost:5000/api/info/" + userinfo.UserId, 
+                                'http://localhost:5000/api/info/' + userinfo.UserId, 
                                 requestInit
                                 );
                             console.log("Made Call in Local");
