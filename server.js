@@ -14,7 +14,7 @@ const port = process.env.PORT || 5000; // Heroku set port
 const app = express();
 
 const bcrypt = require ("bcrypt");
-app.use(cors());
+app.use(cors({origin: ["http://localhost:3000", "https://www.fintech.davidumanzor.com"]}));
 app.use(bodyParser.json());
 app.use(cookieParser());
 
