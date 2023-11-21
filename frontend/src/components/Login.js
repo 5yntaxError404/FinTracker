@@ -81,7 +81,8 @@ function Login() {
                             headers: {
                                 'Content-Type': 'application/json',
                                 'Authorization': `Bearer ${accessToken}`
-                            }
+                            },
+                            credentials: 'same-origin',
                         }
                         if (process.env.NODE_ENV === "production") {
                             infoResponse = await fetch(
