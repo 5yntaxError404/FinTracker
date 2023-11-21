@@ -131,7 +131,7 @@ function AccountsPage() {
             const response = await fetch(
                 `${base_url}/api/accounts/edit/${userinfo.UserId}`,
                 {
-                method: 'POST',
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${userinfo.accessToken}`
