@@ -88,21 +88,23 @@ function Login() {
                                 "https://www.fintech.davidumanzor.com/api/info/" + userinfo.UserId,
                                 requestInit
                                 );
+                            console.log("Made Call in Production");
                         } 
                         else {
                             infoResponse = await fetch(
                                 "http://localhost:5000/api/info/" + userinfo.UserId, 
                                 requestInit
                                 );
+                            console.log("Made Call in Local");
                         };
-        
+
                         if (!infoResponse.ok) {
                             console.log(infoResponse.status, infoResponse.statusText);
                             throw new Error('Network response was not ok');
                         }
         
                         const data = await infoResponse.json();
-                        console.log("Parsed JSON data: " + data);
+                        console.log("Parsed JSON data:", data);
                   
                 } catch (error) {
                 console.error('There was a problem with the fetch operation:', error);
