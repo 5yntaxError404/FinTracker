@@ -931,7 +931,7 @@ app.put('/api/budgets/edit/:UserId', authenticateToken, async (req, res) => {
   }
 });
 
-app.get('/api/budgets/get/:UserId', authenticateToken, async (req, res) => {
+app.post('/api/budgets/get/:UserId', authenticateToken, async (req, res) => {
   try {
 
     if(parseInt(req.params.UserId) != req.user.UserId){
