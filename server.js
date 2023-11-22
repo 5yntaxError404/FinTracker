@@ -658,13 +658,13 @@ app.post('/api/accounts/add/:UserId', authenticateToken, async (req, res) => {
 });
 
 // Get all accounts for the authenticated user
-app.get('/api/accounts', authenticateToken, async (req, res) => {
+app.post('/api/accounts', authenticateToken, async (req, res) => {
   try {
     const UserId = req.user.UserId; // Get UserId from the JWT
 
     // Query your database to fetch all the user's account information based on the UserId
     //Doesn't work because it would be an array - we can workshop this
-    const userAccounts = await accCollection.find({ UserIdRef: UserId }).toArray;
+    const userAccounts = await accCollection.find({ UserIdRef: UserId }).toArray();
 
     res.status(200).json(userAccounts);
   } catch (error) {
