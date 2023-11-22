@@ -3,6 +3,9 @@ import React, { useState } from 'react';
 import '../css/LoginPage.css';
 
 function Login() {
+    const base_url = process.env.NODE_ENV === "production"
+    ? `https://www.fintech.davidumanzor.com`
+    : `http://localhost:5000`;
 
     var username,password;
     const [message,setMessage] = useState('');
@@ -13,109 +16,85 @@ function Login() {
         var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
             return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
         }).join(''));
-    
         return JSON.parse(jsonPayload);
     }
-
-    const passwordRecovery = async event =>
-        {
-            window.location.href = '/passwordrecovery';
+    
+    const doLogin = async event => {
+        event.preventDefault();
+    
+        const obj = {
+            "UserName": username.value,
+            "Password": password.value
         };
 
-        const doLogin = async event => {
-            event.preventDefault();
-        
-            const obj = {
-                "UserName": username.value,
-                "Password": password.value
-            };
-        
-            try {
-                let response;
+        const js = JSON.stringify(obj);
+        try {
 
-                if (process.env.NODE_ENV === "production") {
-                    response = await fetch("https://www.fintech.davidumanzor.com/api/login", {
+            const response = await fetch(
+                `${base_url}/api/login/`,
+                {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: js,
+                credentials: 'same-origin',
+            });
+    
+            const res = await response.json();
+            console.log(res);
+    
+            if (res.error) {
+                setMessage('Unable to Login');
+                console.log("Some error");
+            } else {
+                setMessage('Logged In.');
+    
+                const parsedToken = parseJwt(res.accessToken);
+                console.log(parsedToken);
+    
+                const userinfo = {
+                    accessToken: res.accessToken,
+                    UserId: parsedToken.UserId
+                };
+                const accessToken = res.accessToken;
+                localStorage.setItem('user', JSON.stringify(userinfo));
+    
+                console.log(localStorage.getItem('user'));
+    
+                try {
+                    console.log("Making Get Call");
+
+                    const infoResponse = await fetch(
+                        `${base_url}/api/info/${userinfo.UserId}`,
+                        {
                         method: 'POST',
-                        body: JSON.stringify(obj),
                         headers: {
                             'Content-Type': 'application/json',
-                        }
+                            'Authorization': `Bearer ${userinfo.accessToken}`
+                        },
+                        credentials: 'same-origin',
                     });
-                  } 
-                else {
-                response = await fetch("http://localhost:5000/api/login", {
-                    method: 'POST',
-                    body: JSON.stringify(obj),
-                    headers: {
-                        'Content-Type': 'application/json',
+
+                    if (!infoResponse.ok) {
+                        console.log(infoResponse.status, infoResponse.statusText);
+                        throw new Error('Network response was not ok');
                     }
-                });
-                };
-        
-                const res = await response.json();
-                console.log(res);
-        
-                if (res.error) {
-                    setMessage('Unable to Login');
-                    console.log("Some error");
-                } else {
-                    setMessage('Logged In.');
-        
-                    const parsedToken = parseJwt(res.accessToken);
-                    console.log(parsedToken);
-        
-                    const userinfo = {
-                        accessToken: res.accessToken,
-                        UserId: parsedToken.UserId
-                    };
-                    const accessToken = res.accessToken;
-                    localStorage.setItem('user', JSON.stringify(userinfo));
-        
-                    console.log(localStorage.getItem('user'));
-        
-                    try {
-                        console.log("Making Get Call");
-                        let infoResponse;
-                        let requestInit = {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Authorization': `Bearer ${accessToken}`
-                            },
-                            credentials: 'same-origin',
-                        }
-                        if (process.env.NODE_ENV === "production") {
-                            infoResponse = await fetch(
-                                'https://www.fintech.davidumanzor.com/api/info/' + userinfo.UserId,
-                                requestInit
-                                );
-                            console.log("Made Call in Production");
-                        } 
-                        else {
-                            infoResponse = await fetch(
-                                'http://localhost:5000/api/info/' + userinfo.UserId, 
-                                requestInit
-                                );
-                            console.log("Made Call in Local");
-                        };
-
-                        if (!infoResponse.ok) {
-                            console.log(infoResponse.status, infoResponse.statusText);
-                            throw new Error('Network response was not ok');
-                        }
-        
-                        const data = await infoResponse.json();
-                        console.log("Parsed JSON data:", data);
-                  
-                } catch (error) {
-                console.error('There was a problem with the fetch operation:', error);
+    
+                    const data = await infoResponse.json();
+                    console.log("Parsed JSON data:", data);
+            
+                } 
+                catch (error) {
+                    console.error('There was a problem with the fetch operation:', error);
                 }
-
+            window.location.href = '/dash';
             }
-		} catch (e) {
-			alert(e.toString());
-			return;
-		}
+        } 
+        catch (e) {
+        alert(e.toString());
+        return;
+        }
     }
 
     return (
