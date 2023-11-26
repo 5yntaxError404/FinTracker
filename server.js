@@ -10,7 +10,7 @@ const cookieParser = require('cookie-parser');
 const { MongoClient } = require('mongodb');
 const { generateOneTimePass, verifyEmail } = require('./mailing');
 require('dotenv/config');
-const port = process.env.PORT || 5000; // Heroku set port
+// const port = process.env.PORT || 5000; // Heroku set port
 const app = express();
 
 const bcrypt = require ("bcrypt");
@@ -59,12 +59,14 @@ async function main() {
       const accCollection = db.collection('Accounts');
       const achCollection = db.collection('Achievements');
       const budCollection = db.collection('Budgets');     
-      app.listen(port, () => {
-        console.log(`Server is running on ${port}`);
-      });
+ //     app.listen(port, () => {
+   //     console.log(`Server is running on ${port}`);
+     // });
   
    // Define a variable for the user counter
 let userCounter = 665;
+
+
 
 // JWT post
 app.get('/posts, authenticateToken', (req, res) => {
@@ -397,6 +399,7 @@ app.get('/api/accounts', authenticateToken, async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 app.get('/api/info/:UserId', authenticateToken, async (req, res) => {
   try {
 
@@ -1039,13 +1042,28 @@ app.get('/api/achievements/get/:UserId', authenticateToken, async (req, res) => 
   }
 }); 
     
+
+
+
     }
     catch
     {
-      //console.error(error);
+      console.error(error);
     }
   }
-  
+
   
   main().catch(console.error);
+
+  function startServer() {
+    const port = process.env.PORT || 5000; // Use port from environment variable or default to 5000
+    app.listen(port, () => {
+      console.log(`Server is running on ${port}`);
+    });
+  }
+  // Start the server only if the file is executed directly
+  if (require.main === module) {
+    startServer();
+  }
+  module.exports = {app, startServer}; // Export the app for testing purposes
 
