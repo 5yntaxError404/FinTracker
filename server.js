@@ -109,7 +109,6 @@ app.post('/api/register', async (req, res) => {
       UserId: userCounter,
       FirstName,
       LastName,
-      UserId: userCounter,
       Email,
       UserName,
       Password,

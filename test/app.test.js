@@ -1,4 +1,4 @@
-const { authenticateUser } = require('./appTest'); // Replace with the correct path to your function file
+const { authenticateUser } = require('./Mocks'); // Import the function to test
 
 describe('Authentication Tests', () => {
   test('Valid credentials return user object', () => {
@@ -26,5 +26,4 @@ describe('Authentication Tests', () => {
     expect(user).toEqual({ id: 2, username: 'user2', password: 'password2', isVerified: false });
   });
 
-  // Add more test cases based on different scenarios and edge cases
 });
