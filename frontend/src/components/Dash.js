@@ -8,6 +8,96 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 
+// Constants needed for the page
+const [budget, setBudget] = useState({
+    rent: 0,
+    utilities: 0,
+    groceries: 0,
+    insurance: 0,
+    phone: 0,
+    car: 0,
+    gas: 0,
+    fun: 0,
+    goal: 0
+})
+const [message,setMessage] = useState('');
+const [accounts, setAccounts] = useState([]);
+
+    // Obtains budget from DB and updates webpage
+    const GetAccounts = async () =>
+    {
+        try {
+            const userinfo = JSON.parse(localStorage.getItem('user'));
+            console.log(userinfo);
+            console.log(userinfo.UserId);
+            
+            const response = await fetch(
+                `${base_url}/api/accounts/`,
+                {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${userinfo.accessToken}`
+                },
+                credentials: 'same-origin',
+            });
+
+			var res = JSON.parse(await response.text());
+			console.log(res);
+
+			if (res.error) {
+                setMessage('Unable to get accounts'); // Set an error message
+                console.log('Some error');
+            } 
+            else {
+                setAccounts(res);
+                setMessage('Success');
+            }
+            
+		} catch (e) {
+			alert(e.toString());
+			return;
+		}
+    };
+
+ // Obtains budget from DB and updates webpage
+ const GetBudget = async () =>
+ {
+     try {
+         const userinfo = JSON.parse(localStorage.getItem('user'));
+         console.log(userinfo);
+         console.log(userinfo.UserId);
+         
+         const response = await fetch(
+             `${base_url}/api/budgets/get/${userinfo.UserId}`,
+             {
+             method: 'POST',
+             headers: {
+                 'Content-Type': 'application/json',
+                 'Authorization': `Bearer ${userinfo.accessToken}`
+             },
+             credentials: 'same-origin',
+         });
+
+         var res = JSON.parse(await response.text());
+         console.log(res);
+         console.log(res.budgetGot.MonthlyExpenses);
+         console.log(res.budgetGot.MonthlyExpenses.rent);
+
+         if (res.error) {
+             setMessage('Unable to get Budget'); // Set an error message
+             console.log('Some error');
+         } 
+         else {
+             setBudget(res.budgetGot.MonthlyExpenses);
+             setMessage('Success');
+         }
+         
+     } catch (e) {
+         alert(e.toString());
+         return;
+     }
+ };
 
 const Dash = (props) => {
 

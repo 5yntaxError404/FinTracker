@@ -13,7 +13,7 @@ import Col from 'react-bootstrap/Col';
 function AccountsPage() {
 
     // Constants needed for the page
-    const [accounts, setAccounts] = useState([])
+    const [accounts, setAccounts] = useState([]);
     const [message,setMessage] = useState('');
     
     const base_url = process.env.NODE_ENV === "production"
