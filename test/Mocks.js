@@ -38,6 +38,16 @@ const users = [
       res.status(500).json({ error: 'Internal server error' });
     }
   });
+  
+  const usersCollection = {
+    findOne: jest.fn(),
+    insertOne: jest.fn(),
+  };
+  
+  const crypto = {
+    randomBytes: jest.fn(() => ({ toString: () => 'mockVerificationToken' })),
+  };
+  
 
 // REGISTRATION 
 appTest.post('/api/register', async (req, res) => {
@@ -95,10 +105,6 @@ appTest.post('/api/register', async (req, res) => {
 // END OF REGISTRATION
 
 // AUTHENTICATION ENDPOINTS
-// File: mocks.js (Mocking dependencies)
-const crypto = {
-  randomBytes: jest.fn(() => ({ toString: () => 'mockVerificationToken' })),
-};
 
 
 function checkPassComplexity(pass){
