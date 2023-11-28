@@ -245,18 +245,21 @@
   
   .forms_field-input {
 	width: 100%;
-	border: 1px solid #ccc;
-	border-radius: 3px;
-	padding: 10px;
+	border: none; /* Remove border */
+	border-radius: 20px; /* Add border-radius to make it look like a bubble */
+	padding: 15px; /* Adjust padding for better spacing */
+	margin-bottom: 15px; /* Add margin to separate form fields */
 	font-family: 'Montserrat', sans-serif;
-	font-size: 1rem;
-	font-weight: 300;
+	font-size: 1.2rem; /* Increase font size */
+	font-weight: 500;
 	color: #333;
-	transition: border-color 0.2s ease-in-out;
+	background-color: #fff; /* Add background color */
+	transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out;
   }
   
   .forms_field-input:focus {
-	border-color: #e8716d;
+	background-color: #e8716d; /* Change background color on focus */
+	transform: scale(1.05); /* Add slight scale effect on focus */
   }
   
   .forms_buttons {
