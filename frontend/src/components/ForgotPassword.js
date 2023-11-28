@@ -13,8 +13,17 @@ function ForgotMyPassword() {
     try {
       // Replace the following line with your actual logic to send reset emails
       // Simulating an asynchronous operation (e.g., API call)
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      setMessage('Password Reset Email Sent. Check your email for a reset link.');
+      const response = await fetch(`https://www.fintech.davidumanzor.com/forgot-password-email`, {
+        method: 'post',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ Email: email }),
+      });
+
+      if (response.status === 200) {
+        setMessage('Password Reset Email Sent. Check your email for a reset link.');
+      } else {
+        setMessage('Unable to send Password Reset Email.');
+      }
     } catch (error) {
       setMessage('Unable to send Password Reset Email.');
     }
