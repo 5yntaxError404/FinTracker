@@ -1,3 +1,5 @@
+// ResetMyPassword.js
+
 import React, { useState } from 'react';
 import '../css/ResetPassword.css';
 
@@ -38,6 +40,11 @@ function ResetMyPassword() {
       if (response.status === 200) {
         setVerificationMessage('Password Change Successful!');
         setMessage(''); // Clear any previous error messages
+
+        // Redirect to login after 3 seconds
+        setTimeout(() => {
+          window.location.href = '/login'; // Change this to the actual login route
+        }, 3000);
       } else {
         setMessage('Unable to reset password.');
         setVerificationMessage(''); // Clear any previous verification message
