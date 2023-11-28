@@ -62,7 +62,7 @@ const EmailVerification = () => {
                 <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
               </svg>
             </div>
-            <p style={{ color: 'green', fontSize: '24px', marginLeft: '10px' }}>Verified!</p>
+            <p className="verified-text">Verified!</p>
             <p>Redirecting to login...</p>
           </div>
         ) : (
