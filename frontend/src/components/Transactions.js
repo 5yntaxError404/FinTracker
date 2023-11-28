@@ -1,7 +1,7 @@
 // src/BudgetPage.js
 import React, { useState } from 'react';
 import '../css/LandingPage.css';
-import '../css/BudgetsPage.css';
+import '../css/TransactionPage.css';
 
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -20,30 +20,16 @@ function TransactionsPage() {
     : `http://localhost:5000`;
 
     // Adds and Edits Budget in DB and updates webpage
-    const AddTransactions = async event =>
+    const AddTransaction = async event =>
     {
         event.preventDefault();
 
-        let rent = document.getElementById("inputRent");
-        let utilities = document.getElementById("inputUtilities");
-        let groceries = document.getElementById("inputGroceries");
-        let insurance = document.getElementById("inputInsurance");
-        let phone = document.getElementById("inputPhone");
-        let car = document.getElementById("inputCar");
-        let gas = document.getElementById("inputGas");
-        let fun = document.getElementById("inputFun");
-        let goal = document.getElementById("inputGoal");
+        let transactionAmt = document.getElementById("inputTransactionAmt");
+        let transactionCategory = document.getElementById("inputTransactionCategory");
 
 		var obj = {
-            rent: rent.value,
-            utilities: utilities.value,
-            groceries: groceries.value,
-            insurance: insurance.value,
-            phone: phone.value,
-            car: car.value,
-            gas: gas.value,
-            fun: fun.value,
-            goal: goal.value,
+            transactionAmt: transactionAmt.value,
+            transactionCategory: transactionCategory.value,
 		};
 		var js = JSON.stringify(obj);
         
@@ -54,7 +40,7 @@ function TransactionsPage() {
             console.log(userinfo.UserId);
 
             const response = await fetch(
-                `${base_url}/api/budgets/add/${userinfo.UserId}`,
+                `${base_url}/api/budgets/transactions/${userinfo.UserId}`,
                 {
                 method: 'POST',
                 headers: {
@@ -66,14 +52,13 @@ function TransactionsPage() {
             });
 
 			var res = JSON.parse(await response.text());
-			console.log(res);
 
 			if (res.error) {
                 setMessage('Unable to add Budget'); // Set an error message
                 console.log("Some error");
             } 
             else {
-                setTransactions(obj);
+                GetTransactions();
                 setMessage('Success');
             }
 
@@ -82,6 +67,22 @@ function TransactionsPage() {
 			return;
 		}
     };
+
+    const EditTransaction = async () =>
+    {
+        try {
+
+        }
+        catch
+        {
+
+        }
+    }
+
+    const deleteTransaction = async () =>
+    {
+
+    }
 
     // Obtains budget from DB and updates webpage
     const GetTransactions = async () =>
@@ -92,7 +93,7 @@ function TransactionsPage() {
             console.log(userinfo.UserId);
             
             const response = await fetch(
-                `${base_url}/api/budgets/get/${userinfo.UserId}`,
+                `${base_url}/api/budgets/transactions/get/${userinfo.UserId}`,
                 {
                 method: 'POST',
                 headers: {
@@ -104,15 +105,15 @@ function TransactionsPage() {
 
 			var res = JSON.parse(await response.text());
 			console.log(res);
-            console.log(res.budgetGot.Transactions);
-            console.log(res.budgetGot.TransactionsAmt);
+            console.log(res[0]);
+            console.log(res[0].Transactions);
 
 			if (res.error) {
                 setMessage('Unable to get Budget'); // Set an error message
                 console.log('Some error');
             } 
             else {
-                setTransactions(res.budgetGot.Transactions);
+                setTransactions(res);
                 setMessage('Success');
             }
             
@@ -129,15 +130,15 @@ function TransactionsPage() {
                 <Row>
                 <Col sm={1} md={3} className="accountsInfo">
                         {transactions.map(transactions => (
-                            <Row className="account" key={accounts._id}>
-                                <p>Bank Name: {accounts.BankName}</p>
-                                <p>Account Number: {accounts.AccountNum}</p>
-                                <p>Routing Number: {accounts.RouteNum}</p>
+                            <Row className="account" key={transactions.Transactions.transactionID}>
+                                <p>Transaction</p>
+                                <p>Amount: {transactions.Transactions.transactionAmt}</p>
+                                <p>Category: {transactions.Transactions.transactionCategory}</p>
                                 <Col>
-                                <button className="account_button" onClick={() => EditAccount(accounts.AccountNum)}> Edit Account</button>
+                                <button className="account_button" onClick={() => EditTransaction(transactions.AccountNum)}> Edit Transaction</button>
                                 </Col>
                                 <Col>
-                                <button className="account_button" onClick={() => deleteAccount(accounts.AccountNum)}> Delete Account </button>
+                                <button className="account_button" onClick={() => deleteTransaction(transactions.AccountNum)}> Delete Transaction </button>
                                 </Col>
                                 
                             </Row>
@@ -146,47 +147,28 @@ function TransactionsPage() {
                     <Col sm={3} md={6} className="content">
                     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono"></link>
                         <form className='addBudgetForm'>
-                        <div className="form-row">
-                            <div className="form-group">
-                            <label htmlFor="inputRent">Rent</label>
-                            <input type="number" className="form-control" id="inputRent"/>
-                            </div>
-                            <div className="form-group">
-                            <label htmlFor="inputUtilities">Utilities</label>
-                            <input type="number" className="form-control" id="inputUtilities"/>
-                            </div>
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="inputGroceries">Groceries</label>
-                            <input type="number" className="form-control" id="inputGroceries"/>
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="inputInsurance">Insurance</label>
-                            <input type="number" className="form-control" id="inputInsurance"/>
-                        </div>
-                        <div className="form-row">
-                            <div className="form-group">
-                                <label htmlFor="inputPhone">Phone</label>
-                                <input type="number" className="form-control" id="inputPhone"/>
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="inputCar">Car</label>
-                                <input type="number" className="form-control" id="inputCar"/>
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="inputGas">Gas</label>
-                                <input type="number" className="form-control" id="inputGas"/>
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="inputFun">Fun</label>
-                                <input type="number" className="form-control" id="inputFun"/>
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="inputGoal">Goal</label>
-                                <input type="number" className="form-control" id="inputGoal"/>
-                            </div>
-                        </div>
-                        <button type="submit" className="btn btn-primary" onClick={AddBudget}>Add Budget</button>
+                        
+                        <Container>
+                            <Row>
+                                <Col>
+                                <label htmlFor="inputTransactionAmt">Transaction Amount</label>
+                                <input type="number" className="form-control" id="inputTransactionAmt"/>
+                                </Col>
+                                <Col>
+                                <label htmlFor="inputTransactionCategory">Transaction Category</label>
+                                <select type="text" className="form-control" id="inputTransactionCategory">
+                                    <option value="Car">Car</option>
+                                    <option value="Rent">Rent</option>
+                                    <option value="Gas">Gas</option>
+                                    <option value="Groceries">Groceries</option>
+                                    <option value="Fun">Fun</option>
+                                    <option value="Insurance">Insurance</option>
+                                    <option value="Utilities">Utilities</option>
+                                </select>
+                                </Col>
+                            </Row>
+                        </Container>
+                        <button type="submit" className="btn btn-primary" onClick={AddTransaction}>Add Transaction</button>
                         </form>
                     </Col>
                 </Row>
@@ -197,4 +179,4 @@ function TransactionsPage() {
     );
 }
 
-export default BudgetPage;
+export default TransactionsPage;
