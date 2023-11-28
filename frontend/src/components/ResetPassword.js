@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import '../css/LoginPage.css';
+import '../css/ResetPassword.css';
 
 function ResetMyPassword() {
   var Password, confirmPassword;
