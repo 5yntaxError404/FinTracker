@@ -51,11 +51,11 @@ function ResetMyPassword() {
           <h3>Reset Your Password</h3>
 
           <div className="mb-3">
-            <label htmlFor="Password">Password</label>
+            <label htmlFor="Password" className="forms_field-label">Password</label>
             <input
               type="password"
               id="Password"
-              className="user-input-field"
+              className="user-input-field forms_field-input"
               placeholder="Password"
               ref={(c) => (Password = c)}
               onChange={handlePasswordChange}
@@ -64,11 +64,11 @@ function ResetMyPassword() {
           </div>
 
           <div className="mb-3">
-            <label htmlFor="confirmPassword">Confirm Password</label>
+            <label htmlFor="confirmPassword" className="forms_field-label">Confirm Password</label>
             <input
               type="password"
               id="confirmPassword"
-              className={`user-input-field ${passwordsMatch ? '' : 'passwords-no-match'}`}
+              className={`user-input-field forms_field-input ${passwordsMatch ? '' : 'passwords-no-match'}`}
               placeholder="Confirm Password"
               ref={(c) => (confirmPassword = c)}
               onChange={handlePasswordChange}
@@ -79,7 +79,7 @@ function ResetMyPassword() {
           {!passwordsMatch && <p className="error-message">Passwords must match</p>}
 
           <div className="d-grid">
-            <button className="forms_buttons-action" type="submit">
+            <button className="btn-submit" type="submit">
               Submit
             </button>
           </div>
