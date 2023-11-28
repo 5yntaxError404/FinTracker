@@ -225,24 +225,20 @@
   }
   
   .forms_title {
-	margin-bottom: 20px;
-	font-size: 1.5rem;
-	font-weight: 500;
-	line-height: 1em;
-	text-transform: uppercase;
+	margin-bottom: 40px; /* Increase margin to add space between title and input fields */
+	font-size: 2rem; /* Increase font size for the title */
+	font-weight: 700; /* Increase font weight for the title */
 	color: #e8716d;
-	letter-spacing: .1rem;
+	letter-spacing: 0.2rem;
   }
   
   .forms_field {
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
+	margin-bottom: 20px; /* Increase margin to add space between input fields */
   }
   
   .forms_field-label {
 	position: absolute;
-	font-size: 0.85rem;
+	font-size: 1rem; /* Increase font size for the label */
 	font-weight: 500;
 	color: #ccc;
 	transition: transform 0.3s ease-in-out, font-size 0.3s ease-in-out;
