@@ -279,22 +279,22 @@
   }
   
   .forms_buttons-action {
-	background-color: #e8716d;
+	background-color: #6e2b62; /* Use your purple color here */
 	border: none;
 	border-radius: 3px;
-	padding: 10px 20px;
-	font-size: 1rem;
+	padding: 15px 30px;
+	font-size: 1.2rem;
 	font-family: 'Montserrat', sans-serif;
 	font-weight: 500;
 	color: #fff;
 	text-transform: uppercase;
-	letter-spacing: .1rem;
+	letter-spacing: 0.1rem;
 	cursor: pointer;
 	transition: background-color 0.2s ease-in-out;
   }
   
   .forms_buttons-action:hover {
-	background-color: #d4635f;
+	background-color: #5c2257; /* Use a slightly darker shade on hover */
   }
   
   .user_forms-signup, .user_forms-login {
