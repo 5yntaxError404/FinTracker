@@ -79,7 +79,7 @@ function ResetMyPassword() {
           {!passwordsMatch && <p className="error-message">Passwords must match</p>}
 
           <div className="d-grid">
-            <button className="btn-submit" type="submit">
+            <button className="forms_buttons-action" type="submit">
               Submit
             </button>
           </div>
