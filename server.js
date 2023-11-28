@@ -291,6 +291,7 @@ function checkPassComplexity(pass){
         forgotPassword(name, Email, EmailURL);
       
           console.log('Email Sent To:', user);
+          return res.status(200).json({message: 'Email sent.'});
         }
 
         catch (error) {
