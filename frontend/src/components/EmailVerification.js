@@ -54,7 +54,20 @@ const EmailVerification = () => {
     <div className="landing-container">
       <div className="content">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono"></link>
-        {isVerified ? <p>Verified! Redirecting to login...</p> : <p>Verifying...</p>}
+        {isVerified ? (
+          <div className="verified-container">
+            <div className="verified-circle">
+              <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" fill="#ffffff">
+                <path d="M0 0h24v24H0V0z" fill="none"/>
+                <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
+              </svg>
+            </div>
+            <p style={{ color: 'green', fontSize: '24px', marginLeft: '10px' }}>Verified!</p>
+            <p>Redirecting to login...</p>
+          </div>
+        ) : (
+          <p>Verifying...</p>
+        )}
       </div>
     </div>
   );
