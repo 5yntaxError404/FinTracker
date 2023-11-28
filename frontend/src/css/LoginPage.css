@@ -221,7 +221,7 @@
   }
   
   .forms_title {
-	margin-bottom: 45px;
+	margin-bottom: 20px;
 	font-size: 1.5rem;
 	font-weight: 500;
 	line-height: 1em;
@@ -230,39 +230,48 @@
 	letter-spacing: .1rem;
   }
   
-  .forms_field:not(:last-of-type) {
-	margin-bottom: 20px;
+  .forms_field {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+  }
+  
+  .forms_field-label {
+	margin-bottom: 5px;
+	font-size: 0.85rem;
+	font-weight: 500;
+	color: #ccc;
   }
   
   .forms_field-input {
 	width: 100%;
-	border-bottom: 1px solid #ccc;
-	padding: 6px 20px 6px 6px;
+	border: 1px solid #ccc;
+	border-radius: 3px;
+	padding: 10px;
 	font-family: 'Montserrat', sans-serif;
 	font-size: 1rem;
 	font-weight: 300;
-	color: #999;
-	letter-spacing: .1rem;
-	transition: border-color .2s ease-in-out;
+	color: #333;
+	transition: border-color 0.2s ease-in-out;
   }
   
   .forms_field-input:focus {
-	border-color: #999;
+	border-color: #e8716d;
   }
   
   .forms_buttons {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	margin-top: 35px;
+	margin-top: 25px;
   }
   
   .forms_buttons-forgot {
+	font-size: 0.85rem;
 	font-family: 'Montserrat', sans-serif;
-	letter-spacing: .1rem;
 	color: #ccc;
 	text-decoration: underline;
-	transition: color .2s ease-in-out;
+	transition: color 0.2s ease-in-out;
   }
   
   .forms_buttons-forgot:hover {
@@ -270,20 +279,25 @@
   }
   
   .forms_buttons-action {
-	background-color: #e8716d;
+	background-color: #6e2b62;
+	border: none;
 	border-radius: 3px;
-	padding: 10px 35px;
-	font-size: 1rem;
+	padding: 15px 30px;
+	margin-top: 10px; 
+	margin-bottom: 10px; 
+	font-size: 1.2rem;
 	font-family: 'Montserrat', sans-serif;
-	font-weight: 300;
+	font-weight: 500;
 	color: #fff;
 	text-transform: uppercase;
-	letter-spacing: .1rem;
-	transition: background-color .2s ease-in-out;
+	letter-spacing: 0.1rem;
+	cursor: pointer;
+	transition: background-color 0.2s ease-in-out;
   }
   
   .forms_buttons-action:hover {
-	background-color: #d4635f;
+	background-color: #5c2257;
+	/* Use a slightly darker shade on hover */
   }
   
   .user_forms-signup, .user_forms-login {
