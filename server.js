@@ -1105,7 +1105,7 @@ app.put('/api/budgets/transactions/edit/:UserId', authenticateToken, async (req,
 });
 
 //get transaction
-app.get('/api/budgets/transactions/get/:UserId', authenticateToken, async (req, res) => {
+app.post('/api/budgets/transactions/get/:UserId', authenticateToken, async (req, res) => {
   
   try {
 
