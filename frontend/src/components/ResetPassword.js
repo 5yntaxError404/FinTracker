@@ -48,9 +48,9 @@ function ResetMyPassword() {
     <div className="login-container">
       <div className="login-form">
         <form className="form" onSubmit={resetPassword}>
-          <h3>Reset Your Password</h3>
+          <h3 className="forms_title">Reset Your Password</h3>
 
-          <div className="mb-3">
+          <div className="mb-3 forms_field">
             <label htmlFor="Password" className="forms_field-label">Password</label>
             <input
               type="password"
@@ -63,7 +63,7 @@ function ResetMyPassword() {
             />
           </div>
 
-          <div className="mb-3">
+          <div className="mb-3 forms_field">
             <label htmlFor="confirmPassword" className="forms_field-label">Confirm Password</label>
             <input
               type="password"
@@ -76,13 +76,16 @@ function ResetMyPassword() {
             />
           </div>
 
-          {!passwordsMatch && <p className="error-message">Passwords must match</p>}
+          {!passwordsMatch && <p className="error-message forms_buttons-forgot">Passwords must match</p>}
 
-          <div className="d-grid">
-            <button className="btn-submit" type="submit">
-              Submit
-            </button>
-          </div>
+          // ...
+
+		<div className="d-grid">
+		<button className="forms_buttons-action" type="submit">
+			Submit
+		</button>
+		</div>
+
 
           {message && <p className={message.includes('Successful') ? 'success-message' : 'error-message'}>{message}</p>}
         </form>
