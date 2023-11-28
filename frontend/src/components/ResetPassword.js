@@ -78,7 +78,6 @@ function ResetMyPassword() {
 
           {!passwordsMatch && <p className="error-message forms_buttons-forgot">Passwords must match</p>}
 
-          // ...
 
 		<div className="d-grid">
 		<button className="forms_buttons-action" type="submit">
