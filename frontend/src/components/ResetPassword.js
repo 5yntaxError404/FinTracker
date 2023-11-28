@@ -7,6 +7,7 @@ function ResetMyPassword() {
   var Password, confirmPassword;
   const [message, setMessage] = useState('');
   const [passwordsMatch, setPasswordsMatch] = useState(true);
+  const [verificationMessage, setVerificationMessage] = useState('');
 
   const handlePasswordChange = () => {
     setPasswordsMatch(Password.value === confirmPassword.value);
@@ -36,8 +37,10 @@ function ResetMyPassword() {
       });
 
       if (response.status === 200) {
-        setMessage('Password Reset Successful!');
+        setVerificationMessage('Password Change Successful!');
+        setMessage(''); // Clear any previous error messages
       } else {
+        setVerificationMessage('');
         setMessage('Unable to reset password.');
       }
     } catch (e) {
@@ -85,6 +88,10 @@ function ResetMyPassword() {
               Submit
             </button>
           </div>
+
+          {verificationMessage && (
+            <p className="verification-message">{verificationMessage}</p>
+          )}
 
           {message && (
             <p className={`forms_field-label ${message.includes('Successful') ? 'success-message' : 'error-message'}`}>
