@@ -12,7 +12,9 @@ import Col from 'react-bootstrap/Col';
 function BudgetPage() {
 
     // Constants needed for the page
+
     const [budget, setBudget] = useState({
+        income: 0,
         rent: 0,
         utilities: 0,
         groceries: 0,
@@ -21,7 +23,10 @@ function BudgetPage() {
         car: 0,
         gas: 0,
         fun: 0,
-        goal: 0
+        goal: 0,
+        goalDescription: '',
+        goalAmt: 0,
+        savedAmt: 0
     })
     const [message,setMessage] = useState('');
     
@@ -34,6 +39,7 @@ function BudgetPage() {
     {
         event.preventDefault();
 
+        let income = document.getElementById("inputIncome");
         let rent = document.getElementById("inputRent");
         let utilities = document.getElementById("inputUtilities");
         let groceries = document.getElementById("inputGroceries");
@@ -43,8 +49,12 @@ function BudgetPage() {
         let gas = document.getElementById("inputGas");
         let fun = document.getElementById("inputFun");
         let goal = document.getElementById("inputGoal");
+        let goalDescription = document.getElementById("inputGoalDescription");
+        let goalAmt = document.getElementById("inputGoalAmt");
+        let savedAmt = document.getElementById("inputSavedAmt");
 
 		var obj = {
+            MonthlyIncome: income.value,
             rent: rent.value,
             utilities: utilities.value,
             groceries: groceries.value,
@@ -54,6 +64,9 @@ function BudgetPage() {
             gas: gas.value,
             fun: fun.value,
             goal: goal.value,
+            GoalDescription: goalDescription.value,
+            GoalAmt: goalAmt.value,
+            SavedAmt: savedAmt.value,
 		};
 		var js = JSON.stringify(obj);
         
@@ -122,7 +135,15 @@ function BudgetPage() {
                 console.log('Some error');
             } 
             else {
-                setBudget(res.budgetGot.MonthlyExpenses);
+                var temp = {
+                    income: res.budgetGot.MonthlyIncome,
+                    goalDescription: res.budgetGot.GoalDescription,
+                    goalAmt: res.budgetGot.GoalAmt,
+                    savedAmt: res.budgetGot.SavedAmt,
+                }
+                var newBudget = Object.assign({}, temp, res.budgetGot.MonthlyExpenses);
+
+                setBudget(newBudget);
                 setMessage('Success');
             }
             
@@ -139,36 +160,70 @@ function BudgetPage() {
                 <Row>
                     <Col sm={3} md={6} className="budgetInfo">
                         <Row>
-                            Rent
-                            <p>{budget.rent}</p>
+                            <Col>
+                                Income
+                                <p>{budget.income}</p>
+                            </Col>
+                            <Col>
+                                Rent
+                                <p>{budget.rent}</p>
+                            </Col>
                         </Row>
                         <Row>
+                            <Col>
                             Utilities
                             <p>{budget.utilities}</p>
-                        </Row>
-                        <Row>
+                            </Col>
+                            <Col>
                             Groceries
                             <p>{budget.groceries}</p>
+                            </Col>
                         </Row>
                         <Row>
+                            <Col>
                             Insurance
                             <p>{budget.insurance}</p>
-                        </Row>
-                        <Row>
+                            </Col>
+                            <Col>
                             Phone
                             <p>{budget.phone}</p>
+                            </Col>
                         </Row>
                         <Row>
+                            <Col>
+                            Car
+                            <p>{budget.car}</p>
+                            </Col>
+                            <Col>
                             Gas
                             <p>{budget.gas}</p>
+                            </Col>
                         </Row>
                         <Row>
+                            <Col>
                             Fun
                             <p>{budget.fun}</p>
-                        </Row>
-                        <Row>
+                            </Col>
+                            <Col>
                             Goal
                             <p>{budget.goal}</p>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col>
+                            Goal Description
+                            <p>{budget.goalDescription}</p>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col>
+                            Goal Amount
+                            <p>{budget.goalAmt}</p>
+                            </Col>
+                            <Col>
+                            Amount Saved towards Goal
+                            <p>{budget.savedAmt}</p>
+                            </Col>
                         </Row>
                         
 
@@ -176,47 +231,78 @@ function BudgetPage() {
                     <Col sm={3} md={6} className="content">
                     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono"></link>
                         <form className='addBudgetForm'>
-                        <div className="form-row">
-                            <div className="form-group">
-                            <label htmlFor="inputRent">Rent</label>
-                            <input type="number" className="form-control" id="inputRent"/>
-                            </div>
-                            <div className="form-group">
-                            <label htmlFor="inputUtilities">Utilities</label>
-                            <input type="number" className="form-control" id="inputUtilities"/>
-                            </div>
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="inputGroceries">Groceries</label>
-                            <input type="number" className="form-control" id="inputGroceries"/>
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="inputInsurance">Insurance</label>
-                            <input type="number" className="form-control" id="inputInsurance"/>
-                        </div>
-                        <div className="form-row">
-                            <div className="form-group">
-                                <label htmlFor="inputPhone">Phone</label>
-                                <input type="number" className="form-control" id="inputPhone"/>
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="inputCar">Car</label>
-                                <input type="number" className="form-control" id="inputCar"/>
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="inputGas">Gas</label>
-                                <input type="number" className="form-control" id="inputGas"/>
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="inputFun">Fun</label>
-                                <input type="number" className="form-control" id="inputFun"/>
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="inputGoal">Goal</label>
-                                <input type="number" className="form-control" id="inputGoal"/>
-                            </div>
-                        </div>
-                        <button type="submit" className="btn btn-primary" onClick={AddBudget}>Add Budget</button>
+                                <Container>
+                                    <Row>
+                                        <Col>
+                                        <label htmlFor="inputIncome">Income</label>
+                                        <input type="number" className="form-control" id="inputIncome"/>
+                                        </Col>
+                                        
+                                        <Col>
+                                        <label htmlFor="inputRent">Rent</label>
+                                        <input type="number" className="form-control" id="inputRent"/>
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col>
+                                        <label htmlFor="inputUtilities">Utilities</label>
+                                        <input type="number" className="form-control" id="inputUtilities"/>
+                                        </Col>
+                                        <Col>
+                                        <label htmlFor="inputGroceries">Groceries</label>
+                                        <input type="number" className="form-control" id="inputGroceries"/>
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col>
+                                        <label htmlFor="inputInsurance">Insurance</label>
+                                        <input type="number" className="form-control" id="inputInsurance"/>
+                                        </Col>
+                                        <Col>
+                                        <label htmlFor="inputPhone">Phone</label>
+                                        <input type="number" className="form-control" id="inputPhone"/>
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col>
+                                        <label htmlFor="inputCar">Car</label>
+                                        <input type="number" className="form-control" id="inputCar"/>
+                                        </Col>
+                                        <Col>
+                                        <label htmlFor="inputGas">Gas</label>
+                                        <input type="number" className="form-control" id="inputGas"/>
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col>
+                                        <label htmlFor="inputFun">Fun</label>
+                                        <input type="number" className="form-control" id="inputFun"/>
+                                        </Col>
+                                        <Col>
+                                        <label htmlFor="inputGoal">Goal</label>
+                                        <input type="number" className="form-control" id="inputGoal"/>
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col>
+                                        <label htmlFor="inputGoal">Goal Description</label>
+                                        <input type="text" className="form-control" id="inputGoalDescription"/>
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col>
+                                        <label htmlFor="inputGoal">Goal Amount</label>
+                                        <input type="number" className="form-control" id="inputGoalAmt"/>
+                                        </Col>
+                                        <Col>
+                                        <label htmlFor="inputGoal">Saved Amount</label>
+                                        <input type="number" className="form-control" id="inputSavedAmt"/>
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                    <button type="submit" className="btn btn-primary" onClick={AddBudget}>Edit Budget</button>
+                                    </Row>
+                                </Container>
                         </form>
                     </Col>
                 </Row>
