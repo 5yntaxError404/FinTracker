@@ -1,9 +1,12 @@
+// ResetMyPassword.js
+
 import React, { useState } from 'react';
-import '../css/LoginPage.css';
+import '../css/ResetPassword.css';
 
 function ResetMyPassword() {
   var Password, confirmPassword;
   const [message, setMessage] = useState('');
+  const [verificationMessage, setVerificationMessage] = useState('');
   const [passwordsMatch, setPasswordsMatch] = useState(true);
 
   const handlePasswordChange = () => {
@@ -17,6 +20,7 @@ function ResetMyPassword() {
 
     if (!passwordsMatch) {
       setMessage('Passwords must match');
+      setVerificationMessage(''); // Clear any previous verification message
       return;
     }
 
@@ -34,13 +38,21 @@ function ResetMyPassword() {
       });
 
       if (response.status === 200) {
-        setMessage('Password Reset Successful!');
+        setVerificationMessage('Password Change Successful!');
+        setMessage(''); // Clear any previous error messages
+
+        // Redirect to login after 3 seconds
+        setTimeout(() => {
+          window.location.href = '/Login'; // Change this to the actual login route
+        }, 3000);
       } else {
         setMessage('Unable to reset password.');
+        setVerificationMessage(''); // Clear any previous verification message
       }
     } catch (e) {
-      alert(e.toString());
-      return;
+      setMessage('Unable to reset password.');
+      setVerificationMessage(''); // Clear any previous verification message
+      console.error(e);
     }
   };
 
@@ -76,17 +88,25 @@ function ResetMyPassword() {
             />
           </div>
 
-          {!passwordsMatch && <p className="error-message forms_buttons-forgot">Passwords must match</p>}
+          {!passwordsMatch && <p className="error-message">Passwords must match</p>}
 
+          <div className="d-grid">
+            <button className="forms_buttons-action" type="submit">
+              Submit
+            </button>
+          </div>
 
-		<div className="d-grid">
-		<button className="forms_buttons-action" type="submit">
-			Submit
-		</button>
-		</div>
+          {message && (
+            <p className={`forms_field-label ${message.includes('Successful') ? 'success-message visible' : 'error-message'}`}>
+              {message}
+            </p>
+          )}
 
-
-          {message && <p className={message.includes('Successful') ? 'success-message' : 'error-message'}>{message}</p>}
+          {verificationMessage && (
+            <p className={`forms_field-label ${verificationMessage.includes('Successful') ? 'success-message visible' : 'error-message'}`}>
+              {verificationMessage}
+            </p>
+          )}
         </form>
       </div>
     </div>
