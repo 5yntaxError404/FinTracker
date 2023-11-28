@@ -1,116 +1,83 @@
-// ResetMyPassword.js
+// ForgotMyPassword.js
 
 import React, { useState } from 'react';
-import '../css/ResetPassword.css';
+import { useNavigate } from 'react-router-dom';
+import '../css/ForgotPassword.css';
 
-function ResetMyPassword() {
-  var Password, confirmPassword;
+function ForgotMyPassword() {
+  const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
-  const [verificationMessage, setVerificationMessage] = useState('');
-  const [passwordsMatch, setPasswordsMatch] = useState(true);
+  const navigate = useNavigate();
 
-  const handlePasswordChange = () => {
-    setPasswordsMatch(Password.value === confirmPassword.value);
-  };
-
-  const resetPassword = async (event) => {
+  const startPasswordReset = async (event) => {
     event.preventDefault();
 
-    const verificationToken = new URLSearchParams(window.location.search).get('token');
-
-    if (!passwordsMatch) {
-      setMessage('Passwords must match');
-      setVerificationMessage(''); // Clear any previous verification message
-      return;
-    }
-
-    var obj = {
-      Password: Password.value,
-    };
-
-    var js = JSON.stringify(obj);
-
     try {
-      const response = await fetch(`https://www.fintech.davidumanzor.com/reset-password?token=${verificationToken}`, {
+      const response = await fetch(`https://www.fintech.davidumanzor.com/forgot-password-email`, {
         method: 'post',
-        body: js,
         headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ Email: email }),
       });
 
       if (response.status === 200) {
-        setVerificationMessage('Password Change Successful!');
-        setMessage(''); // Clear any previous error messages
-
-        // Redirect to login after 3 seconds
-        setTimeout(() => {
-          window.location.href = '/login'; // Change this to the actual login route
-        }, 3000);
+        setMessage('Password Reset Email Sent. Check your email for a reset link.');
       } else {
-        setMessage('Unable to reset password.');
-        setVerificationMessage(''); // Clear any previous verification message
+        const data = await response.json();
+
+        // Check if the error message includes a string indicating an internal server error
+        if (data.message && data.message.includes('internal server error')) {
+          setMessage('Internal Server Error. Please try again later.');
+        } else {
+          setMessage(data.message || 'Unable to send Password Reset Email.');
+        }
       }
-    } catch (e) {
-      setMessage('Unable to reset password.');
-      setVerificationMessage(''); // Clear any previous verification message
-      console.error(e);
+    } catch (error) {
+      setMessage('Unable to send Password Reset Email.');
     }
   };
 
   return (
     <div className="login-container">
       <div className="login-form">
-        <form className="form" onSubmit={resetPassword}>
+        <form className="form" onSubmit={startPasswordReset}>
           <h3 className="forms_title">Reset Your Password</h3>
 
+          <p className="instructions">
+            Please Enter Your Email Below. <br />
+            If you have an account with us, we will go ahead and send you a reset link.
+          </p>
+
           <div className="mb-3 forms_field">
-            <label htmlFor="Password" className="forms_field-label">Password</label>
             <input
-              type="password"
-              id="Password"
+              type="text"
+              id="email"
               className="user-input-field forms_field-input"
-              placeholder="Password"
-              ref={(c) => (Password = c)}
-              onChange={handlePasswordChange}
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
-
-          <div className="mb-3 forms_field">
-            <label htmlFor="confirmPassword" className="forms_field-label">Confirm Password</label>
-            <input
-              type="password"
-              id="confirmPassword"
-              className={`user-input-field forms_field-input ${passwordsMatch ? '' : 'passwords-no-match'}`}
-              placeholder="Confirm Password"
-              ref={(c) => (confirmPassword = c)}
-              onChange={handlePasswordChange}
-              required
-            />
-          </div>
-
-          {!passwordsMatch && <p className="error-message">Passwords must match</p>}
 
           <div className="d-grid">
-            <button className="forms_buttons-action" type="submit">
+            <button type="submit" className="forms_buttons-action">
               Submit
             </button>
           </div>
 
-          {message && (
-            <p className={`forms_field-label ${message.includes('Successful') ? 'success-message visible' : 'error-message'}`}>
-              {message}
-            </p>
-          )}
-
-          {verificationMessage && (
-            <p className={`forms_field-label ${verificationMessage.includes('Successful') ? 'success-message visible' : 'error-message'}`}>
-              {verificationMessage}
-            </p>
-          )}
+          {/* Separate container for the success message */}
+          <div className="message-container">
+            {/* Display the message to check the email */}
+            {message && (
+              <p className={`forms_field-label ${message.includes('Reset Email Sent') ? 'success-message visible' : 'error-message'}`}>
+                {message}
+              </p>
+            )}
+          </div>
         </form>
       </div>
     </div>
   );
 }
 
-export default ResetMyPassword;
+export default ForgotMyPassword;
