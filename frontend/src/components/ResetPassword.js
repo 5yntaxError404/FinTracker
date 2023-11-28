@@ -43,7 +43,7 @@ function ResetMyPassword() {
 
         // Redirect to login after 3 seconds
         setTimeout(() => {
-          window.location.href = '/login'; // Change this to the actual login route
+          window.location.href = '/Login'; // Change this to the actual login route
         }, 3000);
       } else {
         setMessage('Unable to reset password.');
