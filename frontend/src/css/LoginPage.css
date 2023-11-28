@@ -279,10 +279,12 @@
   }
   
   .forms_buttons-action {
-	background-color: #6e2b62; /* Use your purple color here */
+	background-color: #6e2b62;
 	border: none;
 	border-radius: 3px;
 	padding: 15px 30px;
+	margin-top: 10px; 
+	margin-bottom: 10px; 
 	font-size: 1.2rem;
 	font-family: 'Montserrat', sans-serif;
 	font-weight: 500;
@@ -294,7 +296,8 @@
   }
   
   .forms_buttons-action:hover {
-	background-color: #5c2257; /* Use a slightly darker shade on hover */
+	background-color: #5c2257;
+	/* Use a slightly darker shade on hover */
   }
   
   .user_forms-signup, .user_forms-login {
