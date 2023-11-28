@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../css/ResetPassword.css';
+import '../css/ForgotPassword.css';
 
 function ForgotMyPassword() {
   const [email, setEmail] = useState('');
@@ -65,12 +65,15 @@ function ForgotMyPassword() {
             </button>
           </div>
 
-          {/* Display the message to check the email */}
-          {message && (
-            <p className={`forms_field-label ${message.includes('Successful') ? 'success-message' : 'error-message'}`}>
-              {message}
-            </p>
-          )}
+          {/* Separate container for the success message */}
+          <div className="message-container">
+            {/* Display the message to check the email */}
+            {message && (
+              <p className={`forms_field-label ${message.includes('Reset Email Sent') ? 'success-message visible' : 'error-message'}`}>
+                {message}
+              </p>
+            )}
+          </div>
         </form>
       </div>
     </div>
