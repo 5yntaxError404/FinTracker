@@ -1,83 +1,109 @@
-// ForgotMyPassword.js
-
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import '../css/ForgotPassword.css';
+import '../css/ResetPassword.css';
 
-function ForgotMyPassword() {
-  const [email, setEmail] = useState('');
+function ResetMyPassword() {
+  var Password, confirmPassword;
   const [message, setMessage] = useState('');
-  const navigate = useNavigate();
+  const [verificationMessage, setVerificationMessage] = useState('');
+  const [passwordsMatch, setPasswordsMatch] = useState(true);
 
-  const startPasswordReset = async (event) => {
+  const handlePasswordChange = () => {
+    setPasswordsMatch(Password.value === confirmPassword.value);
+  };
+
+  const resetPassword = async (event) => {
     event.preventDefault();
 
+    const verificationToken = new URLSearchParams(window.location.search).get('token');
+
+    if (!passwordsMatch) {
+      setMessage('Passwords must match');
+      setVerificationMessage(''); // Clear any previous verification message
+      return;
+    }
+
+    var obj = {
+      Password: Password.value,
+    };
+
+    var js = JSON.stringify(obj);
+
     try {
-      const response = await fetch(`https://www.fintech.davidumanzor.com/forgot-password-email`, {
+      const response = await fetch(`https://www.fintech.davidumanzor.com/reset-password?token=${verificationToken}`, {
         method: 'post',
+        body: js,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ Email: email }),
       });
 
       if (response.status === 200) {
-        setMessage('Password Reset Email Sent. Check your email for a reset link.');
+        setVerificationMessage('Password Change Successful!');
+        setMessage(''); // Clear any previous error messages
       } else {
-        const data = await response.json();
-
-        // Check if the error message includes a string indicating an internal server error
-        if (data.message && data.message.includes('internal server error')) {
-          setMessage('Internal Server Error. Please try again later.');
-        } else {
-          setMessage(data.message || 'Unable to send Password Reset Email.');
-        }
+        setMessage('Unable to reset password.');
+        setVerificationMessage(''); // Clear any previous verification message
       }
-    } catch (error) {
-      setMessage('Unable to send Password Reset Email.');
+    } catch (e) {
+      setMessage('Unable to reset password.');
+      setVerificationMessage(''); // Clear any previous verification message
+      console.error(e);
     }
   };
 
   return (
     <div className="login-container">
       <div className="login-form">
-        <form className="form" onSubmit={startPasswordReset}>
+        <form className="form" onSubmit={resetPassword}>
           <h3 className="forms_title">Reset Your Password</h3>
 
-          <p className="instructions">
-            Please Enter Your Email Below. <br />
-            If you have an account with us, we will go ahead and send you a reset link.
-          </p>
-
           <div className="mb-3 forms_field">
+            <label htmlFor="Password" className="forms_field-label">Password</label>
             <input
-              type="text"
-              id="email"
+              type="password"
+              id="Password"
               className="user-input-field forms_field-input"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Password"
+              ref={(c) => (Password = c)}
+              onChange={handlePasswordChange}
               required
             />
           </div>
 
+          <div className="mb-3 forms_field">
+            <label htmlFor="confirmPassword" className="forms_field-label">Confirm Password</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              className={`user-input-field forms_field-input ${passwordsMatch ? '' : 'passwords-no-match'}`}
+              placeholder="Confirm Password"
+              ref={(c) => (confirmPassword = c)}
+              onChange={handlePasswordChange}
+              required
+            />
+          </div>
+
+          {!passwordsMatch && <p className="error-message">Passwords must match</p>}
+
           <div className="d-grid">
-            <button type="submit" className="forms_buttons-action">
+            <button className="forms_buttons-action" type="submit">
               Submit
             </button>
           </div>
 
-          {/* Separate container for the success message */}
-          <div className="message-container">
-            {/* Display the message to check the email */}
-            {message && (
-              <p className={`forms_field-label ${message.includes('Reset Email Sent') ? 'success-message visible' : 'error-message'}`}>
-                {message}
-              </p>
-            )}
-          </div>
+          {message && (
+            <p className={`forms_field-label ${message.includes('Successful') ? 'success-message visible' : 'error-message'}`}>
+              {message}
+            </p>
+          )}
+
+          {verificationMessage && (
+            <p className={`forms_field-label ${verificationMessage.includes('Successful') ? 'success-message visible' : 'error-message'}`}>
+              {verificationMessage}
+            </p>
+          )}
         </form>
       </div>
     </div>
   );
 }
 
-export default ForgotMyPassword;
+export default ResetMyPassword;
