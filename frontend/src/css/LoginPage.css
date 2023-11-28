@@ -242,14 +242,10 @@
   
   .forms_field-label {
 	position: absolute;
-	left: 15px;
-	top: 50%;
-	transform: translateY(-50%);
 	font-size: 0.85rem;
 	font-weight: 500;
 	color: #ccc;
-	opacity: 0.7; /* Initial opacity to make it slightly transparent */
-	transition: all 0.3s ease; /* Add a smooth transition effect for all properties */
+	transition: transform 0.3s ease-in-out, font-size 0.3s ease-in-out;
   }
   
   .forms_field-input {
@@ -268,11 +264,10 @@
   }
   
   .forms_field-input:focus + .forms_field-label,
-  .forms_field-input:not(:placeholder-shown) + .forms_field-label {
-	transform: translateY(-150%) translateX(-15px); /* Slide label to the left */
-	font-size: 0.8rem; /* Adjust font size when label is slid to the left */
-	opacity: 1; /* Make label fully visible when slid to the left */
-  }
+.forms_field-input:not(:placeholder-shown) + .forms_field-label {
+  transform: translateX(-100%);
+  font-size: 0.7rem;
+}
   
   
   .forms_buttons {
