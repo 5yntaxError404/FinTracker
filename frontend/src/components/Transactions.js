@@ -68,21 +68,91 @@ function TransactionsPage() {
 		}
     };
 
-    const EditTransaction = async () =>
+    const EditTransaction = async (id) =>
+    {
+        let transactionAmt = document.getElementById("inputTransactionAmt");
+        let transactionCategory = document.getElementById("inputTransactionCategory");
+
+		var obj = {
+            transactionID: id,
+            transactionAmt: transactionAmt.value,
+            transactionCategory: transactionCategory.value,
+		};
+		var js = JSON.stringify(obj);
+        
+		try {
+            const userinfo = JSON.parse(localStorage.getItem('user'));
+
+            console.log(userinfo);
+            console.log(userinfo.UserId);
+
+            const response = await fetch(
+                `${base_url}/api/budgets/transactions/edit/${userinfo.UserId}`,
+                {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${userinfo.accessToken}`
+                },
+                body: js,
+                credentials: 'same-origin',
+            });
+
+			var res = JSON.parse(await response.text());
+
+			if (res.error) {
+                setMessage('Unable to add Budget'); // Set an error message
+                console.log("Some error");
+            } 
+            else {
+                GetTransactions();
+                setMessage('Success');
+            }
+
+		} catch (e) {
+			alert(e.toString());
+			return;
+		}
+    };
+
+    const deleteTransaction = async (id) =>
     {
         try {
+            const userinfo = JSON.parse(localStorage.getItem('user'));
+            console.log(userinfo);
+            console.log(userinfo.UserId);
 
-        }
-        catch
-        {
+            const js = JSON.stringify({transactionID: id})
+            
+            const response = await fetch(
+                `${base_url}/api/budgets/transactions/delete/${userinfo.UserId}`,
+                {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${userinfo.accessToken}`
+                },
+                body: js,
+                credentials: 'same-origin',
+            });
 
-        }
-    }
+			var res = JSON.parse(await response.text());
+			console.log(res);
 
-    const deleteTransaction = async () =>
-    {
-
-    }
+			if (res.error) {
+                setMessage('Unable to delete transaction'); // Set an error message
+                console.log('Some error');
+            } 
+            else {
+                setMessage('Success');
+                GetTransactions();
+            }
+            
+		} catch (e) {
+			alert(e.toString());
+			return;
+		}
+    };
 
     // Obtains budget from DB and updates webpage
     const GetTransactions = async () =>
@@ -102,8 +172,8 @@ function TransactionsPage() {
                 },
                 credentials: 'same-origin',
             });
-
-			var res = JSON.parse(await response.text());
+            var check = response.text();
+			var res = JSON.parse(await check);
 			console.log(res);
             console.log(res[0]);
             console.log(res[0].Transactions);
@@ -118,6 +188,11 @@ function TransactionsPage() {
             }
             
 		} catch (e) {
+            console.log(check);
+            if(check.value == "Forbidden")
+            {
+                window.location.href = '/login';
+            }
 			alert(e.toString());
 			return;
 		}
@@ -128,19 +203,18 @@ function TransactionsPage() {
         <div className="landing-container">
             <Container onLoad={GetTransactions}>
                 <Row>
-                <Col sm={1} md={3} className="accountsInfo">
+                    <Col sm={1} md={3} className="accountsInfo">
                         {transactions.map(transactions => (
                             <Row className="account" key={transactions.Transactions.transactionID}>
                                 <p>Transaction</p>
                                 <p>Amount: {transactions.Transactions.transactionAmt}</p>
                                 <p>Category: {transactions.Transactions.transactionCategory}</p>
                                 <Col>
-                                <button className="account_button" onClick={() => EditTransaction(transactions.AccountNum)}> Edit Transaction</button>
+                                <button className="account_button" onClick={() => EditTransaction(transactions.Transactions.transactionID)}> Edit Transaction</button>
                                 </Col>
                                 <Col>
-                                <button className="account_button" onClick={() => deleteTransaction(transactions.AccountNum)}> Delete Transaction </button>
+                                <button className="account_button" onClick={() => deleteTransaction(transactions.Transactions.transactionID)}> Delete Transaction </button>
                                 </Col>
-                                
                             </Row>
                         ))}
                     </Col>
