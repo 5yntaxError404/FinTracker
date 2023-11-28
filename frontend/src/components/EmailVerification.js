@@ -37,12 +37,17 @@ const EmailVerification = () => {
     verifyEmail();
   }, []); // Run the effect only once when the component mounts
 
-  // Redirect to login after verification
+  // Redirect to login after verification with a 3-second delay
   useEffect(() => {
-    if (isVerified) {
-      // Redirect to the login page
-      navigate('/Login');
-    }
+    const redirectTimeout = setTimeout(() => {
+      if (isVerified) {
+        // Redirect to the login page
+        navigate('/Login');
+      }
+    }, 3000); // Adjust the delay to 3000 milliseconds (3 seconds)
+
+    // Cleanup the timeout to avoid memory leaks
+    return () => clearTimeout(redirectTimeout);
   }, [isVerified, navigate]);
 
   return (
