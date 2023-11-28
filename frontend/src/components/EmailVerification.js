@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import '../css/LandingPage.css';
 import Button from 'react-bootstrap/Button';
 import { Link } from 'react-router-dom';
 
 const EmailVerification = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const [isVerified, setIsVerified] = useState(false);
 
   useEffect(() => {
@@ -41,9 +41,9 @@ const EmailVerification = () => {
   useEffect(() => {
     if (isVerified) {
       // Redirect to the login page
-      history.push('/Login');
+      navigate('/Login');
     }
-  }, [isVerified, history]);
+  }, [isVerified, navigate]);
 
   return (
     <div className="landing-container">
