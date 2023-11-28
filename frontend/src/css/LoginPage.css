@@ -225,9 +225,9 @@
   }
   
   .forms_title {
-	margin-bottom: 40px; /* Increase margin to add space between title and input fields */
-	font-size: 4rem; /* Increase font size for the title */
-	font-weight: 700; /* Increase font weight for the title */
+	margin-bottom: 125px !important; /* Increase margin to add space between title and input fields */
+	font-size: 4rem !important; /* Increase font size for the title */
+	font-weight: 700 !important; /* Increase font weight for the title */
 	color: #e8716d;
 	letter-spacing: 0.2rem;
   }

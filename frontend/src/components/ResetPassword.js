@@ -1,3 +1,5 @@
+// ResetMyPassword.js
+
 import React, { useState } from 'react';
 import '../css/ResetPassword.css';
 
@@ -76,17 +78,19 @@ function ResetMyPassword() {
             />
           </div>
 
-          {!passwordsMatch && <p className="error-message forms_buttons-forgot">Passwords must match</p>}
+          {!passwordsMatch && <p className="error-message">Passwords must match</p>}
 
+          <div className="d-grid">
+            <button className="forms_buttons-action" type="submit">
+              Submit
+            </button>
+          </div>
 
-		<div className="d-grid">
-		<button className="forms_buttons-action" type="submit">
-			Submit
-		</button>
-		</div>
-
-
-          {message && <p className={message.includes('Successful') ? 'success-message' : 'error-message'}>{message}</p>}
+          {message && (
+            <p className={`forms_field-label ${message.includes('Successful') ? 'success-message' : 'error-message'}`}>
+              {message}
+            </p>
+          )}
         </form>
       </div>
     </div>
