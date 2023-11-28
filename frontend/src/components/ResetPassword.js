@@ -32,12 +32,11 @@ function ResetMyPassword() {
         body: js,
         headers: { 'Content-Type': 'application/json' },
       });
-      var res = JSON.parse(await response.text());
-      console.log(res);
-      if (res.error !== '') {
-        setMessage('Unable to reset password.');
-      } else {
+
+      if (response.status === 200) {
         setMessage('Password Reset Successful!');
+      } else {
+        setMessage('Unable to reset password.');
       }
     } catch (e) {
       alert(e.toString());
