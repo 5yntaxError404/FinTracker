@@ -13,6 +13,7 @@ import EmailVerificationPage from './pages/EmailVerificationPage';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
+import TransactionsPage from './pages/TransactionsPage';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
                   <Route path="/help" element={<HelpPage/>} />
                   <Route path="/settings" element={<SettingsPage/>} />
                   <Route path="/budgets" element={<BudgetsPage/>} />
+                  <Route path="/transactions" element={<TransactionsPage/>} />
                   <Route path="/EmailVerification" element={<EmailVerificationPage/>} />
                   <Route path="/ForgotPassword" element={<ForgotPasswordPage/>} />
                   <Route path="/ResetPassword" element={<ResetPasswordPage/>} />
