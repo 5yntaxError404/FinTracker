@@ -122,7 +122,29 @@ function checkPassComplexity(pass){
     // Return true if the password is sufficiently complex
     return isLengthValid && meetsComplexityCriteria;
 }
+function generateJWTToken(user) {
+  const payload = {
+    UserName: user.UserName,
+    UserId: user.UserId,
+    // Any other user-specific data needed??
+  };
+  const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '30m' });
+  return accessToken;
+}
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
 
+  if (token == null) return res.sendStatus(401);
+
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, payload) => {
+    if (err) return res.sendStatus(403);
+
+    req.user = payload;
+
+    next();
+  });
+}
 
 
 module.exports = {
@@ -130,5 +152,7 @@ module.exports = {
   crypto, 
   authenticateUser,
   checkPassComplexity,
+  generateJWTToken,
+  authenticateToken
   
 };
