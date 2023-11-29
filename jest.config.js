@@ -3,6 +3,9 @@
  * https://jestjs.io/docs/configuration
  */
 
+const dotenv = require('dotenv');
+dotenv.config({ path: './.env' }); // Adjust the path based on your file structure
+
 /** @type {import('jest').Config} */
 const config = {
 
@@ -11,6 +14,7 @@ const config = {
         '/frontend/', // ignore folderToIgnore
         '/mobile/'
       ],
+      
   // All imported modules in your tests should be mocked automatically
   // automock: false,
 
