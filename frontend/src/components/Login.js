@@ -99,56 +99,40 @@ function Login() {
 
     return (
 	<div className="login-container">
-        <div className="login-form">
-            <form className='form' onSubmit={doLogin}>
-            <h3>Sign In</h3>
+       <div class="login-form">
+      <form class="form" onSubmit={doLogin}>
+        <h1>Login</h1>
 
-            <div className="mb-3">
-            <label>Username</label>
-            <input 
-						type="text" 
-						id="username" 
-						className="user-input-field" 
-						placeholder="Username" 
-						ref={(c) => username = c}/><br />
-            </div>
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" class="user-input-field" placeholder="Enter your username" ref={(c) => username = c}/>
+        </div>
 
-            <div className="mb-3">
-            <label>Password</label>
-            <input 
-						type="password" 
-						id="password" 
-						className="user-input-field" 
-						placeholder="Password" 
-						ref={(c) => password = c}/><br />
-            </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" class="user-input-field" placeholder="Enter your password" ref={(c) => password = c}/>
+        </div>
 
-            <div className="mb-3">
-            <div className="custom-control custom-checkbox">
-                <input
-                type="checkbox"
-                className="custom-control-input"
-                id="customCheck1"
-                />
-                <label className="custom-control-label" htmlFor="customCheck1">
-                Remember me
-                </label>
-            </div>
-            </div>
+        <div class="form-group">
+          <div class="custom-control custom-checkbox">
+            <input type="checkbox" class="custom-control-input" id="customCheck1"/>
+            <label class="custom-control-label" for="customCheck1">Remember me</label>
+          </div>
+        </div>
 
-            <div className="d-grid">
-            <button onClick={doLogin} type="submit" className="btn btn-primary">
-                Submit
-            </button>
-            </div>
-            <p className="forgot-password text-right">
-            Forgot <a href="/ForgotPassword">password?</a>
-            </p>
-			<p className="new-account test-right"> 
-			New <a href="/signup">account?</a>
-			</p>
-        </form>
-        </div> 
+        <div class="d-grid">
+          <button type="submit" class="btn btn-primary">Sign In</button>
+        </div>
+
+        <p class="forgot-password">
+          <a href="/ForgotPassword">Forgot your password?</a>
+        </p>
+
+        <p class="new-account"> 
+          Don't have an account? <a href="/signup">Sign up!</a>
+        </p>
+      </form>
+    </div> 
 	</div>
 );
 }
