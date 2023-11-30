@@ -207,7 +207,7 @@ function TransactionsPage() {
                         {transactions.map(transactions => (
                             <Row className="account" key={transactions.Transactions.transactionID}>
                                 <p>Transaction</p>
-                                <p>Amount: {transactions.Transactions.transactionAmt}</p>
+                                <p>Amount: ${transactions.Transactions.transactionAmt}</p>
                                 <p>Category: {transactions.Transactions.transactionCategory}</p>
                                 <Col>
                                 <button className="account_button" onClick={() => EditTransaction(transactions.Transactions.transactionID)}> Edit Transaction</button>
