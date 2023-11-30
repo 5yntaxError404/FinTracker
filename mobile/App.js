@@ -6,6 +6,15 @@ import Landing from './screens/Landing'
 import Dashboard from './screens/Dashboard'
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { YellowBox } from 'react-native';
+
+// Ignore specific deprecation warnings by their message content
+YellowBox.ignoreWarnings([
+  'ViewPropTypes will be removed from React Native',
+  // Add other warning messages here if needed
+]);
+
+// AppRegistry registration and other code...
 
 const Stack = createNativeStackNavigator();
 

@@ -27,11 +27,6 @@
       "favicon": "./assets/favicon.png"
     },
     "owner": "jackiez226",
-    "extra": {
-      "eas": {
-        "projectId": "fcf7c055-399f-4ec4-b2d7-8b6bc3687fff"
-      }
-    },
     "runtimeVersion": {
       "policy": "appVersion"
     },

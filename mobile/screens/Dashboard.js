@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import { getAccessToken } from '../accessToken';
+import { PieChart } from 'react-native-svg-charts';
 
 const Dashboard = ({ navigation }) => {
 
@@ -393,8 +394,35 @@ const Dashboard = ({ navigation }) => {
         readBudget();
         }, []);
 
+    
+            // Sample data for the pie chart
+            const pieChartData = [
+                {
+                    key: 'expenses',
+                    value: 500,
+                    svg: { fill: '#FF6F61' },
+                    arc: { outerRadius: '100%', padAngle: 0.05 },
+                },
+                {
+                    key: 'savings',
+                    value: 300,
+                    svg: { fill: '#6EC1C2' },
+                    arc: { outerRadius: '90%', padAngle: 0.05 },
+                },
+                // Add more data segments as needed
+            ];
+
+
     return (
         <View style={styles.container}>
+
+        <View style={styles.graphContainer}>
+                <PieChart
+                    style={{ height: 300 }}
+                    data={pieChartData}
+                    // additional st
+                />
+            </View>
 
             <LinearGradient colors={['#67286C','#973C9F']} style={styles.section1} start = {[0,0]} end = {[1,0]}>
             <Text style={styles.title}>FinTracker</Text>
@@ -434,508 +462,23 @@ const Dashboard = ({ navigation }) => {
 
             </ScrollView>
             </LinearGradient>
-            
-            
         </View>
-        );
-
-}
-            
-            {/* Bank info popup */}
-            {/* <Modal
-            transparent={true}
-            visible={visibleBankPopup}>
-            <View style={{backgroundColor:"#000000aa",flex:1}}>
-                <View style={{backgroundColor:"#808080",margin:30,padding:40,borderRadius:10,flex:1,}}>
-
-                    <Text style={styles.loginText}>Bank CRUD</Text>
-                    <TextInput
-                    style={styles.input}
-                    placeholder="Account Number"
-                    secureTextEntry = {false}
-                    onChangeText={text => setAccountNumber(text)}
-                    />
-
-                    <TextInput
-                    style={styles.input}
-                    placeholder="Route Number"
-                    secureTextEntry = {false}
-                    onChangeText={text => setRouteNumber(text)}
-                    />
-
-                    <TextInput
-                    style={styles.input}
-                    placeholder="Bank Name"
-                    secureTextEntry = {false}
-                    onChangeText={text => setBankName(text)}
-                    />
-
-                    <TextInput
-                    style={styles.input}
-                    placeholder="New Account Number"
-                    secureTextEntry = {false}
-                    onChangeText={text => setNewAccountNumber(text)}
-                    />
-
-                    <TextInput
-                    style={styles.input}
-                    placeholder="New Route Number"
-                    secureTextEntry = {false}
-                    onChangeText={text => setNewRouteNumber(text)}
-                    />
-
-                    <TextInput
-                    style={styles.input}
-                    placeholder="New Bank Name"
-                    secureTextEntry = {false}
-                    onChangeText={text => setNewBankName(text)}
-                    />
-
-                    <TouchableOpacity 
-                        style={styles.button}
-                        onPress={createBankAccount}
-                    >
-                    <Text style={styles.buttonText}>Create Account</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity 
-                        style={styles.button}
-                        onPress={readBankAccount}
-                    >
-                    <Text style={styles.buttonText}>Read Account</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity 
-                        style={styles.button}
-                        onPress={updateBankAccount}
-                    >
-                    <Text style={styles.buttonText}>Update Account</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity 
-                        style={styles.button}
-                        onPress={deleteBankAccount}
-                    >
-                    <Text style={styles.buttonText}>Delete Account</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity 
-                        style={styles.button}
-                        onPress={hideBankPopup}
-                    >
-                    <Text style={styles.buttonText}>Go Back</Text>
-                    </TouchableOpacity>
-
-                </View>
-            </View>
-            </Modal> */}
-
-            {/* Budget info popup */}
-            {/* <Modal
-            transparent={true}
-            visible={visibleBudgetPopup}>
-            <View style={{backgroundColor:"#000000aa",flex:1}}>
-                <View style={{backgroundColor:"#808080",margin:20,padding:40,borderRadius:10,flex:1,}}>
-
-                    <Text style={styles.loginText}>Budget CRUD</Text>
-                    <TextInput
-                    style={styles.input}
-                    placeholder="Monthly Income"
-                    secureTextEntry = {false}
-                    keyboardType='numeric'
-                    onChangeText={text => {
-                        const incomeValue = parseInt(text,10);
-                        setMonthlyIncome(incomeValue);
-                    }}
-                    />
-
-                    <TextInput
-                    style={styles.input}
-                    placeholder="Rent"
-                    secureTextEntry = {false}
-                    keyboardType='numeric'
-                    onChangeText={text => {
-                        const rentValue = parseInt(text,10);
-                        setRent(rentValue);
-                    }}
-                    />
-
-                    <TextInput
-                    style={styles.input}
-                    placeholder="Utilities"
-                    secureTextEntry = {false}
-                    keyboardType='numeric'
-                    onChangeText={text => {
-                        const utilitiesValue = parseInt(text,10);
-                        setUtilities(utilitiesValue);
-                    }}
-                    />
-
-                    <TextInput
-                    style={styles.input}
-                    placeholder="Groceries"
-                    secureTextEntry = {false}
-                    keyboardType='numeric'
-                    onChangeText={text => {
-                        const groceriesValue = parseInt(text,10);
-                        setGroceries(groceriesValue);
-                    }}
-                    />
-
-                    <TextInput
-                    style={styles.input}
-                    placeholder="Insurance"
-                    secureTextEntry = {false}
-                    keyboardType='numeric'
-                    onChangeText={text => {
-                        const insuranceValue = parseInt(text,10);
-                        setInsurance(insuranceValue);
-                    }}
-                    />
-
-                    <TextInput
-                    style={styles.input}
-                    placeholder="Phone"
-                    secureTextEntry = {false}
-                    keyboardType='numeric'
-                    onChangeText={text => {
-                        const phoneValue = parseInt(text,10);
-                        setPhone(phoneValue);
-                    }}
-                    />
-
-                    <TextInput
-                    style={styles.input}
-                    placeholder="Car"
-                    secureTextEntry = {false}
-                    keyboardType='numeric'
-                    onChangeText={text => {
-                        const carValue = parseInt(text,10);
-                        setCar(carValue);
-                    }}
-                    />
-
-                    <TextInput
-                    style={styles.input}
-                    placeholder="Gas"
-                    secureTextEntry = {false}
-                    keyboardType='numeric'
-                    onChangeText={text => {
-                        const gasValue = parseInt(text,10);
-                        setGas(gasValue);
-                    }}
-                    />
-
-                    <TextInput
-                    style={styles.input}
-                    placeholder="Fun"
-                    secureTextEntry = {false}
-                    keyboardType='numeric'
-                    onChangeText={text => {
-                        const funValue = parseInt(text,10);
-                        setFun(funValue);
-                    }}
-                    />
-
-                    <TextInput
-                    style={styles.input}
-                    placeholder="Goal"
-                    secureTextEntry = {false}
-                    keyboardType='numeric'
-                    onChangeText={text => {
-                        const goalValue = parseInt(text,10);
-                        setGoal(goalValue);
-                    }}
-                    />
-
-                    <TextInput
-                    style={styles.input}
-                    placeholder="Goal Description"
-                    secureTextEntry = {false}
-                    onChangeText={text => setGoalDescription(text)}
-                    />
-
-                    <TextInput
-                    style={styles.input}
-                    placeholder="Goal Amount"
-                    secureTextEntry = {false}
-                    keyboardType='numeric'
-                    onChangeText={text => {
-                        const goalAmountValue = parseInt(text,10);
-                        setGoalAmt(goalAmountValue);
-                    }}
-                    />
-
-                    <TextInput
-                    style={styles.input}
-                    placeholder="Saved Amount"
-                    secureTextEntry = {false}
-                    keyboardType='numeric'
-                    onChangeText={text => {
-                        const savedAmtValue = parseInt(text,10);
-                        setSavedAmt(savedAmtValue);
-                    }}
-                    />
-
-                    <TouchableOpacity 
-                        style={styles.button}
-                        onPress={createBudget}
-                    >
-                    <Text style={styles.buttonText}>Create Budget</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity 
-                        style={styles.button}
-                        onPress={readBudget}
-                    >
-                    <Text style={styles.buttonText}>Read Budget</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity 
-                        style={styles.button}
-                        onPress={updateBudget}
-                    >
-                    <Text style={styles.buttonText}>Update Budget</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity 
-                        style={styles.button}
-                        onPress={hideBudgetPopup}
-                    >
-                    <Text style={styles.buttonText}>Go Back</Text>
-                    </TouchableOpacity>
-
-                </View>
-            </View>
-            </Modal> */}
-            
-            {/* Transaction info popup */}
-            {/* <Modal
-            transparent={true}
-            visible={visibleTransactionPopup}>
-            <View style={{backgroundColor:"#000000aa",flex:1}}>
-                <View style={{backgroundColor:"#808080",margin:30,padding:40,borderRadius:10,flex:1,}}>
-
-                    <Text style={styles.loginText}>Transaction Crud</Text>
-
-                    <TextInput
-                    style={styles.input}
-                    placeholder="Transaction Amount"
-                    secureTextEntry = {false}
-                    keyboardType='numeric'
-                    onChangeText={text => {
-                        const transactionAmtValue = parseInt(text,10);
-                        setTransactionAmt(transactionAmtValue);
-                    }}
-                    />
-
-                    <TextInput
-                    style={styles.input}
-                    placeholder="Transaction Category"
-                    secureTextEntry = {false}
-                    onChangeText={text => setTransactionCategory(text)}
-                    />
-
-                    <TextInput
-                    style={styles.input}
-                    placeholder="Transaction ID"
-                    secureTextEntry = {false}
-                    keyboardType='numeric'
-                    onChangeText={text => {
-                        const transactionIDValue = parseInt(text,10);
-                        setTransactionID(transactionIDValue);
-                    }}
-                    />
-
-                    <TouchableOpacity 
-                        style={styles.button}
-                        onPress={addTransaction}
-                    >
-                    <Text style={styles.buttonText}>Create Transaction</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity 
-                        style={styles.button}
-                        onPress={editTransaction}
-                    >
-                    <Text style={styles.buttonText}>Edit Transaction</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity 
-                        style={styles.button}
-                        onPress={deleteTransaction}
-                    >
-                    <Text style={styles.buttonText}>Delete Transaction</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity 
-                        style={styles.button}
-                        onPress={hideTransactionPopup}
-                    >
-                    <Text style={styles.buttonText}>Go Back</Text>
-                    </TouchableOpacity>
-
-                </View>
-            </View>
-            </Modal> */}
-
-            {/* User info popup */}
-            {/* <Modal
-            transparent={true}
-            visible={visibleAccountPopup}>
-            <View style={{backgroundColor:"#000000aa",flex:1}}>
-                <View style={{backgroundColor:"#808080",margin:30,padding:40,borderRadius:10,flex:1,}}>
-
-                    <Text style={styles.loginText}>User Edit and Delete</Text>
-
-                    <TextInput
-                    style={styles.input}
-                    placeholder="User ID"
-                    secureTextEntry = {false}
-                    keyboardType='numeric'
-                    onChangeText={text => {
-                        const transactionAmtValue = parseInt(text,10);
-                        setTransactionAmt(transactionAmtValue);
-                    }}
-                    />
-
-                    <TextInput
-                    style={styles.input}
-                    placeholder="Password"
-                    secureTextEntry = {true}
-                    onChangeText={text => setTransactionCategory(text)}
-                    />
-
-                    <TouchableOpacity 
-                        style={styles.button}
-                        onPress={editUser}
-                    >
-                    <Text style={styles.buttonText}>Edit User</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity 
-                        style={styles.button}
-                        onPress={deleteUser}
-                    >
-                    <Text style={styles.buttonText}>Delete User</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity 
-                        style={styles.button}
-                        onPress={hideAccountPopup}
-                    >
-                    <Text style={styles.buttonText}>Go Back</Text>
-                    </TouchableOpacity>
-
-                </View>
-            </View>
-            </Modal> */}
-
-            {/* show banking detail CRUD popup*/}
-            {/* <TouchableOpacity
-                            style={styles.transactionButton}
-                            onPress={showBankPopup}
-                        >
-                            <Text style={{color:'white'}}>Banking Details</Text>    
-            </TouchableOpacity> */}
-
-            {/* show budget CRUD popup */}
-            {/* <TouchableOpacity
-                            style={styles.transactionButton}
-                            onPress={showBudgetPopup}
-                        >
-                            <Text style={{color:'white'}}>Budget</Text>    
-            </TouchableOpacity> */}
-
-            {/* edit and delete main account info */}
-            {/* <TouchableOpacity
-                            style={styles.transactionButton}
-                            onPress={showAccountPopup}
-                        >
-                            <Text style={{color:'white'}}>Account Info</Text>    
-            </TouchableOpacity> */}
-
-            {/* <TouchableOpacity
-                            style={styles.transactionButton}
-                            onPress={showTransactionPopup}
-                        >
-                            <Text style={{color:'white'}}>Transactions</Text>    
-            </TouchableOpacity> */}
-
-            {/* <TouchableOpacity
-                            style={styles.transactionButton}
-                            onPress={getAchievements}
-                        >
-                            <Text style={{color:'white'}}>Get Achievements</Text>    
-            </TouchableOpacity> */}
-
-            {/* <TouchableOpacity
-                            style={styles.transactionButton}
-                            onPress={getAPIdashinfo}
-                        >
-                            <Text style={{color:'white'}}>API dash info</Text>    
-            </TouchableOpacity> */}
-
-                {/* <View style={styles.dashboardMainBox}>
-                    <View style={styles.innerBox}>
-                        <Text style={{color:'white', fontWeight:'bold',fontSize:20, marginTop:-50,marginBottom:5}}>Hello {name}!</Text>
-                        <Text style={{color:'white', fontWeight:'bold',fontSize:15}}>Monthly Income: {monthlyIncome}</Text>
-                        <Text style={{color:'white', fontWeight:'bold',fontSize:15}}>Utilities: {utilites}</Text>
-                        <Text style={{color:'white', fontWeight:'bold',fontSize:15}}>Groceries: {groceries}</Text>
-                        <Text style={{color:'white', fontWeight:'bold',fontSize:15}}>Insurance Bills: {insuranceBill}</Text>
-                        <Text style={{color:'white', fontWeight:'bold',fontSize:15}}>Phone: {phoneBill}</Text>
-                        <Text style={{color:'white', fontWeight:'bold',fontSize:15}}>Gas: {gasBill}</Text>
-                        <Text style={{color:'white', fontWeight:'bold',fontSize:15}}>Fun: {fun}</Text>
-                        <Text style={{color:'white', fontWeight:'bold',fontSize:15}}>Budget Monthly Goal: {monthlyGoal}</Text>
-
-                        <TouchableOpacity
-                            style={styles.transactionButton}
-                            //onPress should navigate to transaction page
-                            onPress={() => console.log("budget button pressed")}
-                        >
-                            <Text style={{color:'white'}}>Add  Transaction</Text>    
-                        </TouchableOpacity>
-
-                        <TouchableOpacity
-                            onPress={() => console.log("view transaction button pressed")}>
-                        <Text style={styles.linkText}>View Transactions</Text>
-                        </TouchableOpacity>
-
-                    </View>
-                </View>
-
-                <View style={styles.dashboardBudgetBox}>
-                    <View style={styles.innerBox}>
-                        <Text style={{color:'white', fontWeight:'bold',fontSize:15, marginTop:-130, marginBottom:5}}>Budget Goal: {currentBudgetGoalName}</Text>
-                        <Text style={{color:'white', fontWeight:'bold',fontSize:15, marginBottom:5}}>Total: ${currentBudgetSaved}/${currentBudgetGoal}</Text>
-                        <Text style={{color:'white', fontWeight:'bold',fontSize:15, marginBottom:5}}>Monthly Savings Goal: ${budgetMonthlySavingGoal}</Text>
-
-                        <TouchableOpacity
-                            style={styles.transactionButton}
-                            onPress={() => console.log("Add budget")}
-                        >
-                            <Text style={{color:'white'}}>Add Budget</Text>    
-                        </TouchableOpacity>
-
-                        <TouchableOpacity
-                            style={styles.transactionButton}
-                            onPress={() => console.log("Edit Account")}
-                        >
-                            <Text style={{color:'white'}}>Edit Account</Text>    
-                        </TouchableOpacity>
-                    </View>
-                </View>
-                
-                <View style={styles.dashboardAchievementBox}>
-                    <View style={styles.innerBox}>
-                        <Text style={{color:'white', fontWeight:'bold',fontSize:20, marginTop:-280}}>Achievements</Text>
-                    </View>
-               
-               
-                </View> */}
+    );
+};
 
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    graphContainer: {
+        marginTop: 20,
+        borderRadius: 15,
+        padding: 10,
+    },
+
     container:{
         flex:1,
         justifyContent:'center',
@@ -1104,6 +647,6 @@ const styles = StyleSheet.create({
         marginBottom:10,
         alignSelf:'center',
     },
-})
+});
 
 export default Dashboard;
