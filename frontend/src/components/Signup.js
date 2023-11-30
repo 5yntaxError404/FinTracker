@@ -77,12 +77,14 @@ function SignUp() {
     if (errors.length > 0) {
       setErrorMessages(errors.join('\n'));
       setErrorFields(fieldsWithErrors);
+      setRegistrationError('');
       return;
     }
 
     // Reset error messages and fields
     setErrorMessages('');
     setErrorFields([]);
+    setRegistrationError('');
 
     try {
       // Check for existing username and email
