@@ -9,6 +9,7 @@ function SignUp() {
   const [email, setEmail] = useState('');
   const [errorMessages, setErrorMessages] = useState('');
   const [errorFields, setErrorFields] = useState([]);
+  const [registrationError, setRegistrationError] = useState('');
 
   const isStrongPassword = (value) => {
     // Check for at least 1 capital letter
@@ -137,13 +138,14 @@ function SignUp() {
       console.log(res);
 
       if (res.error !== '') {
-        setErrorMessages('Unable to Register');
+        setRegistrationError('Unable to Register');
       } else {
+        setRegistrationError('');
         alert('Registered.');
       }
     } catch (e) {
       console.error('Error during fetch:', e.message);
-      alert(e.message || 'Unknown error');
+      setRegistrationError(e.message || 'Unknown error');
     }
   };
 
@@ -220,6 +222,7 @@ function SignUp() {
           </div>
 
           <p className="error-messages">{errorMessages}</p>
+          <p className="error-messages">{registrationError}</p>
 
           <p className="forgot-password text-right">
             <a href="/ForgotPassword"> Forgot password?</a>
