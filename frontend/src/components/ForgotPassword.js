@@ -40,7 +40,7 @@ function ForgotMyPassword() {
     <div className="login-container">
       <div className="login-form">
         <form className="form" onSubmit={startPasswordReset}>
-          <h3 className="forms_title">Reset Your Password</h3>
+          <h3 className="pass2_forms_title">Forget Your Password?</h3>
 
           <p className="instructions">
             Please Enter Your Email Below. <br />
