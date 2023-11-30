@@ -89,7 +89,7 @@ app.post('/api/register', async (req, res) => {
     }
 
     if (existingEmail) {
-      return res.status(400).json({ error: 'Email already associated with another account.'});
+      return res.status(401).json({ error: 'Email already associated with another account.'});
     }
     
     var check = await usersCollection.findOne({ UserId: userCounter });

@@ -93,20 +93,17 @@ function SignUp() {
       });
 
       if (!checkResponse.ok) {
-        throw new Error(`Server responded with status ${checkResponse.status}`);
-      }
-
-      const checkRes = await checkResponse.json();
-
-      if (checkRes.error) {
-        // Handle existing username or email error
-        if (checkRes.error === 'Username already exists') {
+        if (checkResponse.status === 400) {
+          // Username already exists
           errors.push('Username is already in use.');
           fieldsWithErrors.push('userName');
-        }
-        if (checkRes.error === 'Email already associated with another account.') {
+        } else if (checkResponse.status === 401) {
+          // Email already exists
           errors.push('Email is already in use.');
           fieldsWithErrors.push('email');
+        } else {
+          // Handle other errors
+          throw new Error(`Server responded with status ${checkResponse.status}`);
         }
 
         setErrorMessages(errors.join('\n'));
