@@ -1,4 +1,4 @@
-// src/BudgetPage.js
+// src/TransactionPage.js
 import React, { useState } from 'react';
 import '../css/LandingPage.css';
 import '../css/TransactionPage.css';
@@ -58,7 +58,118 @@ function TransactionsPage() {
     }
   };
 
-  // Other functions remain unchanged...
+  const EditTransaction = async (id) => {
+    let transactionAmt = document.getElementById('inputTransactionAmt');
+    let transactionCategory = document.getElementById('inputTransactionCategory');
+
+    var obj = {
+      transactionID: id,
+      transactionAmt: transactionAmt.value,
+      transactionCategory: transactionCategory.value,
+    };
+    var js = JSON.stringify(obj);
+
+    try {
+      const userinfo = JSON.parse(localStorage.getItem('user'));
+
+      const response = await fetch(
+        `${base_url}/api/budgets/transactions/edit/${userinfo.UserId}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userinfo.accessToken}`,
+          },
+          body: js,
+          credentials: 'same-origin',
+        }
+      );
+
+      var res = JSON.parse(await response.text());
+
+      if (res.error) {
+        setMessage('Unable to add Budget');
+      } else {
+        GetTransactions();
+        setMessage('Success');
+      }
+    } catch (e) {
+      alert(e.toString());
+      return;
+    }
+  };
+
+  const deleteTransaction = async (id) => {
+    try {
+      const userinfo = JSON.parse(localStorage.getItem('user'));
+
+      const js = JSON.stringify({ transactionID: id });
+
+      const response = await fetch(
+        `${base_url}/api/budgets/transactions/delete/${userinfo.UserId}`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userinfo.accessToken}`,
+          },
+          body: js,
+          credentials: 'same-origin',
+        }
+      );
+
+      var res = JSON.parse(await response.text());
+      console.log(res);
+
+      if (res.error) {
+        setMessage('Unable to delete transaction');
+      } else {
+        setMessage('Success');
+        GetTransactions();
+      }
+    } catch (e) {
+      alert(e.toString());
+      return;
+    }
+  };
+
+  const GetTransactions = async () => {
+    try {
+      const userinfo = JSON.parse(localStorage.getItem('user'));
+
+      const response = await fetch(
+        `${base_url}/api/budgets/transactions/get/${userinfo.UserId}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userinfo.accessToken}`,
+          },
+          credentials: 'same-origin',
+        }
+      );
+
+      var check = response.text();
+      var res = JSON.parse(await check);
+      console.log(res);
+      console.log(res[0]);
+      console.log(res[0].Transactions);
+
+      if (res.error) {
+        setMessage('Unable to get Budget');
+      } else {
+        setTransactions(res);
+        setMessage('Success');
+      }
+    } catch (e) {
+      console.log(check);
+      if (check.value === 'Forbidden') {
+        window.location.href = '/login';
+      }
+      alert(e.toString());
+      return;
+    }
+  };
 
   return (
     <div className="landing-container">
