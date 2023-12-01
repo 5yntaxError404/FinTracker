@@ -20,7 +20,7 @@ function ForgotMyPassword() {
       });
 
       if (response.status === 200) {
-        setMessage('Password Reset Email Sent. Check your email for a reset link.');
+        setMessage('If this email is registered to an account, you will receive an email momentarily.');
       } else {
         const data = await response.json();
 
@@ -65,14 +65,10 @@ function ForgotMyPassword() {
             </button>
           </div>
 
-          {/* Separate container for the success message */}
+          {/* Separate container for the message at the bottom */}
           <div className="message-container">
-            {/* Display the message to check the email */}
-            {message && (
-              <p className={`forms_field-label ${message.includes('Reset Email Sent') ? 'success-message visible' : 'error-message'}`}>
-                {message}
-              </p>
-            )}
+            {/* Display the message at the bottom */}
+            {message && <p className="forms_field-label">{message}</p>}
           </div>
         </form>
       </div>
