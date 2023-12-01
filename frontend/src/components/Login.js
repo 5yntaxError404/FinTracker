@@ -130,15 +130,11 @@ function Login() {
             <label htmlFor="username">Username</label>
             <input type="text" id="username" className={`user-input-field ${errorFields.includes('username') ? 'error-border' : ''}`} placeholder="Enter your username" ref={(c) => (username = c)} />
           </div>
-          {/* Display error message for username */}
-          <p className="error-messages">{errorFields.includes('username') && errorMessages}</p>
 
           <div className={`form-group ${errorFields.includes('password') ? 'error' : ''}`}>
             <label htmlFor="password">Password</label>
             <input type="password" id="password" className={`user-input-field ${errorFields.includes('password') ? 'error-border' : ''}`} placeholder="Enter your password" ref={(c) => (password = c)} />
           </div>
-          {/* Display error message for password */}
-          <p className="error-messages">{errorFields.includes('password') && errorMessages}</p>
 
           <div className="form-group">
             <div className="custom-control custom-checkbox">
@@ -163,7 +159,7 @@ function Login() {
             Don't have an account? <a href="/signup">Sign up!</a>
           </p>
 
-          {/* Display general login error message */}
+          {/* Display general login error message at the bottom */}
           <p className="error-messages">{errorMessages}</p>
         </form>
       </div>
