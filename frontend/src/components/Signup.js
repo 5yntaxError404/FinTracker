@@ -105,7 +105,12 @@ function SignUp() {
         headers: { 'Content-Type': 'application/json' },
       });
 
-      if (!response.ok) {
+      if (response.ok) {
+        // Successful registration
+        setRegistrationError('');
+        setSuccessMessage('Account created! Please check your email to verify before logging in.');
+      } else {
+        const jsonResponse = await response.json();
         if (response.status === 400) {
           // Username already exists
           errors.push('Username is already in use.');
@@ -121,19 +126,6 @@ function SignUp() {
 
         setErrorMessages(errors.join('\n'));
         setErrorFields(fieldsWithErrors);
-        return;
-      }
-
-      // Continue with form submission if no existing username or email
-      const res = await response.json();
-      console.log(res);
-
-      if (res.error !== '') {
-        setRegistrationError('Unable to Register');
-      } else {
-        // Successful registration
-        setRegistrationError('');
-        setSuccessMessage('Account created! Please check your email to verify before logging in.');
       }
     } catch (e) {
       console.error('Error during fetch:', e.message);
@@ -214,7 +206,7 @@ function SignUp() {
           </div>
 
           <p className="error-messages">{errorMessages}</p>
-          <p className="error-messages">{registrationError}</p>
+          <p className="registration-error">{registrationError}</p>
           <p className="success-message">{successMessage}</p>
 
           <p className="forgot-password text-right">
