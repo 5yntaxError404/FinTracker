@@ -47,6 +47,13 @@ function SignUp() {
     return true;
   };
 
+  const errorPush = (message, fields) => {
+    setErrorMessages(message);
+    setErrorFields(fields);
+    setRegistrationError('');
+    setSuccessMessages([]);
+  };
+
   const successPush = (message) => {
     setSuccessMessages([message]);
     setErrorMessages('');
@@ -85,10 +92,7 @@ function SignUp() {
     }
 
     if (errors.length > 0) {
-      setErrorMessages(errors.join('\n'));
-      setErrorFields(fieldsWithErrors);
-      setRegistrationError('');
-      setSuccessMessages([]);
+      errorPush(errors.join('\n'), fieldsWithErrors);
       return;
     }
 
@@ -115,11 +119,9 @@ function SignUp() {
       } else {
         // Handle errors based on response status
         if (response.status === 400) {
-          setErrorMessages('Username is already in use.');
-          setErrorFields(['userName']);
+          errorPush('Username is already in use.', ['userName']);
         } else if (response.status === 401) {
-          setErrorMessages('Email is already in use.');
-          setErrorFields(['email']);
+          errorPush('Email is already in use.', ['email']);
         } else {
           throw new Error(`Server responded with status ${response.status}`);
         }
@@ -204,7 +206,9 @@ function SignUp() {
 
           <p className="error-messages">{errorMessages}</p>
           <p className="registration-error">{registrationError}</p>
-          <p className="success-message">{successMessages.join('\n')}</p>
+          {successMessages.length > 0 && (
+            <p className="success-message">{successMessages.join('\n')}</p>
+          )}
 
           <p className="forgot-password text-right">
             <a href="/ForgotPassword"> Forgot password?</a>
