@@ -20,31 +20,19 @@ function ForgotMyPassword() {
       });
 
       if (response.status === 200) {
-        setMessage({
-          text: 'If this email is registered to an account, you will receive an email momentarily.',
-          color: 'success', // Set color to green
-        });
+        setMessage('If this email is registered to an account, you will receive an email momentarily.');
       } else {
         const data = await response.json();
 
         // Check if the error message includes a string indicating an internal server error
         if (data.message && data.message.includes('internal server error')) {
-          setMessage({
-            text: 'Internal Server Error. Please try again later.',
-            color: 'error', // Set color to red for error messages
-          });
+          setMessage('Internal Server Error. Please try again later.');
         } else {
-          setMessage({
-            text: data.message || 'Unable to send Password Reset Email.',
-            color: 'error',
-          });
+          setMessage(data.message || 'Unable to send Password Reset Email.');
         }
       }
     } catch (error) {
-      setMessage({
-        text: 'Unable to send Password Reset Email.',
-        color: 'error',
-      });
+      setMessage('Unable to send Password Reset Email.');
     }
   };
 
@@ -77,14 +65,10 @@ function ForgotMyPassword() {
             </button>
           </div>
 
-          {/* Separate container for the success message */}
+          {/* Separate container for the message at the bottom */}
           <div className="message-container">
-            {/* Display the message with the specified color */}
-            {message.text && (
-              <p className={`forms_field-label ${message.color === 'success' ? 'success-message' : 'error-message'}`}>
-                {message.text}
-              </p>
-            )}
+            {/* Display the message at the bottom */}
+            {message && <p className="forms_field-label">{message}</p>}
           </div>
         </form>
       </div>

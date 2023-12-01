@@ -6,11 +6,21 @@ import '../css/ResetPassword.css';
 function ResetMyPassword() {
   var Password, confirmPassword;
   const [message, setMessage] = useState('');
-  const [verificationMessage, setVerificationMessage] = useState('');
   const [passwordsMatch, setPasswordsMatch] = useState(true);
 
   const handlePasswordChange = () => {
-    setPasswordsMatch(Password.value === confirmPassword.value);
+    const newPassword = Password.value;
+    const newPasswordStrength = isStrongPassword(newPassword);
+
+    // Check if the password meets the strength criteria
+    if (!newPasswordStrength) {
+      setMessage('Password must have at least 8 characters, including uppercase, lowercase, digit, and special character.');
+    } else {
+      setMessage(''); // Clear any previous error messages
+    }
+
+    // Check if passwords match
+    setPasswordsMatch(newPassword === confirmPassword.value);
   };
 
   const resetPassword = async (event) => {
@@ -20,12 +30,20 @@ function ResetMyPassword() {
 
     if (!passwordsMatch) {
       setMessage('Passwords must match');
-      setVerificationMessage(''); // Clear any previous verification message
+      return;
+    }
+
+    const newPassword = Password.value;
+    const newPasswordStrength = isStrongPassword(newPassword);
+
+    // Check if the password meets the strength criteria
+    if (!newPasswordStrength) {
+      setMessage('Password must have at least 8 characters, including uppercase, lowercase, digit, and special character.');
       return;
     }
 
     var obj = {
-      Password: Password.value,
+      Password: newPassword,
     };
 
     var js = JSON.stringify(obj);
@@ -38,8 +56,8 @@ function ResetMyPassword() {
       });
 
       if (response.status === 200) {
-        setVerificationMessage('Password Change Successful!');
-        setMessage(''); // Clear any previous error messages
+        setMessage('Password Change Successful!');
+        // Clear any previous error messages
 
         // Redirect to login after 3 seconds
         setTimeout(() => {
@@ -47,13 +65,44 @@ function ResetMyPassword() {
         }, 3000);
       } else {
         setMessage('Unable to reset password.');
-        setVerificationMessage(''); // Clear any previous verification message
       }
     } catch (e) {
       setMessage('Unable to reset password.');
-      setVerificationMessage(''); // Clear any previous verification message
       console.error(e);
     }
+  };
+
+  const isStrongPassword = (value) => {
+    // Check for at least 1 capital letter
+    const capitalLetterRegex = /[A-Z]/;
+    if (!capitalLetterRegex.test(value)) {
+      return false;
+    }
+
+    // Check for at least 1 lowercase letter
+    const lowercaseLetterRegex = /[a-z]/;
+    if (!lowercaseLetterRegex.test(value)) {
+      return false;
+    }
+
+    // Check for at least 1 digit
+    const digitRegex = /\d/;
+    if (!digitRegex.test(value)) {
+      return false;
+    }
+
+    // Check for at least 1 special character
+    const specialCharacterRegex = /[!@#$%^&*(),.?":{}|<>]/;
+    if (!specialCharacterRegex.test(value)) {
+      return false;
+    }
+
+    // Check for minimum 8 characters in length
+    if (value.length < 8) {
+      return false;
+    }
+
+    return true;
   };
 
   return (
@@ -63,7 +112,9 @@ function ResetMyPassword() {
           <h3 className="pass_forms_title">Reset Your Password</h3>
 
           <div className="mb-3 forms_field">
-            <label htmlFor="Password" className="forms_field-label">Password</label>
+            <label htmlFor="Password" className="forms_field-label">
+              Password
+            </label>
             <input
               type="password"
               id="Password"
@@ -76,7 +127,9 @@ function ResetMyPassword() {
           </div>
 
           <div className="mb-3 forms_field">
-            <label htmlFor="confirmPassword" className="forms_field-label">Confirm Password</label>
+            <label htmlFor="confirmPassword" className="forms_field-label">
+              Confirm Password
+            </label>
             <input
               type="password"
               id="confirmPassword"
@@ -90,23 +143,18 @@ function ResetMyPassword() {
 
           {!passwordsMatch && <p className="error-message">Passwords must match</p>}
 
-          <div className="d-grid">
-            <button className="forms_buttons-action" type="submit">
-              Submit
-            </button>
-          </div>
-
+          {/* Display the password strength message */}
           {message && (
             <p className={`forms_field-label ${message.includes('Successful') ? 'success-message visible' : 'error-message'}`}>
               {message}
             </p>
           )}
 
-          {verificationMessage && (
-            <p className={`forms_field-label ${verificationMessage.includes('Successful') ? 'success-message visible' : 'error-message'}`}>
-              {verificationMessage}
-            </p>
-          )}
+          <div className="d-grid">
+            <button className="forms_buttons-action" type="submit">
+              Submit
+            </button>
+          </div>
         </form>
       </div>
     </div>
