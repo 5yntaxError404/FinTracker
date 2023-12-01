@@ -266,6 +266,71 @@ const Dashboard = ({ navigation }) => {
         // getTransaction();
         }, []);
 
+            const goalData = [
+                {Id: 0, value: MonthlyIncome, label: 'Income', svg: {fill: '#FF6F61'}},
+                {Id: 1, value: rent, label: 'rent',svg: {fill: '#6B5B95'}},
+                {Id: 2, value: utilities, label: 'utilities',svg: {fill: '#88B04B'}},
+            ];
+            // Sample data for the pie chart
+            const pieChartData = [
+                {
+                    key: 'Income',
+                    value: MonthlyIncome,
+                    svg: { fill: '#FF6F61' },
+                    arc: { outerRadius: '100%', padAngle: 0.05 },
+                },
+                {
+                    key: 'Rent',
+                    value: rent,
+                    svg: { fill: '#6B5B95' },
+                    arc: { outerRadius: '90%', padAngle: 0.05 }
+                },
+                {
+                    key: 'Utilities',
+                    value: utilities,
+                    svg: { fill: '#88B04B' },
+                    arc: { outerRadius: '90%', padAngle: 0.05 }
+                },
+                {
+                    key: 'Groceries',
+                    value: groceries,
+                    svg: { fill: '#F7CAC9' },
+                    arc: { outerRadius: '90%', padAngle: 0.05 }
+                },
+                {
+                    key: 'Insurance',
+                    value: insurance,
+                    svg: { fill: '#92A8D1' },
+                    arc: { outerRadius: '90%', padAngle: 0.05 }
+                },
+                {
+                    key: 'Phone',
+                    value: phone,
+                    svg: { fill: '#955251' },
+                    arc: { outerRadius: '90%', padAngle: 0.05 }
+                },
+                {
+                    key: 'Car',
+                    value: car,
+                    svg: { fill: '#B565A7' },
+                    arc: { outerRadius: '90%', padAngle: 0.05 }
+                },
+                {
+                    key: 'Gas',
+                    value: gas,
+                    svg: { fill: '#009B77' },
+                    arc: { outerRadius: '90%', padAngle: 0.05 }
+                },
+                {
+                    key: 'Fun',
+                    value: fun,
+                    svg: { fill: '#DD4124' },
+                    arc: { outerRadius: '90%', padAngle: 0.05 }
+                }
+
+                // Add more data segments as needed
+            ];
+
 
     function initiateGraph(){
         setGraphColor("green");
@@ -275,7 +340,7 @@ const Dashboard = ({ navigation }) => {
 
     const [graphColor, setGraphColor] = useState("grey");
     // Sample data for the pie chart
-    const pieChartData = [
+    const pieChartDataInitial = [
         {
             key: 'MonthlyIncome',
             value: MonthlyIncome,
@@ -289,6 +354,7 @@ const Dashboard = ({ navigation }) => {
 
             <LinearGradient colors={['#67286C','#973C9F']} style={styles.section1} start = {[0,0]} end = {[1,0]}>
             <Text style={styles.title}>FinTracker</Text>
+            
             </LinearGradient>
 
             <LinearGradient colors={['#322133','#322133','#322133']} style={styles.section2}>
@@ -296,6 +362,7 @@ const Dashboard = ({ navigation }) => {
 
             
             <LinearGradient colors={['#67286C','#973C9F']} style={styles.section3} start = {[0,0]} end = {[1,0]}>
+
             <ScrollView horizontal={true} pagingEnabled={true} showsHorizontalScrollIndicator={false}>
 
             <View style={styles.mainSummaryBox}>
@@ -424,6 +491,7 @@ const Dashboard = ({ navigation }) => {
                 <Text style={styles.getStartedText}>Goal: ${parseFloat(GoalAmt).toFixed(2)}</Text>
                 <Text style={styles.getStartedText}>Saved Amount: ${parseFloat(SavedAmt).toFixed(2)}</Text>
 
+                   
                     <Text style={styles.text}>Transactions</Text>
                     <Modal
                     transparent={true}
@@ -487,10 +555,17 @@ const Dashboard = ({ navigation }) => {
 
 
                     <View style={styles.textBox}>
-
+                        
                     </View>
 
                     <Text style={styles.text}>Achievements</Text>
+                    <View style={styles.graphContainer}>
+                        <PieChart
+                        style={{ height: 300 }}
+                        data={goalData}
+                        />
+                    </View>
+
                 </View>
 
             </ScrollView>
@@ -505,6 +580,8 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     graphContainer: {
+        height: 300,
+        alignContent:'center',
         margin:10,
         borderRadius: 15,
         padding: 10,
