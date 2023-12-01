@@ -1,3 +1,5 @@
+/* SignUpPage.css */
+
 @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
 
 body {
@@ -7,29 +9,36 @@ body {
 
 .signup-container {
     background-image: linear-gradient(to bottom right, #6e2b62, #33243f, #211522, #613659);
-	height: 110vh;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-    position:relative;
+    height: 110vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
     overflow-y: auto;
 }
 
 .signup-form {
-	position: relative;
+    position: relative;
     margin-top: -15vh;
-	background-image: linear-gradient(to bottom right, #4d1b4e, #281e2c);
-	color: white;
-	width: 70vw;
-	max-width: 400px;
-	border-radius: 10px;
-	box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-	padding: 10px;
-	text-align: center;
-	animation: fadeInAnimation ease 1s;
-	animation-iteration-count: 1;
-	animation-fill-mode: forwards;
+    background-image: linear-gradient(to bottom right, #4d1b4e, #281e2c);
+    color: white;
+    width: 70vw;
+    max-width: 400px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    text-align: center;
+    animation: fadeInAnimation ease 1s;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+    z-index: 2; /* Updated z-index */
+}
+
+.success-message {
+    color: green; /* Update the color as needed */
+    margin-top: 10px;
+    z-index: 3; /* Ensure the success message is rendered above other elements */
 }
 
 @keyframes fadeInAnimation {
@@ -38,7 +47,7 @@ body {
     }
     100% {
         opacity: 1;
-     }
+    }
 }
 
 .form {
@@ -62,6 +71,13 @@ body {
     border-radius: 5px;
 }
 
+.error {
+    position: relative;
+}
+
+.error-border {
+    border: 2px solid red;
+}
 
 .d-grid {
     display: grid;
@@ -88,4 +104,20 @@ body {
 
 .test-right {
     text-align: center;
+}
+
+.error-messages {
+    color: red;
+    margin-top: 10px;
+}
+
+.success-message {
+    color: green;
+    margin-top: 10px;
+}
+
+.required-field::before {
+    content: '*';
+    color: red;
+    margin-right: 5px;
 }
