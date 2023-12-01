@@ -47,13 +47,6 @@ function SignUp() {
     return true;
   };
 
-  const errorPush = (message, field) => {
-    setErrorMessages(message);
-    setErrorFields([field]);
-    setRegistrationError('');
-    setSuccessMessages([]);
-  };
-
   const successPush = (message) => {
     setSuccessMessages([message]);
     setErrorMessages('');
@@ -92,7 +85,10 @@ function SignUp() {
     }
 
     if (errors.length > 0) {
-      errorPush(errors.join('\n'), fieldsWithErrors[0]);
+      setErrorMessages(errors.join('\n'));
+      setErrorFields(fieldsWithErrors);
+      setRegistrationError('');
+      setSuccessMessages([]);
       return;
     }
 
@@ -114,24 +110,19 @@ function SignUp() {
         headers: { 'Content-Type': 'application/json' },
       });
 
-      if (!response.ok) {
+      if (response.ok) {
+        successPush('Account created! Please check your email to verify before logging in.');
+      } else {
+        // Handle errors based on response status
         if (response.status === 400) {
-          errorPush('Username is already in use.', 'userName');
+          setErrorMessages('Username is already in use.');
+          setErrorFields(['userName']);
         } else if (response.status === 401) {
-          errorPush('Email is already in use.', 'email');
+          setErrorMessages('Email is already in use.');
+          setErrorFields(['email']);
         } else {
           throw new Error(`Server responded with status ${response.status}`);
         }
-        return;
-      }
-
-      const res = await response.json();
-      console.log(res);
-
-      if (res.error !== '') {
-        setRegistrationError('Unable to Register');
-      } else {
-        successPush('Account created! Please check your email to verify before logging in.');
       }
     } catch (e) {
       console.error('Error during fetch:', e.message);
@@ -212,7 +203,7 @@ function SignUp() {
           </div>
 
           <p className="error-messages">{errorMessages}</p>
-          <p className="error-messages">{registrationError}</p>
+          <p className="registration-error">{registrationError}</p>
           <p className="success-message">{successMessages.join('\n')}</p>
 
           <p className="forgot-password text-right">
