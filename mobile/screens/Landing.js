@@ -7,6 +7,10 @@ import { useFonts } from 'expo-font';
 
 const Landing = ({ navigation }) => {
 
+    const dismissKeyboard = () => {
+        Keyboard.dismiss();
+    }
+
     const [fontsLoaded] = useFonts({
         "Montserrat-Black":require("../assets/fonts/Montserrat-Black.ttf"),
     })
@@ -16,6 +20,11 @@ const Landing = ({ navigation }) => {
     }
 
     return(
+        <TouchableOpacity
+        activeOpacity={1}
+        onPress={dismissKeyboard}
+        style={styles.container}
+      >
         <View style={styles.container}>
 
             <View style={styles.landingBox}>
@@ -45,6 +54,7 @@ const Landing = ({ navigation }) => {
             </LinearGradient>
 
         </View>
+        </TouchableOpacity>
     )
 }
 

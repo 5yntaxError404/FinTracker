@@ -17,8 +17,16 @@ const Dashboard = ({ navigation }) => {
     const showTransactionPopup = () => setVisibleTransactionPopup(true);
     const hideTransactionPopup = () => setVisibleTransactionPopup(false);
 
+    const [visibleIncomePopup, setVisibleIncomePopup] = useState(false);
+    const showIncomePopup = () => setVisibleIncomePopup(true);
+    const hideIncomePopup = () => setVisibleIncomePopup(false);
+
+    const [visibleExpensePopup, setVisibleExpensePopup] = useState(false);
+    const showExpensePopup = () => setVisibleExpensePopup(true);
+    const hideExpensePopup = () => setVisibleExpensePopup(false);
+
     // Budget BODY
-    const[MonthlyIncome, setMonthlyIncome] = useState(0.0);
+    const[MonthlyIncome, setMonthlyIncome] = useState(1.0);
     const[rent, setRent] = useState(0.0);
     const[utilities, setUtilities] = useState(0.0);
     const[groceries, setGroceries] = useState(0.0);
@@ -46,7 +54,7 @@ const Dashboard = ({ navigation }) => {
 
     //achievement BODY
     const [achievementToAdd, setAchievementToAdd] = useState(0);
-    
+
     //CRUD operations for Budget
     const createBudget = async() => {
         //create
@@ -254,28 +262,27 @@ const Dashboard = ({ navigation }) => {
         };
 
     useEffect(() => {
-        readBudget();
+        // readBudget();
         // getTransaction();
         }, []);
 
 
+    function initiateGraph(){
+        setGraphColor("green");
+        hideIncomePopup();
+    }
+
+
+    const [graphColor, setGraphColor] = useState("grey");
     // Sample data for the pie chart
     const pieChartData = [
         {
-            key: 'expenses',
-            value: 500,
-            svg: { fill: '#FF6F61' },
+            key: 'MonthlyIncome',
+            value: MonthlyIncome,
+            svg: { fill: graphColor },
             arc: { outerRadius: '100%', padAngle: 0.05 },
         },
-        {
-            key: 'savings',
-            value: 300,
-            svg: { fill: '#6EC1C2' },
-            arc: { outerRadius: '90%', padAngle: 0.05 },
-        },
-        // Add more data segments as needed
     ];
-
 
     return (
         <View style={styles.container}>
@@ -300,8 +307,8 @@ const Dashboard = ({ navigation }) => {
                 />
                 </View>
                 
-                    <Text style={styles.text}>Hello {firstName}!</Text>
-                    <Text style={styles.monthlyIncomeText}>Monthly Income: ${parseFloat(MonthlyIncome).toFixed(2)}</Text>
+                    {/* <Text style={styles.text}>Hello {firstName}!</Text> */}
+                    {/* <Text style={styles.monthlyIncomeText}>Monthly Income: ${parseFloat(MonthlyIncome).toFixed(2)}</Text>
                     <Text style={styles.getStartedText}>Rent: ${parseFloat(rent).toFixed(2)}</Text>
                     <Text style={styles.getStartedText}>Utilities: ${parseFloat(utilities).toFixed(2)}</Text>
                     <Text style={styles.getStartedText}>Groceries: ${parseFloat(groceries).toFixed(2)}</Text>
@@ -309,21 +316,115 @@ const Dashboard = ({ navigation }) => {
                     <Text style={styles.getStartedText}>Phone: ${parseFloat(phone).toFixed(2)}</Text>
                     <Text style={styles.getStartedText}>Gas: ${parseFloat(gas).toFixed(2)}</Text>
                     <Text style={styles.getStartedText}>Entertainment: ${parseFloat(fun).toFixed(2)}</Text>
-                    <Text style={styles.getStartedText}>Income - Expenses: ${(parseFloat(MonthlyIncome) - parseFloat(MonthlyExpenses)).toFixed(2)}</Text>
-                    <Text style={styles.getStartedText}>Current Goal: {GoalDescription}</Text>
-                    <Text style={styles.getStartedText}>Goal: ${parseFloat(GoalAmt).toFixed(2)}</Text>
-                    <Text style={styles.getStartedText}>Saved Amount: ${parseFloat(SavedAmt).toFixed(2)}</Text>
+                    <Text style={styles.getStartedText}>Income - Expenses: ${(parseFloat(MonthlyIncome) - parseFloat(MonthlyExpenses)).toFixed(2)}</Text> */}
+
+                    <Modal
+                    transparent={true}
+                    visible={visibleIncomePopup}>
+                    <View style={{backgroundColor:"#000000aa",flex:1}}>
+                        <View style={{backgroundColor:"#808080",margin:30,padding:40,borderRadius:10,flex:0.5, height:50, marginTop:150,}}>
+
+                            <Text style={styles.loginText}>Set Monthly Income</Text>
+
+                            <TextInput
+                            style={styles.input}
+                            placeholder="Monthly Income"
+                            secureTextEntry = {false}
+                            keyboardType='numeric'
+                            onChangeText={text => {
+                                const monthlyIncomeValue = parseInt(text,10);
+                                setMonthlyIncome(monthlyIncomeValue)
+                            }}
+                            />
+
+                            <TouchableOpacity 
+                                style={styles.button}
+                                onPress={() => initiateGraph()}
+                            >
+                            <Text style={styles.buttonText}>Set Income</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity 
+                                style={styles.button}
+                                onPress={hideIncomePopup}
+                            >
+                            <Text style={styles.buttonText}>Go Back</Text>
+                            </TouchableOpacity>
+
+                        </View>
+                    </View>
+                    </Modal>
+                    <TouchableOpacity
+                                style={styles.getStartedButton}
+                                onPress={showIncomePopup}> 
+                                <Text style={styles.getStartedText}>Set Income</Text>
+                    </TouchableOpacity>
+
+                    <Modal
+                    transparent={true}
+                    visible={visibleExpensePopup}>
+                    <View style={{backgroundColor:"#000000aa",flex:1}}>
+                        <View style={{backgroundColor:"#808080",margin:30,padding:40,borderRadius:10,flex:0.5, height:50, marginTop:150}}>
+
+                            <Text style={styles.loginText}>Add Expense</Text>
+
+                            <TextInput
+                            style={styles.input}
+                            placeholder="Amount"
+                            secureTextEntry = {false}
+                            keyboardType='numeric'
+                            onChangeText={text => {
+                                const transactionAmtValue = parseInt(text,10);
+                                setTransactionAmt(transactionAmtValue);
+                            }}
+                            />
+
+                            <TextInput
+                            style={styles.input}
+                            placeholder="Category"
+                            secureTextEntry = {false}
+                            onChangeText={text => setTransactionCategory(text)}
+                            />
+
+                            <TouchableOpacity 
+                                style={styles.button}
+                                onPress={addTransaction}
+                            >
+                            <Text style={styles.buttonText}>Add</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity 
+                                style={styles.button}
+                                onPress={hideExpensePopup}
+                            >
+                            <Text style={styles.buttonText}>Go Back</Text>
+                            </TouchableOpacity>
+
+                        </View>
+                    </View>
+                    </Modal>
+
 
                     <TouchableOpacity
+                                style={styles.getStartedButton}
+                                onPress={showExpensePopup}> 
+                                <Text style={styles.getStartedText}>Add Transaction</Text>
+                    </TouchableOpacity>
+
+                    {/* <TouchableOpacity
                         style={styles.getStartedButton}
                         onPress={() => navigation.navigate('Landing')}> 
                         <Text style={styles.getStartedText}>Log Out</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                 </View>
 
                 <View style={styles.mainSummaryBox}>
+
+                <Text style={styles.getStartedText}>Current Goal: {GoalDescription}</Text>
+                <Text style={styles.getStartedText}>Goal: ${parseFloat(GoalAmt).toFixed(2)}</Text>
+                <Text style={styles.getStartedText}>Saved Amount: ${parseFloat(SavedAmt).toFixed(2)}</Text>
+
                     <Text style={styles.text}>Transactions</Text>
-                                        {/* Transaction info popup */}
                     <Modal
                     transparent={true}
                     visible={visibleTransactionPopup}>
@@ -473,11 +574,12 @@ const styles = StyleSheet.create({
         alignItems:'center',
         backgroundColor:'purple',
         borderWidth:1,
-        width:140,
+        width:170,
         alignContent:'center',
         justifyContent:'center',
         alignSelf:'center',
         fontFamily: 'Montserrat-Black',
+        margin:10,
     },
     getStartedText:{
         color:'white',

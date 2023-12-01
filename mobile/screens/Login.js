@@ -15,6 +15,8 @@ import { useFonts } from 'expo-font';
 
 const Login = ({ navigation }) => {
 
+const [showError, setShowError] = useState(false);
+
 const [fontsLoaded] = useFonts({
     "Montserrat-Black":require("../assets/fonts/Montserrat-Black.ttf"),
 })
@@ -52,11 +54,13 @@ const [Email, setSignupEmail] = useState('');
         setAccessToken(data.accessToken);
         console.log(data);
         console.log("access token is:" + getAccessToken());
+        setShowError(false);
       } else{
         console.log("Login unsuccessful");
         console.log(data);
+        setShowError(true);
       }
-      setUserName("");
+      Keyboard.dismiss();
     } catch(error) {
         console.error("An error occured: ", error)
         console.log(UserName + " " + Password);
@@ -83,9 +87,9 @@ const [Email, setSignupEmail] = useState('');
       }
     };
 
-    const handleForgotPass = () => {
-        //forgot password
-    };
+    // const handleForgotPass = () => {
+    //     //forgot password
+    // };
 
     return (
     <TouchableOpacity
@@ -187,6 +191,9 @@ const [Email, setSignupEmail] = useState('');
                 secureTextEntry = {true}
                 onChangeText={text => setPassword(text)}
             />
+            {showError && (
+            <Text style={styles.errorText}>Invalid Credentials</Text>
+            )}
             <TouchableOpacity 
                 style={styles.button}
                 onPress={handleLogin}
@@ -198,11 +205,11 @@ const [Email, setSignupEmail] = useState('');
                 onPress={show}>
             <Text style={styles.linkText}>Sign Up</Text>
             </TouchableOpacity>
-            <Text style={styles.italicBoldText}>Forgot Password?</Text>
+            {/* <Text style={styles.italicBoldText}>Forgot Password?</Text>
             <TouchableOpacity
                     onPress={handleForgotPass}>
             <Text style={styles.linkText}>Reset Now</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
         </View>
         </LinearGradient>
     </TouchableOpacity>
