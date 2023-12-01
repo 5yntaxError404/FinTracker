@@ -1,3 +1,5 @@
+/* SignUpPage.css */
+
 @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
 
 body {
@@ -99,6 +101,11 @@ body {
 
 .error-messages {
     color: red;
+    margin-top: 10px;
+}
+
+.success-message {
+    color: green;
     margin-top: 10px;
 }
 

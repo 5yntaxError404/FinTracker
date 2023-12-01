@@ -1,3 +1,5 @@
+// SignUp.js
+
 import React, { useState } from 'react';
 import '../css/SignUpPage.css';
 
@@ -10,6 +12,7 @@ function SignUp() {
   const [errorMessages, setErrorMessages] = useState('');
   const [errorFields, setErrorFields] = useState([]);
   const [registrationError, setRegistrationError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
   const isStrongPassword = (value) => {
     // Check for at least 1 capital letter
@@ -46,7 +49,7 @@ function SignUp() {
 
   const doSignup = async (event) => {
     event.preventDefault();
-    console.log('Before fetch:', { fname, lname, username, password, email });
+
     // Validate form fields
     const errors = [];
     const fieldsWithErrors = [];
@@ -78,6 +81,7 @@ function SignUp() {
       setErrorMessages(errors.join('\n'));
       setErrorFields(fieldsWithErrors);
       setRegistrationError('');
+      setSuccessMessage('');
       return;
     }
 
@@ -85,27 +89,34 @@ function SignUp() {
     setErrorMessages('');
     setErrorFields([]);
     setRegistrationError('');
+    setSuccessMessage('');
 
     try {
-      // Check for existing username and email
-      const checkResponse = await fetch('https://www.fintech.davidumanzor.com/api/register', {
+      // Make a single fetch request for both checking and registration
+      const response = await fetch('https://www.fintech.davidumanzor.com/api/register', {
         method: 'post',
-        body: JSON.stringify({ UserName: username, Email: email }),
+        body: JSON.stringify({
+          UserName: username,
+          Email: email,
+          FirstName: fname,
+          LastName: lname,
+          Password: password,
+        }),
         headers: { 'Content-Type': 'application/json' },
       });
 
-      if (!checkResponse.ok) {
-        if (checkResponse.status === 400) {
+      if (!response.ok) {
+        if (response.status === 400) {
           // Username already exists
           errors.push('Username is already in use.');
           fieldsWithErrors.push('userName');
-        } else if (checkResponse.status === 401) {
+        } else if (response.status === 401) {
           // Email already exists
           errors.push('Email is already in use.');
           fieldsWithErrors.push('email');
         } else {
           // Handle other errors
-          throw new Error(`Server responded with status ${checkResponse.status}`);
+          throw new Error(`Server responded with status ${response.status}`);
         }
 
         setErrorMessages(errors.join('\n'));
@@ -114,33 +125,15 @@ function SignUp() {
       }
 
       // Continue with form submission if no existing username or email
-      const obj = {
-        FirstName: fname,
-        LastName: lname,
-        Email: email,
-        UserName: username,
-        Password: password,
-      };
-      const js = JSON.stringify(obj);
-
-      const response = await fetch('https://www.fintech.davidumanzor.com/api/register', {
-        method: 'post',
-        body: js,
-        headers: { 'Content-Type': 'application/json' },
-      });
-
-      if (!response.ok) {
-        throw new Error(`Server responded with status ${response.status}`);
-      }
-
       const res = await response.json();
       console.log(res);
 
       if (res.error !== '') {
         setRegistrationError('Unable to Register');
       } else {
+        // Successful registration
         setRegistrationError('');
-        alert('Registered.');
+        setSuccessMessage('Account created! Please check your email to verify before logging in.');
       }
     } catch (e) {
       console.error('Error during fetch:', e.message);
@@ -222,6 +215,7 @@ function SignUp() {
 
           <p className="error-messages">{errorMessages}</p>
           <p className="error-messages">{registrationError}</p>
+          <p className="success-message">{successMessage}</p>
 
           <p className="forgot-password text-right">
             <a href="/ForgotPassword"> Forgot password?</a>
