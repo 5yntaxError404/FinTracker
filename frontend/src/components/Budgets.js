@@ -10,7 +10,6 @@ import Chart from 'chart.js/auto';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 function BudgetPage() {
-
     const [budget, setBudget] = useState({
         income: 0,
         rent: 0,
@@ -28,22 +27,28 @@ function BudgetPage() {
     });
 
     const [message, setMessage] = useState('');
-    
+
     const base_url = process.env.NODE_ENV === "production"
-    ? `https://www.fintech.davidumanzor.com`
-    : `http://localhost:5000`;
+        ? `https://www.fintech.davidumanzor.com`
+        : `http://localhost:5000`;
 
     const validateInput = (inputElement, fieldName) => {
-        const value = parseFloat(inputElement.value);
-        if (isNaN(value) || value < 0) {
-            alert(`Invalid ${fieldName}: Please enter a non-negative number.`);
-            throw new Error(`Invalid ${fieldName}`);
+        try {
+            const value = parseFloat(inputElement.value);
+
+            if (isNaN(value) || value < 0) {
+                throw new Error(`Invalid ${fieldName}: Please enter a non-negative number.`);
+            }
+
+            if (value.toString().includes('.') && (value.toString().split('.')[1].length > 2)) {
+                throw new Error(`Invalid ${fieldName}: Please enter up to two decimal places.`);
+            }
+
+            return value.toFixed(2);
+        } catch (error) {
+            setMessage(error.message);
+            throw error;
         }
-        if (value.toString().includes('.') && (value.toString().split('.')[1].length > 2)) {
-            alert(`Invalid ${fieldName}: Please enter up to two decimal places.`);
-            throw new Error(`Invalid ${fieldName}`);
-        }
-        return value.toFixed(2);
     };
 
     const AddBudget = async (event) => {
@@ -226,97 +231,94 @@ function BudgetPage() {
         });
     }, [budget]);
 
-
     return (
-
         <div className="landing-container">
             <Container onLoad={GetBudget}>
                 <Row>
                     <Col sm={3} md={6} className="budgetInfo">
-                    <canvas id="budgetChart"></canvas>
+                        <canvas id="budgetChart"></canvas>
                     </Col>
                     <Col sm={3} md={6} className="content">
-                    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono"></link>
+                        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono"></link>
                         <form className='addBudgetForm'>
-                                <Container>
-                                    <Row>
-                                        <Col>
+                            <Container>
+                                <Row>
+                                    <Col>
                                         <label htmlFor="inputIncome">Income</label>
                                         <input type="number" className="form-control" id="inputIncome"/>
-                                        </Col>
-                                        
-                                        <Col>
+                                    </Col>
+                                    
+                                    <Col>
                                         <label htmlFor="inputRent">Rent</label>
                                         <input type="number" className="form-control" id="inputRent"/>
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col>
                                         <label htmlFor="inputUtilities">Utilities</label>
                                         <input type="number" className="form-control" id="inputUtilities"/>
-                                        </Col>
-                                        <Col>
+                                    </Col>
+                                    <Col>
                                         <label htmlFor="inputGroceries">Groceries</label>
                                         <input type="number" className="form-control" id="inputGroceries"/>
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col>
                                         <label htmlFor="inputInsurance">Insurance</label>
                                         <input type="number" className="form-control" id="inputInsurance"/>
-                                        </Col>
-                                        <Col>
+                                    </Col>
+                                    <Col>
                                         <label htmlFor="inputPhone">Phone</label>
                                         <input type="number" className="form-control" id="inputPhone"/>
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col>
                                         <label htmlFor="inputCar">Car</label>
                                         <input type="number" className="form-control" id="inputCar"/>
-                                        </Col>
-                                        <Col>
+                                    </Col>
+                                    <Col>
                                         <label htmlFor="inputGas">Gas</label>
                                         <input type="number" className="form-control" id="inputGas"/>
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col>
                                         <label htmlFor="inputFun">Entertainment</label>
                                         <input type="number" className="form-control" id="inputFun"/>
-                                        </Col>
-                                        <Col>
+                                    </Col>
+                                    <Col>
                                         <label htmlFor="inputGoal">Goal</label>
                                         <input type="number" className="form-control" id="inputGoal"/>
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col>
                                         <label htmlFor="inputGoal">Goal Description</label>
                                         <input type="text" className="form-control" id="inputGoalDescription"/>
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col>
                                         <label htmlFor="inputGoal">Goal Amount</label>
                                         <input type="number" className="form-control" id="inputGoalAmt"/>
-                                        </Col>
-                                        <Col>
+                                    </Col>
+                                    <Col>
                                         <label htmlFor="inputGoal">Saved Amount</label>
                                         <input type="number" className="form-control" id="inputSavedAmt"/>
-                                        </Col>
-                                    </Row>
-                                    <Row>
+                                    </Col>
+                                </Row>
+                                <Row>
                                     <button type="submit" className="btn btn-primary" onClick={AddBudget}>Edit Budget</button>
-                                    </Row>
-                                </Container>
+                                </Row>
+                                {message && <div style={{ color: 'red', marginTop: '10px' }}>{message}</div>}
+                            </Container>
                         </form>
                     </Col>
                 </Row>
             </Container>
         </div>
-
-        
     );
 }
 
