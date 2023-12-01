@@ -60,7 +60,7 @@ function ResetMyPassword() {
     <div className="login-container">
       <div className="login-form">
         <form className="form" onSubmit={resetPassword}>
-          <h3 className="forms_title">Reset Your Password</h3>
+          <h3 className="pass_forms_title">Reset Your Password</h3>
 
           <div className="mb-3 forms_field">
             <label htmlFor="Password" className="forms_field-label">Password</label>
