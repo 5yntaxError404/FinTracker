@@ -1,19 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../css/DashPage.css';
-import LoggedInName from './LoggedInName';
 
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import ProgressBar from 'react-bootstrap/ProgressBar';
+import { Pie } from 'react-chartjs-2'
 
-
+import CircleProgress from './CircleChart'
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    PieController,
+    ArcElement,
+    Tooltip,
+    Legend
+  } from 'chart.js';
 
 const Dash = (props) => {
 
     // Constants needed for the page
     const [budget, setBudget] = useState({
+        income: 0,
         rent: 0,
         utilities: 0,
         groceries: 0,
@@ -22,10 +32,16 @@ const Dash = (props) => {
         car: 0,
         gas: 0,
         fun: 0,
-        goal: 0
+        goal: 0,
+        goalDescription: '',
+        goalAmt: 0,
+        savedAmt: 0,
+        monthlyExpensesAmt: 0,
+        transactionsAmt: 0,
     })
     const [message,setMessage] = useState('');
     const [accounts, setAccounts] = useState([]);
+    const [transactions, setTransactions] = useState([]);
 
     const base_url = process.env.NODE_ENV === "production"
     ? `https://www.fintech.davidumanzor.com`
@@ -36,8 +52,6 @@ const Dash = (props) => {
         {
             try {
                 const userinfo = JSON.parse(localStorage.getItem('user'));
-                console.log(userinfo);
-                console.log(userinfo.UserId);
                 
                 const response = await fetch(
                     `${base_url}/api/accounts/`,
@@ -73,9 +87,7 @@ const Dash = (props) => {
     {
         try {
             const userinfo = JSON.parse(localStorage.getItem('user'));
-            console.log(userinfo);
-            console.log(userinfo.UserId);
-            
+
             const response = await fetch(
                 `${base_url}/api/budgets/get/${userinfo.UserId}`,
                 {
@@ -89,15 +101,23 @@ const Dash = (props) => {
 
             var res = JSON.parse(await response.text());
             console.log(res);
-            console.log(res.budgetGot.MonthlyExpenses);
-            console.log(res.budgetGot.MonthlyExpenses.rent);
 
             if (res.error) {
                 setMessage('Unable to get Budget'); // Set an error message
                 console.log('Some error');
             } 
             else {
-                setBudget(res.budgetGot.MonthlyExpenses);
+                var temp = {
+                    income: res.budgetGot.MonthlyIncome,
+                    goalDescription: res.budgetGot.GoalDescription,
+                    goalAmt: res.budgetGot.GoalAmt,
+                    savedAmt: res.budgetGot.SavedAmt,
+                    transactionAmt: res.budgetGot.TransactionAmt,
+                    monthlyExpensesAmt: res.budgetGot.MonthlyExpensesAmt
+                }
+                var newBudget = Object.assign({}, temp, res.budgetGot.MonthlyExpenses);
+
+                setBudget(newBudget);
                 setMessage('Success');
             }
             
@@ -107,140 +127,204 @@ const Dash = (props) => {
         }
     };
 
+    // Obtains budget from DB and updates webpage
+    const GetTransactions = async() =>
+    {
+        try {
+            const userinfo = JSON.parse(localStorage.getItem('user'));
+            
+            const response = await fetch(
+                `${base_url}/api/budgets/transactions/get/${userinfo.UserId}`,
+                {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${userinfo.accessToken}`
+                },
+                credentials: 'same-origin',
+            });
+            var check = response.text();
+            var res = JSON.parse(await check);
+            console.log(res);
+
+            if (res.error) {
+                setMessage('Unable to get Budget'); // Set an error message
+                console.log('Some error');
+            } 
+            else {
+                setTransactions(res);
+                setMessage('Success');
+            }
+            
+        } catch (e) {
+            console.log(check);
+            if(check.value == "Forbidden")
+            {
+                window.location.href = '/login';
+            }
+            alert(e.toString());
+            return;
+        }
+    };
+
+    // Obtains budget from DB and updates webpage
+    const GetAchievements = async() =>
+    {
+        try {
+            const userinfo = JSON.parse(localStorage.getItem('user'));
+            
+            const response = await fetch(
+                `${base_url}/api/budgets/transactions/get/${userinfo.UserId}`,
+                {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${userinfo.accessToken}`
+                },
+                credentials: 'same-origin',
+            });
+            var check = response.text();
+            var res = JSON.parse(await check);
+            console.log(res);
+
+            if (res.error) {
+                setMessage('Unable to get Budget'); // Set an error message
+                console.log('Some error');
+            } 
+            else {
+                setTransactions(res);
+                setMessage('Success');
+            }
+            
+        } catch (e) {
+            console.log(check);
+            if(check.value == "Forbidden")
+            {
+                window.location.href = '/login';
+            }
+            alert(e.toString());
+            return;
+        }
+    };
+
+    useEffect(() => {
+        const loadData = async () => {
+          try {
+            // Delaying the execution to ensure all setups are complete
+            await new Promise(resolve => setTimeout(resolve, 1000));
+      
+            await Promise.all([
+              GetBudget(),
+              GetAccounts(),
+              GetTransactions()
+            ]);
+      
+            console.log('All data fetched successfully');
+          } catch (error) {
+            console.error('Error fetching data:', error);
+          }
+        };
+      
+        loadData();
+    }, []);
+
+    const goToTransaction = async () =>
+    {
+        window.location.href="/transactions";
+    }
+
+    const data = {
+        labels: ['Income', 'Expenses'],
+        datasets: [
+          {
+            data: [budget.income, budget.monthlyExpensesAmt],
+            backgroundColor: ['#FF6384', '#FFFFFF'],
+            hoverBackgroundColor: ['#FF6384', '#36A2EB']
+          }
+        ]
+    };
+      
+      // Registering the required components
+      ChartJS.register(
+        CategoryScale,
+        LinearScale,
+        PieController,
+        ArcElement,
+        Tooltip,
+        Legend
+      );
 
     return (
-    <div className="background">
-    <Container>
-        <Row>
-            <Col sm={3} md={6} className="widget" class="main">
-                <LoggedInName />
-            </Col>
+        <div className="background">
+        <Container className='widget-box'>
+            <Row>
+                <Col md={12} className="widget">
+                    <Row>
+                        <Col>
+                        <h2>Hello User!</h2>
+                        <p>Monthly Income: ${budget.income.toLocaleString()}</p>
 
-            <Col sm={8} md={6} class="bar-chart" className="widget">
-                
-                <div className='graph'>
-                <div/>
-                <div class="barGraph">
-                    <ul class="graph">
-                    Current Progress
-                    <span class="graph-barBack">
-                        <li class="graph-bar" data-value="28.5">
-                        <span class="graph-legend">Mon</span>
-                        </li>
-                        <ProgressBar now="28.5" max="100" />
+                        {/* Expenses List */}
+                        <div className="expenses-list">
+                            <h4>Monthly Expenses:</h4>
+                            <ul>
+                                {Object.keys(budget).map((key) => {
+                                    if (key !== 'income' && key !== 'goal' && key !== 'goalDescription' && key !== 'goalAmt' && key !== 'savedAmt' && key !== 'transactionAmt' && key !== 'monthlyExpensesAmt') {
+                                        return <li key={key}>{key.charAt(0).toUpperCase() + key.slice(1)}: ${budget[key]}</li>;
+                                    }
+                                    return null;
+                                })}
+                            </ul>
+                        </div>
+                        </Col>
+                        <Col>
+                            {/*<CircleProgress spent={(budget.savedAmt)} income={budget.income}/>*/}
+                            <Pie data={data} />
+                        </Col>
+                        <Col>
+                            {/* Placeholder for transactions and achievements */}
+                            <div className="transactions">
+                                <h4>Transactions</h4>
+                                {/* Map through transactions and display them */}
+                                {transactions.map(transactions => (
+                                <Row className="transaction" key={transactions.Transactions.transactionID}>
+                                    <p>{transactions.Transactions.transactionCategory} Transaction for: ${transactions.Transactions.transactionAmt}</p>
+                                </Row>
+                        ))}
+                            </div>
+                            <button className="btn btn-primary">Add Transaction</button>
+                        </Col>
 
-                    </span>  
-
-                    <span class="graph-barBack">    
-                        <li class="graph-bar" data-value="85">
-                        <span class="graph-legend">Tue</span>
-                        </li>
-                        <ProgressBar now="85" max="100" />
-                    </span>
-
-                    <span class="graph-barBack">    
-                        <li class="graph-bar" data-value="70">
-                        <span class="graph-legend">Wed</span>
-                        </li>
-                        <ProgressBar now="70" max="100" />
-                    </span>
-
-                    <span class="graph-barBack">    
-                        <li class="graph-bar" data-value="50">
-                        <span class="graph-legend">Thu</span>
-                        </li>
-                        <ProgressBar now="50" max="100" />
-                    </span>
-
-                    <span class="graph-barBack">    
-                        <li class="graph-bar" data-value="68">
-                        <span class="graph-legend">Fri</span>
-                        </li>
-                        <ProgressBar now="68" max="100" />
-                    </span>      
-                    </ul>
-                </div>
-                </div> 
-            </Col>
-            <Col sm={8} md="auto" class="budget-list" className="widget">
-                <div className="budgets">
-                <ul class="graph">
-                    <li class="budget-name" data-value="budget1">
-                    Budget 1 is at 50% completion
-                    </li>
-                </ul>
-                </div>
-                
-            </Col>
-        </Row>
-        <Row>
-            <Col md="auto" className="widget">
-                <h2 class="text-lg font-medium mb-4">Income</h2>
-                <p class="text-gray-600 mb-4">$10,000</p>
-                <canvas id="incomeChart" width="90" height="50"></canvas>
-            </Col>
-            <Col md="auto" className="widget">
-                <h2 class="text-lg font-medium mb-4">Expenses</h2>
-                <p class="text-gray-600 mb-4">$5,000</p>
-                <canvas id="expensesChart" width="90" height="50"></canvas>
-            </Col>
-            <Col md="auto" className="widget">
-                <h2 class="text-lg font-medium mb-4">Net Worth</h2>
-                <p class="text-gray-600 mb-4">$50,000</p>
-                <canvas id="netWorthChart" width="90" height="50"></canvas>
-            </Col>
-        </Row>
-        <Row>
-            <Col md="auto" className="widget">
-                <h2 class="text-lg font-medium mb-4">Cash Flow</h2>
-                <p class="text-gray-600 mb-4">$2,000</p>
-                <canvas id="cashFlowChart" width="90" height="50"></canvas>
-            </Col>
-            <Col md="auto" class="transations" className="widget">
-                <h2 class="text-lg font-medium mb-4">Transactions</h2>
-                <table class="w-full">
-                    <thead>
-                        <tr>
-                        <th class="text-left text-gray-600">Date</th>
-                        <th class="text-left text-gray-600">Description</th>
-                        <th class="text-right text-gray-600">Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                        <td class="py-2 text-sm">2021-08-01</td>
-                        <td class="py-2 text-sm">Rent Payment</td>
-                        <td class="py-2 text-sm text-right">$1,500</td>
-                        </tr>
-                        <tr>
-                        <td class="py-2 text-sm">2021-08-05</td>
-                        <td class="py-2 text-sm">Grocery Store</td>
-                        </tr>
-                        <tr>
-                        <td class="py-2 text-sm">2021-08-15</td>
-                        <td class="py-2 text-sm">Utility Bill</td>
-                        <td class="py-2 text-sm text-right">$200</td>
-                        </tr>
-                        <tr>
-                        <td class="py-2 text-sm">2021-08-25</td>
-                        <td class="py-2 text-sm">Dinner</td>
-                        <td class="py-2 text-sm text-right">$60</td>
-                        </tr>
-                        <tr>
-                        <td class="py-2 text-sm">2021-08-31</td>
-                        <td class="py-2 text-sm">Internet Bill</td>
-                        <td class="py-2 text-sm text-right">$100</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </Col>
-            <Col className="widget">
-                <h2 class="text-lg font-medium mb-4">Budget</h2>
-                <canvas id="budgetChart" width="90" height="50"></canvas>
-            </Col>
-        </Row>
-    </Container>
-    </div>
+                    </Row>
+                </Col>
+                {/* Transactions and Achievements could be other <Col> components */}
+            </Row>
+            <Row>
+                <Col className='widget'>
+                    {/* Current Budget Goal */}
+                    <div className="budget-goal">
+                        <h3>Current Budget Goal: {budget.goalDescription}</h3>
+                        <p>Total: ${budget.savedAmt.toLocaleString()} / ${budget.goalAmt.toLocaleString()} </p>
+                        <ProgressBar now={`${budget.savedAmt/budget.goalAmt}`} label={`${budget.savedAmt/budget.goalAmt}%`} />
+                    </div>
+                </Col>
+                <Col className='widget'>
+                    <div className="achievements">
+                        <h4>Achievements</h4>
+                        {/* Map through achievements and display them */}
+                        {/*
+                        {achievements.map(achievements => (
+                        <Row className="transaction" key={achievements.Transactions.transactionID}>
+                            <p>{achievements.Transactions.transactionCategory} Transaction for: ${achievements.Transactions.transactionAmt}</p>
+                        </Row>
+                        ))};
+                        */}
+                    </div>
+                </Col>
+            </Row>
+        </Container>
+      </div>
 );
 }
 export default Dash;
+

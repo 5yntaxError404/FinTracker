@@ -54,19 +54,19 @@ function BudgetPage() {
         let savedAmt = document.getElementById("inputSavedAmt");
 
 		var obj = {
-            MonthlyIncome: income.value,
-            rent: rent.value,
-            utilities: utilities.value,
-            groceries: groceries.value,
-            insurance: insurance.value,
-            phone: phone.value,
-            car: car.value,
-            gas: gas.value,
-            fun: fun.value,
-            goal: goal.value,
+            MonthlyIncome: parseFloat(income.value),
+            rent: parseFloat(rent.value),
+            utilities: parseFloat(utilities.value),
+            groceries: parseFloat(groceries.value),
+            insurance: parseFloat(insurance.value),
+            phone: parseFloat(phone.value),
+            car: parseFloat(car.value),
+            gas: parseFloat(gas.value),
+            fun: parseFloat(fun.value),
+            goal: parseFloat(goal.value),
             GoalDescription: goalDescription.value,
-            GoalAmt: goalAmt.value,
-            SavedAmt: savedAmt.value,
+            GoalAmt: parseFloat(goalAmt.value),
+            SavedAmt: parseFloat(savedAmt.value),
 		};
 		var js = JSON.stringify(obj);
         
@@ -96,7 +96,15 @@ function BudgetPage() {
                 console.log("Some error");
             } 
             else {
-                setBudget(obj);
+                var temp = {
+                    income: res.budgetGot.MonthlyIncome,
+                    goalDescription: res.budgetGot.GoalDescription,
+                    goalAmt: res.budgetGot.GoalAmt,
+                    savedAmt: res.budgetGot.SavedAmt,
+                }
+                var newBudget = Object.assign({}, temp, res.budgetGot.MonthlyExpenses);
+
+                setBudget(newBudget);
                 setMessage('Success');
             }
 

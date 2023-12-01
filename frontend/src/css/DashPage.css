@@ -17,27 +17,26 @@
 .background {
   background-size: cover;
   overflow-x: hidden;
-  overflow-y: scroll;
+  overflow-y: auto;
   background-image: linear-gradient(to bottom right, #6e2b62, #33243f);
   height: 100vh;
   width: 100vw;
-  display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding-top: 310px;
+  padding-top: 20px;
 }
 
 .widgets-box {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 0px .5em;
-  align-items: center;
-  padding-top: 0px;
+	top: 57vh;
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	gap: 0px .5em;
+	align-items: center;
+	padding-top: 0px;
 }
 
 .widget {
-	position: relative;
+	position: flex;
 	background-image: linear-gradient(to bottom right, #211522, #613659);
 	width: 30vw;
 	align-content: center;
@@ -93,6 +92,15 @@
   place-content: center;
   margin-left: 10%;
   margin-top: 5%;
+}
+
+.transaction {
+	align-content: left;
+	padding-top: 0px;
+}
+
+.transaction p{
+	padding: flex;
 }
 
 
@@ -361,4 +369,31 @@
 
 	.user_options-forms .forms_buttons {
 		flex-direction: column;
-	}  
+	}
+	
+	/* CIRLCE CSS CODE */
+	.circular-progress-container {
+		position: relative;
+		width: 300px;
+		height: 300px;
+	  }
+	  
+	  .circular-progress-bar {
+		transform: rotate(0deg); /* Rotate the progress bar to start from the top */
+	  }
+	  
+	  .circular-bg {
+		stroke-dasharray: 314; /* Circumference of the circle */
+		stroke-dashoffset: 0;
+	  }
+	  
+	  .circle-progress {
+		transition: stroke-dashoffset 0.6s ease 0s;
+		stroke-linecap: round; /* Rounded stroke ends */
+	  }
+	  
+	  .circular-progress-text {
+		fill: white;
+		font-size: 12px; /* Adjust the font size as needed */
+		text-anchor: middle; /* Align text to center */
+	  }

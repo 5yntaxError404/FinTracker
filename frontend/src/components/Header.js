@@ -4,10 +4,17 @@ import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
-import doLogout from '../components/LoggedInName';
 
 function Header()
 {
+
+	const doLogout = async event =>
+	{
+	event.preventDefault();
+	localStorage.removeItem("user_data")
+	window.location.href = '/';
+	};
+
 	const isLoggedIn = async event =>
 	{
 		if(localStorage()){
@@ -18,7 +25,7 @@ function Header()
 				</NavDropdown.Item>
 				<NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
 				<NavDropdown.Divider />
-				<NavDropdown.Item onClick={doLogout}>
+				<NavDropdown.Item onClick="doLogout()">
 				Log Out
 				</NavDropdown.Item>
 			</NavDropdown>
@@ -66,7 +73,7 @@ return(
 						Help
 					</NavDropdown.Item>
 					<NavDropdown.Divider />
-					<NavDropdown.Item onClick={< doLogout />}> 
+					<NavDropdown.Item onClick={doLogout}> 
 						Log Out
 					</NavDropdown.Item>
 				</NavDropdown>

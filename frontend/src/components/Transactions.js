@@ -75,8 +75,8 @@ function TransactionsPage() {
 
 		var obj = {
             transactionID: id,
-            transactionAmt: transactionAmt.value,
-            transactionCategory: transactionCategory.value,
+            transactionAmt: parseFloat(transactionAmt.value),
+            transactionCategory: parseFloat(transactionCategory.value),
 		};
 		var js = JSON.stringify(obj);
         
