@@ -10,6 +10,8 @@ import Col from 'react-bootstrap/Col';
 function TransactionsPage() {
   const [transactions, setTransactions] = useState([]);
   const [message, setMessage] = useState('');
+  const [decimalError, setDecimalError] = useState(false);
+  const [negativeError, setNegativeError] = useState(false);
 
   const base_url =
     process.env.NODE_ENV === 'production'
@@ -21,6 +23,22 @@ function TransactionsPage() {
 
     let transactionAmt = document.getElementById('inputTransactionAmt');
     let transactionCategory = document.getElementById('inputTransactionCategory');
+
+    // Check for decimal places
+    const decimalCount = (transactionAmt.value.split('.')[1] || []).length;
+    if (decimalCount > 2) {
+      setDecimalError(true);
+      return;
+    }
+
+    // Check for negative values
+    if (parseFloat(transactionAmt.value) < 0) {
+      setNegativeError(true);
+      return;
+    }
+
+    setDecimalError(false);
+    setNegativeError(false);
 
     var obj = {
       transactionAmt: transactionAmt.value,
@@ -203,11 +221,13 @@ function TransactionsPage() {
                     <label htmlFor="inputTransactionAmt">Transaction Amount</label>
                     <input
                       type="number"
-                      className="form-control"
+                      className={`form-control ${decimalError || negativeError ? 'error' : ''}`}
                       id="inputTransactionAmt"
-                      min="0"    // To prevent negative values
+                      min="0" // To prevent negative values
                       step="0.01" // To limit to two decimal places
                     />
+                    {decimalError && <p className="error-message">Decimal places must be limited to 2.</p>}
+                    {negativeError && <p className="error-message">Value must not be negative.</p>}
                   </Col>
                   <Col>
                     <label htmlFor="inputTransactionCategory">Transaction Category</label>
