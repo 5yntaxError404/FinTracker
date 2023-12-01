@@ -9,8 +9,15 @@ import Landing from './Landing'
 import Dashboard from './Dashboard'
 import { useIsFocused } from '@react-navigation/native';
 import { useEffect } from 'react';
+import { useFonts } from 'expo-font';
+
+
 
 const Login = ({ navigation }) => {
+
+const [fontsLoaded] = useFonts({
+    "Montserrat-Black":require("../assets/fonts/Montserrat-Black.ttf"),
+})
 
 const dismissKeyboard = () => {
     Keyboard.dismiss();
@@ -267,6 +274,7 @@ const styles = StyleSheet.create({
         marginTop:20,
         fontSize:30,
         color:'white',
+        fontFamily: 'Montserrat-Black',
     },
     text:{
         marginLeft:1,
@@ -275,6 +283,7 @@ const styles = StyleSheet.create({
         marginBottom:20,
         fontSize:35,
         color:'white',
+        fontFamily: 'Montserrat-Black',
     },
     loginText:{
         marginLeft:1,
@@ -284,6 +293,7 @@ const styles = StyleSheet.create({
         fontSize:35,
         color:'white',
         marginTop:-20,
+        fontFamily: 'Montserrat-Black',
     },
     getStartedButton:{
         borderRadius:20,
@@ -295,10 +305,12 @@ const styles = StyleSheet.create({
         alignContent:'center',
         justifyContent:'center',
         alignSelf:'center',
+        fontFamily: 'Montserrat-Black',
     },
     getStartedText:{
         color:'white',
         fontSize:15,
+        fontFamily: 'Montserrat-Black',
     },
     input: {
         width:200,
@@ -313,6 +325,7 @@ const styles = StyleSheet.create({
         color:'black',
         backgroundColor:"white",
         fontSize:18,
+        fontFamily: 'Montserrat-Black',
     },
     button: {
         borderRadius:20,
@@ -327,6 +340,7 @@ const styles = StyleSheet.create({
     },
     buttonText:{
         color:'white',
+        fontFamily: 'Montserrat-Black',
     },
     italicBoldText: {
         fontStyle: 'italic',
@@ -334,6 +348,7 @@ const styles = StyleSheet.create({
         alignSelf:'center',
         color: 'white',
         marginTop:10,
+        fontFamily: 'Montserrat-Black',
     },
     linkText: {
         textDecorationLine: 'underline',
@@ -342,6 +357,14 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         alignSelf:'center',
         marginBottom:20,
+        fontFamily: 'Montserrat-Black',
     },
+    errorText: {
+        color: 'red',
+        fontSize: 15,
+        marginBottom: 10,
+        textAlign: 'center',
+        fontFamily: 'Montserrat-Black',
+      },
 })
 export default Login;

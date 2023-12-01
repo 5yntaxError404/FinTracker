@@ -5,51 +5,34 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import { getAccessToken } from '../accessToken';
 import { PieChart } from 'react-native-svg-charts';
+import { useFonts } from 'expo-font';
 
 const Dashboard = ({ navigation }) => {
 
-    const [visibleBankPopup, setVisibleBankPopup] = useState(false);
-    const showBankPopup = () => setVisibleBankPopup(true);
-    const hideBankPopup = () => setVisibleBankPopup(false);
-
-    const [visibleBudgetPopup, setVisibleBudgetPopup] = useState(false);
-    const showBudgetPopup = () => setVisibleBudgetPopup(true);
-    const hideBudgetPopup = () => setVisibleBudgetPopup(false);
-
-    const [visibleAccountPopup, setVisibleAccountPopup] = useState(false);
-    const showAccountPopup = () => setVisibleAccountPopup(true);
-    const hideAccountPopup = () => setVisibleAccountPopup(false);
+    const [fontsLoaded] = useFonts({
+        "Montserrat-Black":require("../assets/fonts/Montserrat-Black.ttf"),
+    })
 
     const [visibleTransactionPopup, setVisibleTransactionPopup] = useState(false);
     const showTransactionPopup = () => setVisibleTransactionPopup(true);
     const hideTransactionPopup = () => setVisibleTransactionPopup(false);
 
     // Budget BODY
-    const[MonthlyIncome, setMonthlyIncome] = useState(0);
-    const[rent, setRent] = useState(0);
-    const[utilities, setUtilities] = useState(0);
-    const[groceries, setGroceries] = useState(0);
-    const[insurance, setInsurance] = useState(0);
-    const[phone, setPhone] = useState(0);
-    const[car, setCar] = useState(0);
-    const[gas, setGas] = useState(0);
-    const[fun, setFun] = useState(0);
-    const[goal, setGoal] = useState(0);
+    const[MonthlyIncome, setMonthlyIncome] = useState(0.0);
+    const[rent, setRent] = useState(0.0);
+    const[utilities, setUtilities] = useState(0.0);
+    const[groceries, setGroceries] = useState(0.0);
+    const[insurance, setInsurance] = useState(0.0);
+    const[phone, setPhone] = useState(0.0);
+    const[car, setCar] = useState(0.0);
+    const[gas, setGas] = useState(0.0);
+    const[fun, setFun] = useState(0.0);
+    const[goal, setGoal] = useState(0.0);
     const[GoalDescription, setGoalDescription] = useState('');
-    const[GoalAmt, setGoalAmt] = useState(0);
-    const[budgetMonthlySavingGoal, setBudgetMonthlySavingGoal] = useState(0);
-    const[SavedAmt, setSavedAmt] = useState(0);
-    const[MonthlyExpenses, setMonthlyExpenses] = useState(0);
-
-    // Bank Account BODY
-    const [AccountNum, setAccountNumber] = useState('');
-    const oldAccountNum = AccountNum;
-    const [RouteNum, setRouteNumber] = useState('');
-    const [BankName, setBankName] = useState('');
-
-    const [newAccountNum, setNewAccountNumber] = useState('');
-    const [newRouteNum, setNewRouteNumber] = useState('');
-    const [newBankName, setNewBankName] = useState('');
+    const[GoalAmt, setGoalAmt] = useState(0.0);
+    const[budgetMonthlySavingGoal, setBudgetMonthlySavingGoal] = useState(0.0);
+    const[SavedAmt, setSavedAmt] = useState(0.0);
+    const[MonthlyExpenses, setMonthlyExpenses] = useState(0.0);
 
     //User ID BODY
     const [userId, setUserId] = useState(0);
@@ -63,87 +46,7 @@ const Dashboard = ({ navigation }) => {
 
     //achievement BODY
     const [achievementToAdd, setAchievementToAdd] = useState(0);
-
-    //create bank account
-    const createBankAccount = async() => {
-        try {
-            const response = await fetch('http://192.168.1.29:5000/api/accounts/add/667', {
-                method: 'POST',
-                headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getAccessToken()}`,
-                },
-                body: JSON.stringify({AccountNum, RouteNum, BankName,}),
-            });
-
-            const data = await response.json();
-            hideBankPopup();
-            } catch(error) {
-                console.error("An error occured: ", error);
-                console.log(`Bearer ${getAccessToken()}`);
-            }
-        };
-
-    //read bank account
-    const readBankAccount = async() => {
-        try {
-            const response = await fetch('http://192.168.1.29:5000/api/account', {
-                method: 'POST',
-                headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getAccessToken()}`,
-                },
-                body: JSON.stringify({AccountNum}),
-            });
-
-            const data = await response.json();
-            console.log(data);
-            hideBankPopup();
-            } catch(error) {
-                console.error("An error occured: ", error)
-            }
-        };
-
-    //update bank account
-    const updateBankAccount = async() => {
-        try {
-            const response = await fetch('http://192.168.1.29:5000/api/accounts/edit/667', {
-                method: 'PUT',
-                headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getAccessToken()}`,
-                },
-                body: JSON.stringify({oldAccountNum, newAccountNum, newRouteNum, newBankName}),
-            });
     
-            const data = await response.json();
-            console.log(data);
-            hideBankPopup();
-            } catch(error) {
-                console.error("An error occured: ", error)
-            }
-        };
-    
-    //delete bank account
-    const deleteBankAccount = async() => {
-    
-        try {
-            const response = await fetch('http://192.168.1.29:5000/api/accounts/delete', {
-                method: 'DELETE',
-                headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getAccessToken()}`,
-                },
-                body: JSON.stringify({AccountNum}),
-            });
-            const data = await response.json();
-            console.log(data);
-            hideBankPopup();
-            } catch(error) {
-                console.error("An error occured: ", error)
-            }
-        };
-
     //CRUD operations for Budget
     const createBudget = async() => {
         //create
@@ -249,46 +152,6 @@ const Dashboard = ({ navigation }) => {
         }
         };
 
-    //Edit and Delete User
-    const editUser = async() => {
-        //update
-        try {
-            const response = await fetch('http://192.168.1.29:5000/api/users/edit', {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getAccessToken()}`,
-            },
-            body: JSON.stringify({Password}),
-            });
-    
-            const data = await response.json();
-            console.log(data);
-            hideBankPopup();
-        } catch(error) {
-            console.error("An error occured: ", error)
-        }
-        };
-
-    const deleteUser = async() => {
-        //delete
-        try {
-            const response = await fetch('http://192.168.1.29:5000/api/users/delete', {
-                method: 'DELETE',
-                headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getAccessToken()}`,
-                },
-                body: JSON.stringify({AccountNum, RouteNum, BankName,}),
-            });
-            const data = await response.json();
-            console.log(data);
-            hideBankPopup();
-            } catch(error) {
-                console.error("An error occured: ", error)
-            }
-        };
-
     //CRUD for transactions
     const addTransaction = async() => {
         try {
@@ -392,61 +255,64 @@ const Dashboard = ({ navigation }) => {
 
     useEffect(() => {
         readBudget();
+        // getTransaction();
         }, []);
 
-    
-            // Sample data for the pie chart
-            const pieChartData = [
-                {
-                    key: 'expenses',
-                    value: 500,
-                    svg: { fill: '#FF6F61' },
-                    arc: { outerRadius: '100%', padAngle: 0.05 },
-                },
-                {
-                    key: 'savings',
-                    value: 300,
-                    svg: { fill: '#6EC1C2' },
-                    arc: { outerRadius: '90%', padAngle: 0.05 },
-                },
-                // Add more data segments as needed
-            ];
+
+    // Sample data for the pie chart
+    const pieChartData = [
+        {
+            key: 'expenses',
+            value: 500,
+            svg: { fill: '#FF6F61' },
+            arc: { outerRadius: '100%', padAngle: 0.05 },
+        },
+        {
+            key: 'savings',
+            value: 300,
+            svg: { fill: '#6EC1C2' },
+            arc: { outerRadius: '90%', padAngle: 0.05 },
+        },
+        // Add more data segments as needed
+    ];
 
 
     return (
         <View style={styles.container}>
 
-        <View style={styles.graphContainer}>
-                <PieChart
-                    style={{ height: 300 }}
-                    data={pieChartData}
-                    // additional st
-                />
-            </View>
-
             <LinearGradient colors={['#67286C','#973C9F']} style={styles.section1} start = {[0,0]} end = {[1,0]}>
             <Text style={styles.title}>FinTracker</Text>
             </LinearGradient>
 
-            <LinearGradient colors={['#211522','#211522','#211522']} style={styles.section2}>
+            <LinearGradient colors={['#322133','#322133','#322133']} style={styles.section2}>
             </LinearGradient>
 
             
             <LinearGradient colors={['#67286C','#973C9F']} style={styles.section3} start = {[0,0]} end = {[1,0]}>
             <ScrollView horizontal={true} pagingEnabled={true} showsHorizontalScrollIndicator={false}>
 
-                <View style={styles.mainSummaryBox}>
-                    <Text style={styles.text}>Hello {}!</Text>
-                    <Text style={styles.getStartedText}>Monthly Income: {MonthlyIncome}</Text>
-                    <Text style={styles.getStartedText}>Rent: {rent}</Text>
-                    <Text style={styles.getStartedText}>Utilities: {utilities}</Text>
-                    <Text style={styles.getStartedText}>Groceries: {groceries}</Text>
-                    <Text style={styles.getStartedText}>Insurance Bills: {insurance}</Text>
-                    <Text style={styles.getStartedText}>Phone: {phone}</Text>
-                    <Text style={styles.getStartedText}>Gas: {gas}</Text>
-                    <Text style={styles.getStartedText}>Fun: {fun}</Text>
-                    {/* <Text style={styles.getStartedText}>Budget Monthly Goal: {budgetMonthlySavingGoal}</Text> */}
-                    <Text style={styles.getStartedText}> enter graph here</Text>
+            <View style={styles.mainSummaryBox}>
+
+                <View style={styles.graphContainer}>
+                <PieChart
+                    style={{ height: 300 }}
+                    data={pieChartData}
+                />
+                </View>
+                
+                    <Text style={styles.text}>Hello {firstName}!</Text>
+                    <Text style={styles.monthlyIncomeText}>Monthly Income: ${parseFloat(MonthlyIncome).toFixed(2)}</Text>
+                    <Text style={styles.getStartedText}>Rent: ${parseFloat(rent).toFixed(2)}</Text>
+                    <Text style={styles.getStartedText}>Utilities: ${parseFloat(utilities).toFixed(2)}</Text>
+                    <Text style={styles.getStartedText}>Groceries: ${parseFloat(groceries).toFixed(2)}</Text>
+                    <Text style={styles.getStartedText}>Insurance Bills: ${parseFloat(insurance).toFixed(2)}</Text>
+                    <Text style={styles.getStartedText}>Phone: ${parseFloat(phone).toFixed(2)}</Text>
+                    <Text style={styles.getStartedText}>Gas: ${parseFloat(gas).toFixed(2)}</Text>
+                    <Text style={styles.getStartedText}>Entertainment: ${parseFloat(fun).toFixed(2)}</Text>
+                    <Text style={styles.getStartedText}>Income - Expenses: ${(parseFloat(MonthlyIncome) - parseFloat(MonthlyExpenses)).toFixed(2)}</Text>
+                    <Text style={styles.getStartedText}>Current Goal: {GoalDescription}</Text>
+                    <Text style={styles.getStartedText}>Goal: ${parseFloat(GoalAmt).toFixed(2)}</Text>
+                    <Text style={styles.getStartedText}>Saved Amount: ${parseFloat(SavedAmt).toFixed(2)}</Text>
 
                     <TouchableOpacity
                         style={styles.getStartedButton}
@@ -457,6 +323,72 @@ const Dashboard = ({ navigation }) => {
 
                 <View style={styles.mainSummaryBox}>
                     <Text style={styles.text}>Transactions</Text>
+                                        {/* Transaction info popup */}
+                    <Modal
+                    transparent={true}
+                    visible={visibleTransactionPopup}>
+                    <View style={{backgroundColor:"#000000aa",flex:1}}>
+                        <View style={{backgroundColor:"#808080",margin:30,padding:40,borderRadius:10,flex:0.5, height:50, marginTop:150}}>
+
+                            <Text style={styles.loginText}>Add Transaction</Text>
+
+                            <TextInput
+                            style={styles.input}
+                            placeholder="Transaction Amount"
+                            secureTextEntry = {false}
+                            keyboardType='numeric'
+                            onChangeText={text => {
+                                const transactionAmtValue = parseInt(text,10);
+                                setTransactionAmt(transactionAmtValue);
+                            }}
+                            />
+
+                            <TextInput
+                            style={styles.input}
+                            placeholder="Transaction Category"
+                            secureTextEntry = {false}
+                            onChangeText={text => setTransactionCategory(text)}
+                            />
+
+                            <TextInput
+                            style={styles.input}
+                            placeholder="Transaction ID"
+                            secureTextEntry = {false}
+                            keyboardType='numeric'
+                            onChangeText={text => {
+                                const transactionIDValue = parseInt(text,10);
+                                setTransactionID(transactionIDValue);
+                            }}
+                            />
+
+                            <TouchableOpacity 
+                                style={styles.button}
+                                onPress={addTransaction}
+                            >
+                            <Text style={styles.buttonText}>Create Transaction</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity 
+                                style={styles.button}
+                                onPress={hideTransactionPopup}
+                            >
+                            <Text style={styles.buttonText}>Go Back</Text>
+                            </TouchableOpacity>
+
+                        </View>
+                    </View>
+                    </Modal>
+                    <TouchableOpacity
+                                style={styles.getStartedButton}
+                                onPress={showTransactionPopup}> 
+                                <Text style={styles.getStartedText}>Add Transaction</Text>
+                    </TouchableOpacity>
+
+
+                    <View style={styles.textBox}>
+
+                    </View>
+
                     <Text style={styles.text}>Achievements</Text>
                 </View>
 
@@ -470,23 +402,27 @@ const Dashboard = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
     },
     graphContainer: {
-        marginTop: 20,
+        margin:10,
         borderRadius: 15,
         padding: 10,
+        width:Dimensions.get('window').width,
     },
-
-    container:{
-        flex:1,
-        justifyContent:'center',
+    textBox:{
+        width:Dimensions.get('window').width,
+        height:50,
+        borderWidth:1,
         alignContent:'center',
+        justifyContent:'center',
+        padding:10,
+        marginTop:10,
+        alignSelf:"center",
     },
     section1:{
         flex:.7,
-        justifyContent: 'center',
+        backgroundColor:'lightblue',
+        justifyContent: 'center'
     },
     section2:{
         flex:.1,
@@ -501,35 +437,7 @@ const styles = StyleSheet.create({
         padding:10,
         alignItems:'center',
         backgroundColor:'#67286C',
-        // alignContent:'center',
-        // justifyContent:'center',
         alignSelf:'center',
-    },
-    budgetSummaryBox:{
-        width:300,
-        height:250,
-        borderRadius:20,
-        padding:10,
-        alignItems:'center',
-        backgroundColor:'#67286C',
-        borderWidth:1,
-        alignContent:'center',
-        justifyContent:'center',
-        alignSelf:'center',
-        marginTop:10,
-    },
-    AchievementBox:{
-        width:300,
-        height:250,
-        borderRadius:20,
-        padding:10,
-        alignItems:'center',
-        backgroundColor:'#67286C',
-        borderWidth:1,
-        alignContent:'center',
-        justifyContent:'center',
-        alignSelf:'center',
-        marginTop:10,
     },
     title:{
         position:'relative',
@@ -538,14 +446,16 @@ const styles = StyleSheet.create({
         marginTop:20,
         fontSize:30,
         color:'white',
+        fontFamily: 'Montserrat-Black',
     },
     text:{
         marginLeft:1,
         marginRight:1,
         textAlign:'center',
-        marginBottom:20,
+        marginBottom:5,
         fontSize:35,
         color:'white',
+        fontFamily: 'Montserrat-Black',
     },
     loginText:{
         marginLeft:1,
@@ -555,6 +465,7 @@ const styles = StyleSheet.create({
         fontSize:35,
         color:'white',
         marginTop:-30,
+        fontFamily: 'Montserrat-Black',
     },
     getStartedButton:{
         borderRadius:20,
@@ -562,17 +473,24 @@ const styles = StyleSheet.create({
         alignItems:'center',
         backgroundColor:'purple',
         borderWidth:1,
-        width:100,
+        width:140,
         alignContent:'center',
         justifyContent:'center',
         alignSelf:'center',
+        fontFamily: 'Montserrat-Black',
     },
     getStartedText:{
         color:'white',
         fontSize:15,
+        fontFamily: 'Montserrat-Black',
+    },
+    monthlyIncomeText:{
+        color:'white',
+        fontSize:20,
+        fontFamily: 'Montserrat-Black',
     },
     input: {
-        width:140,
+        width:200,
         height:30,
         borderColor:'white',
         borderWidth:1,
@@ -582,6 +500,7 @@ const styles = StyleSheet.create({
         textAlign:'center',
         alignSelf:'center',
         color:'white',
+        fontFamily: 'Montserrat-Black',
     },
     transactionButton: {
         borderRadius:20,
@@ -596,46 +515,7 @@ const styles = StyleSheet.create({
     },
     buttonText:{
         color:'white',
-    },
-    italicBoldText: {
-        fontStyle: 'italic',
-        fontWeight: 'bold',
-        alignSelf:'center',
-    },
-    linkText: {
-        textDecorationLine: 'underline',
-        color: 'blue',
-        fontStyle: 'italic',
-        fontWeight: 'bold',
-        marginBottom:20,
-        marginLeft:115,
-    },
-    dashboardMainBox: {
-        width:'99%',
-        height:'50%',
-        padding:5,
-    },
-    dashboardBudgetBox: {
-        width:'60%',
-        height:'50%',
-        padding:5,
-        marginTop:-5
-    },
-    dashboardAchievementBox: {
-        width:'40%',
-        height:'50%',
-        padding:5,
-        marginLeft:220,
-        marginTop:-319,
-        alignItems:'center',
-        justifyContent: 'flex-start',
-    },
-    innerBox: {
-        flex:1,
-        backgroundColor: '#411845',
-        alignItems:'flex-start',
-        justifyContent:'center',
-        padding:5
+        fontFamily: 'Montserrat-Black',
     },
     button: {
         borderRadius:20,
@@ -647,6 +527,5 @@ const styles = StyleSheet.create({
         marginBottom:10,
         alignSelf:'center',
     },
-});
-
+})
 export default Dashboard;

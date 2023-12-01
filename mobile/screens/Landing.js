@@ -1,11 +1,20 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { View, TextInput, Button, StyleSheet, Image, Modal, Text, TouchableOpacity } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
-
+import { useFonts } from 'expo-font';
 
 const Landing = ({ navigation }) => {
+
+    const [fontsLoaded] = useFonts({
+        "Montserrat-Black":require("../assets/fonts/Montserrat-Black.ttf"),
+    })
+
+    if(!fontsLoaded){
+        return undefined;
+    }
+
     return(
         <View style={styles.container}>
 
@@ -39,6 +48,11 @@ const Landing = ({ navigation }) => {
     )
 }
 
+// const [fontsLoaded] = useFonts({
+//     "Montserrat-Black":require("../assets/fonts/Montserrat-Black.ttf"),
+// })
+
+
 function openMenu(){
     console.log("OpenMenu");
 }
@@ -47,6 +61,11 @@ function openMenu(){
 const styles = StyleSheet.create({
     container:{
         flex:1
+    },
+    graphContainer: {
+        marginTop: 20,
+        borderRadius: 15,
+        padding: 10,
     },
     textBox:{
         width:300,
@@ -99,15 +118,17 @@ const styles = StyleSheet.create({
         marginTop:20,
         fontSize:30,
         color:'white',
+        fontFamily: 'Montserrat-Black',
     },
     text:{
         marginLeft:1,
         marginRight:1,
         textAlign:'center',
         marginBottom:20,
-        fontSize:25,
+        fontSize:20,
         color:'white',
         marginTop:10,
+        fontFamily: 'Montserrat-Black',
     },
     getStartedButton:{
         borderRadius:20,
@@ -124,6 +145,7 @@ const styles = StyleSheet.create({
     getStartedText:{
         color:'white',
         fontSize:15,
+        fontFamily: 'Montserrat-Black',
     }
 })
 
