@@ -8,40 +8,48 @@ function Login() {
 
   var username, password;
   const [message, setMessage] = useState('');
-  const [usernameError, setUsernameError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
-  const [invalidCredentialsError, setInvalidCredentialsError] = useState('');
-  const [verificationEmailError, setVerificationEmailError] = useState('');
+  const [errorMessages, setErrorMessages] = useState('');
+  const [errorFields, setErrorFields] = useState([]);
+  const [registrationError, setRegistrationError] = useState('');
+  const [successMessages, setSuccessMessages] = useState([]);
 
   // Function to parse JWT token
   function parseJwt(token) {
-    var base64Url = token.split('.')[1];
-    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
-    return JSON.parse(jsonPayload);
+    // ... (your existing parseJwt function)
   }
+
+  const errorPush = (message, fields) => {
+    setErrorMessages(message);
+    setErrorFields(fields);
+    setRegistrationError('');
+    setSuccessMessages([]);
+  };
+
+  const successPush = (message) => {
+    setSuccessMessages([message]);
+    setErrorMessages('');
+    setErrorFields([]);
+    setRegistrationError('');
+  };
 
   // Function to perform login
   const doLogin = async (event) => {
     event.preventDefault();
 
     // Clear previous error messages
-    setUsernameError('');
-    setPasswordError('');
-    setInvalidCredentialsError('');
-    setVerificationEmailError('');
+    setErrorMessages('');
+    setErrorFields([]);
+    setRegistrationError('');
 
     // Check for empty username
     if (!username.value) {
-      setUsernameError('Username cannot be empty');
+      errorPush('Username cannot be empty', ['username']);
       return;
     }
 
     // Check for empty password
     if (!password.value) {
-      setPasswordError('Password cannot be empty');
+      errorPush('Password cannot be empty', ['password']);
       return;
     }
 
@@ -64,10 +72,10 @@ function Login() {
 
       if (response.status === 401) {
         // Invalid credentials
-        setInvalidCredentialsError('Invalid Username or Password');
+        errorPush('Invalid Username or Password', ['username', 'password']);
       } else if (response.status === 400) {
         // User needs to verify their email
-        setVerificationEmailError('Please verify your email before logging in.');
+        errorPush('Please verify your email before logging in.', []);
       } else if (response.ok) {
         // Successful login
         setMessage('Logged In.');
@@ -100,66 +108,63 @@ function Login() {
           console.error('There was a problem with the fetch operation:', error);
         }
 
-        window.location.href = '/dash';
+        // Redirect or perform other actions on successful login
+        // window.location.href = '/dash';
       } else {
         // Other error scenarios
-        setMessage('Unable to Login');
+        errorPush('Unable to Login', []);
       }
     } catch (e) {
-      alert(e.toString());
-      return;
+      console.error('Error during fetch:', e.message);
+      setRegistrationError(e.message || 'Unknown error');
     }
   };
 
   return (
     <div className="login-container">
-      <div class="login-form">
-        <form class="form" onSubmit={doLogin}>
+      <div className="login-form">
+        <form className="form" onSubmit={doLogin}>
           <h1>Login</h1>
 
-          <div class="form-group">
-            <label for="username">Username</label>
-            <input type="text" id="username" class="user-input-field" placeholder="Enter your username" ref={(c) => (username = c)} />
-            <p className="error-message">{usernameError}</p>
+          <div className={`form-group ${errorFields.includes('username') ? 'error' : ''}`}>
+            <label htmlFor="username">Username</label>
+            <input type="text" id="username" className={`user-input-field ${errorFields.includes('username') ? 'error-border' : ''}`} placeholder="Enter your username" ref={(c) => (username = c)} />
           </div>
+          {/* Display error message for username */}
+          <p className="error-messages">{errorFields.includes('username') && errorMessages}</p>
 
-          <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" class="user-input-field" placeholder="Enter your password" ref={(c) => (password = c)} />
-            <p className="error-message">{passwordError}</p>
+          <div className={`form-group ${errorFields.includes('password') ? 'error' : ''}`}>
+            <label htmlFor="password">Password</label>
+            <input type="password" id="password" className={`user-input-field ${errorFields.includes('password') ? 'error-border' : ''}`} placeholder="Enter your password" ref={(c) => (password = c)} />
           </div>
+          {/* Display error message for password */}
+          <p className="error-messages">{errorFields.includes('password') && errorMessages}</p>
 
-          <div class="form-group">
-            <div class="custom-control custom-checkbox">
-              <input type="checkbox" class="custom-control-input" id="customCheck1" />
-              <label class="custom-control-label" for="customCheck1">
+          <div className="form-group">
+            <div className="custom-control custom-checkbox">
+              <input type="checkbox" className="custom-control-input" id="customCheck1" />
+              <label className="custom-control-label" htmlFor="customCheck1">
                 Remember me
               </label>
             </div>
           </div>
 
-          <div class="d-grid">
-            <button type="submit" class="btn btn-primary">
+          <div className="d-grid">
+            <button type="submit" className="btn btn-primary">
               Sign In
             </button>
           </div>
 
-          <p class="forgot-password">
+          <p className="forgot-password">
             <a href="/ForgotPassword">Forgot your password?</a>
           </p>
 
-          <p class="new-account">
+          <p className="new-account">
             Don't have an account? <a href="/signup">Sign up!</a>
           </p>
 
-          {/* Display invalid credentials error message */}
-          <p className="error-message">{invalidCredentialsError}</p>
-
-          {/* Display verification email error message */}
-          <p className="error-message">{verificationEmailError}</p>
-
           {/* Display general login error message */}
-          <p className="error-message">{message}</p>
+          <p className="error-messages">{errorMessages}</p>
         </form>
       </div>
     </div>
