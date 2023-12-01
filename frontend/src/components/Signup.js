@@ -46,7 +46,7 @@ function SignUp() {
 
   const doSignup = async (event) => {
     event.preventDefault();
-
+    console.log('Before fetch:', { fname, lname, username, password, email });
     // Validate form fields
     const errors = [];
     const fieldsWithErrors = [];
