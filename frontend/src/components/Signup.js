@@ -12,7 +12,7 @@ function SignUp() {
   const [errorMessages, setErrorMessages] = useState('');
   const [errorFields, setErrorFields] = useState([]);
   const [registrationError, setRegistrationError] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
+  const [successMessages, setSuccessMessages] = useState([]);
 
   const isStrongPassword = (value) => {
     // Check for at least 1 capital letter
@@ -47,6 +47,20 @@ function SignUp() {
     return true;
   };
 
+  const errorPush = (message, field) => {
+    setErrorMessages(message);
+    setErrorFields([field]);
+    setRegistrationError('');
+    setSuccessMessages([]);
+  };
+
+  const successPush = (message) => {
+    setSuccessMessages([message]);
+    setErrorMessages('');
+    setErrorFields([]);
+    setRegistrationError('');
+  };
+
   const doSignup = async (event) => {
     event.preventDefault();
 
@@ -78,10 +92,7 @@ function SignUp() {
     }
 
     if (errors.length > 0) {
-      setErrorMessages(errors.join('\n'));
-      setErrorFields(fieldsWithErrors);
-      setRegistrationError('');
-      setSuccessMessage('');
+      errorPush(errors.join('\n'), fieldsWithErrors[0]);
       return;
     }
 
@@ -89,10 +100,8 @@ function SignUp() {
     setErrorMessages('');
     setErrorFields([]);
     setRegistrationError('');
-    setSuccessMessage('');
 
     try {
-      // Make a single fetch request for both checking and registration
       const response = await fetch('https://www.fintech.davidumanzor.com/api/register', {
         method: 'post',
         body: JSON.stringify({
@@ -105,27 +114,24 @@ function SignUp() {
         headers: { 'Content-Type': 'application/json' },
       });
 
-      if (response.ok) {
-        // Successful registration
-        setRegistrationError('');
-        setSuccessMessage('Account created! Please check your email to verify before logging in.');
-      } else {
-        const jsonResponse = await response.json();
+      if (!response.ok) {
         if (response.status === 400) {
-          // Username already exists
-          errors.push('Username is already in use.');
-          fieldsWithErrors.push('userName');
+          errorPush('Username is already in use.', 'userName');
         } else if (response.status === 401) {
-          // Email already exists
-          errors.push('Email is already in use.');
-          fieldsWithErrors.push('email');
+          errorPush('Email is already in use.', 'email');
         } else {
-          // Handle other errors
           throw new Error(`Server responded with status ${response.status}`);
         }
+        return;
+      }
 
-        setErrorMessages(errors.join('\n'));
-        setErrorFields(fieldsWithErrors);
+      const res = await response.json();
+      console.log(res);
+
+      if (res.error !== '') {
+        setRegistrationError('Unable to Register');
+      } else {
+        successPush('Account created! Please check your email to verify before logging in.');
       }
     } catch (e) {
       console.error('Error during fetch:', e.message);
@@ -206,8 +212,8 @@ function SignUp() {
           </div>
 
           <p className="error-messages">{errorMessages}</p>
-          <p className="registration-error">{registrationError}</p>
-          <p className="success-message">{successMessage}</p>
+          <p className="error-messages">{registrationError}</p>
+          <p className="success-message">{successMessages.join('\n')}</p>
 
           <p className="forgot-password text-right">
             <a href="/ForgotPassword"> Forgot password?</a>
