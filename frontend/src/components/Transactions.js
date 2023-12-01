@@ -205,8 +205,8 @@ function TransactionsPage() {
                       type="number"
                       className="form-control"
                       id="inputTransactionAmt"
-                      min="0"
-                      step="0.01"
+                      min="0"    // To prevent negative values
+                      step="0.01" // To limit to two decimal places
                     />
                   </Col>
                   <Col>
