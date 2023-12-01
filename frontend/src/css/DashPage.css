@@ -103,6 +103,15 @@
 	padding: flex;
 }
 
+.expenses-list{
+	text-align: left;
+	margin-left: 7vw;
+}
+
+.achievements {
+	padding-top: 20px;
+	height: flex 50vh;
+}
 
 /* General configs */
 * {

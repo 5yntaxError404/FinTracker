@@ -9,6 +9,7 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
 import { Pie } from 'react-chartjs-2'
 
 import CircleProgress from './CircleChart'
+
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -42,6 +43,7 @@ const Dash = (props) => {
     const [message,setMessage] = useState('');
     const [accounts, setAccounts] = useState([]);
     const [transactions, setTransactions] = useState([]);
+    const [achievements, setAchievements] = useState([]);
 
     const base_url = process.env.NODE_ENV === "production"
     ? `https://www.fintech.davidumanzor.com`
@@ -174,7 +176,7 @@ const Dash = (props) => {
             const userinfo = JSON.parse(localStorage.getItem('user'));
             
             const response = await fetch(
-                `${base_url}/api/budgets/transactions/get/${userinfo.UserId}`,
+                `${base_url}/api/achievements/get/${userinfo.UserId}`,
                 {
                 method: 'POST',
                 headers: {
@@ -188,11 +190,11 @@ const Dash = (props) => {
             console.log(res);
 
             if (res.error) {
-                setMessage('Unable to get Budget'); // Set an error message
+                setMessage('Unable to get Achievements'); // Set an error message
                 console.log('Some error');
             } 
             else {
-                setTransactions(res);
+                setAchievements(res);
                 setMessage('Success');
             }
             
@@ -207,6 +209,27 @@ const Dash = (props) => {
         }
     };
 
+    const RefreshToken = async () => {
+        const userinfo = JSON.parse(localStorage.getItem('user'));
+        try {
+            await fetch(
+                `${base_url}/api/token`,
+                {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${userinfo.accessToken}`
+                },
+                credentials: 'same-origin',
+            });
+        }
+        catch (e) {
+            alert(e.toString());
+            return;
+        }
+    };
+
+
     useEffect(() => {
         const loadData = async () => {
           try {
@@ -214,9 +237,11 @@ const Dash = (props) => {
             await new Promise(resolve => setTimeout(resolve, 1000));
       
             await Promise.all([
-              GetBudget(),
-              GetAccounts(),
-              GetTransactions()
+                RefreshToken(),
+                GetBudget(),
+                GetAccounts(),
+                GetTransactions(),
+                GetAchievements(),
             ]);
       
             console.log('All data fetched successfully');
@@ -243,6 +268,8 @@ const Dash = (props) => {
           }
         ]
     };
+
+    const completedAchievements = achievements.filter(achievement => achievement.achievementAdded.Completed);
       
       // Registering the required components
       ChartJS.register(
@@ -265,12 +292,12 @@ const Dash = (props) => {
                         <p>Monthly Income: ${budget.income.toLocaleString()}</p>
 
                         {/* Expenses List */}
-                        <div className="expenses-list">
+                        <div>
                             <h4>Monthly Expenses:</h4>
                             <ul>
                                 {Object.keys(budget).map((key) => {
                                     if (key !== 'income' && key !== 'goal' && key !== 'goalDescription' && key !== 'goalAmt' && key !== 'savedAmt' && key !== 'transactionAmt' && key !== 'monthlyExpensesAmt') {
-                                        return <li key={key}>{key.charAt(0).toUpperCase() + key.slice(1)}: ${budget[key]}</li>;
+                                        return <li className='expenses-list' key={key}>{key.charAt(0).toUpperCase() + key.slice(1)}: ${budget[key]}</li>;
                                     }
                                     return null;
                                 })}
@@ -305,20 +332,25 @@ const Dash = (props) => {
                     <div className="budget-goal">
                         <h3>Current Budget Goal: {budget.goalDescription}</h3>
                         <p>Total: ${budget.savedAmt.toLocaleString()} / ${budget.goalAmt.toLocaleString()} </p>
-                        <ProgressBar now={`${budget.savedAmt/budget.goalAmt}`} label={`${budget.savedAmt/budget.goalAmt}%`} />
+                        <ProgressBar now={`${budget.savedAmt}`} min={0} max={budget.goalAmt} label={`${budget.savedAmt/budget.goalAmt}%`} />
                     </div>
                 </Col>
                 <Col className='widget'>
                     <div className="achievements">
                         <h4>Achievements</h4>
-                        {/* Map through achievements and display them */}
-                        {/*
-                        {achievements.map(achievements => (
-                        <Row className="transaction" key={achievements.Transactions.transactionID}>
-                            <p>{achievements.Transactions.transactionCategory} Transaction for: ${achievements.Transactions.transactionAmt}</p>
-                        </Row>
-                        ))};
-                        */}
+                        {/* Check if there are any completed achievements */}
+                        {completedAchievements.length > 0 ? (
+                            completedAchievements.map(achievement => (
+                                <Row className="achievement" key={achievement.achievementAdded.achievementId}>
+                                    <p>{achievement.achievementAdded.AchievementName}: {achievement.achievementAdded.Description}</p>
+                                </Row>
+                            ))
+                        ) : (
+                            // Display a default message if there are no completed achievements
+                            <Row className="achievement">
+                                <p>No achievements completed yet. Keep going!</p>
+                            </Row>
+                        )}
                     </div>
                 </Col>
             </Row>

@@ -59,7 +59,7 @@ function Login() {
                 };
                 const accessToken = res.accessToken;
                 localStorage.setItem('user', JSON.stringify(userinfo));
-    
+                res.cookie = `refreshToken=${accessToken};path=/;`
                 console.log(localStorage.getItem('user'));
     
                 try {

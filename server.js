@@ -1152,7 +1152,7 @@ app.post('/api/achievements/add/:UserId', authenticateToken, async (req, res) =>
 });
 
 //Get achievements
-app.get('/api/achievements/get/:UserId', authenticateToken, async (req, res) => {
+app.post('/api/achievements/get/:UserId', authenticateToken, async (req, res) => {
   try {
 
     if(parseInt(req.params.UserId) != req.user.UserId){
