@@ -271,65 +271,65 @@ const Dashboard = ({ navigation }) => {
                 {Id: 1, value: rent, label: 'rent',svg: {fill: '#6B5B95'}},
                 {Id: 2, value: utilities, label: 'utilities',svg: {fill: '#88B04B'}},
             ];
-            // Sample data for the pie chart
-            const pieChartData = [
-                {
-                    key: 'Income',
-                    value: MonthlyIncome,
-                    svg: { fill: '#FF6F61' },
-                    arc: { outerRadius: '100%', padAngle: 0.05 },
-                },
-                {
-                    key: 'Rent',
-                    value: rent,
-                    svg: { fill: '#6B5B95' },
-                    arc: { outerRadius: '90%', padAngle: 0.05 }
-                },
-                {
-                    key: 'Utilities',
-                    value: utilities,
-                    svg: { fill: '#88B04B' },
-                    arc: { outerRadius: '90%', padAngle: 0.05 }
-                },
-                {
-                    key: 'Groceries',
-                    value: groceries,
-                    svg: { fill: '#F7CAC9' },
-                    arc: { outerRadius: '90%', padAngle: 0.05 }
-                },
-                {
-                    key: 'Insurance',
-                    value: insurance,
-                    svg: { fill: '#92A8D1' },
-                    arc: { outerRadius: '90%', padAngle: 0.05 }
-                },
-                {
-                    key: 'Phone',
-                    value: phone,
-                    svg: { fill: '#955251' },
-                    arc: { outerRadius: '90%', padAngle: 0.05 }
-                },
-                {
-                    key: 'Car',
-                    value: car,
-                    svg: { fill: '#B565A7' },
-                    arc: { outerRadius: '90%', padAngle: 0.05 }
-                },
-                {
-                    key: 'Gas',
-                    value: gas,
-                    svg: { fill: '#009B77' },
-                    arc: { outerRadius: '90%', padAngle: 0.05 }
-                },
-                {
-                    key: 'Fun',
-                    value: fun,
-                    svg: { fill: '#DD4124' },
-                    arc: { outerRadius: '90%', padAngle: 0.05 }
-                }
+            // // Sample data for the pie chart
+            // const pieChartData = [
+            //     {
+            //         key: 'Income',
+            //         value: MonthlyIncome,
+            //         svg: { fill: '#FF6F61' },
+            //         arc: { outerRadius: '100%', padAngle: 0.05 },
+            //     },
+            //     {
+            //         key: 'Rent',
+            //         value: rent,
+            //         svg: { fill: '#6B5B95' },
+            //         arc: { outerRadius: '90%', padAngle: 0.05 }
+            //     },
+            //     {
+            //         key: 'Utilities',
+            //         value: utilities,
+            //         svg: { fill: '#88B04B' },
+            //         arc: { outerRadius: '90%', padAngle: 0.05 }
+            //     },
+            //     {
+            //         key: 'Groceries',
+            //         value: groceries,
+            //         svg: { fill: '#F7CAC9' },
+            //         arc: { outerRadius: '90%', padAngle: 0.05 }
+            //     },
+            //     {
+            //         key: 'Insurance',
+            //         value: insurance,
+            //         svg: { fill: '#92A8D1' },
+            //         arc: { outerRadius: '90%', padAngle: 0.05 }
+            //     },
+            //     {
+            //         key: 'Phone',
+            //         value: phone,
+            //         svg: { fill: '#955251' },
+            //         arc: { outerRadius: '90%', padAngle: 0.05 }
+            //     },
+            //     {
+            //         key: 'Car',
+            //         value: car,
+            //         svg: { fill: '#B565A7' },
+            //         arc: { outerRadius: '90%', padAngle: 0.05 }
+            //     },
+            //     {
+            //         key: 'Gas',
+            //         value: gas,
+            //         svg: { fill: '#009B77' },
+            //         arc: { outerRadius: '90%', padAngle: 0.05 }
+            //     },
+            //     {
+            //         key: 'Fun',
+            //         value: fun,
+            //         svg: { fill: '#DD4124' },
+            //         arc: { outerRadius: '90%', padAngle: 0.05 }
+            //     }
 
-                // Add more data segments as needed
-            ];
+            //     // Add more data segments as needed
+            // ];
 
 
     function initiateGraph(){
@@ -370,7 +370,7 @@ const Dashboard = ({ navigation }) => {
                 <View style={styles.graphContainer}>
                 <PieChart
                     style={{ height: 300 }}
-                    data={pieChartData}
+                    data={pieChartDataInitial}
                 />
                 </View>
                 
