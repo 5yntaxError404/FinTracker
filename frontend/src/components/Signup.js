@@ -1,9 +1,12 @@
 // SignUp.js
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../css/SignUpPage.css';
 
 function SignUp() {
+  const navigate = useNavigate();
+
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [fname, setFname] = useState('');
@@ -14,6 +17,7 @@ function SignUp() {
   const [registrationError, setRegistrationError] = useState('');
   const [successMessages, setSuccessMessages] = useState([]);
 
+  // Function to check strong password
   const isStrongPassword = (value) => {
     // Check for at least 1 capital letter
     const capitalLetterRegex = /[A-Z]/;
@@ -47,6 +51,7 @@ function SignUp() {
     return true;
   };
 
+  // Function to handle errors
   const errorPush = (message, fields) => {
     setErrorMessages(message);
     setErrorFields(fields);
@@ -54,6 +59,7 @@ function SignUp() {
     setSuccessMessages([]);
   };
 
+  // Function to handle success
   const successPush = (message) => {
     setSuccessMessages([message]);
     setErrorMessages('');
@@ -61,6 +67,7 @@ function SignUp() {
     setRegistrationError('');
   };
 
+  // Function to perform signup
   const doSignup = async (event) => {
     event.preventDefault();
 
@@ -115,7 +122,8 @@ function SignUp() {
       });
 
       if (response.ok) {
-        successPush('Account created! Please check your email to verify before logging in.');
+        // Redirect to login page after successful account creation
+        navigate('/Login');
       } else {
         // Handle errors based on response status
         if (response.status === 400) {
@@ -210,12 +218,16 @@ function SignUp() {
             <p className="success-message">{successMessages.join('\n')}</p>
           )}
 
+          <p className="check-email-message text-right mb-3">
+            Once redirected, please check your email.
+          </p>
+
           <p className="forgot-password text-right">
             <a href="/ForgotPassword"> Forgot password?</a>
           </p>
           
           <p className="new-account test-right"> 
-            <a href="/login"> Already have an account?</a>
+            <a href="/Login"> Already have an account?</a>
           </p>
         </form>
       </div>
