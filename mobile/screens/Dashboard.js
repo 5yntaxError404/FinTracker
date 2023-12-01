@@ -258,23 +258,69 @@ const Dashboard = ({ navigation }) => {
         // getTransaction();
         }, []);
 
+            const goalData = [
+                { name: 'Saved', population: SavedAmt, color: '#FF6F61', legendFontColor: '#7F7F7F', legendFontSize: 15 },
+                { name: 'Goal', population: GoalAmt, color: '#6B5B95', legendFontColor: '#7F7F7F', legendFontSize: 15 },
+            ];
+            // Sample data for the pie chart
+            const pieChartData = [
+                {
+                    key: 'Income',
+                    value: MonthlyIncome,
+                    svg: { fill: '#FF6F61' },
+                    arc: { outerRadius: '100%', padAngle: 0.05 },
+                },
+                {
+                    key: 'Rent',
+                    value: rent,
+                    svg: { fill: '#6B5B95' },
+                    arc: { outerRadius: '90%', padAngle: 0.05 }
+                },
+                {
+                    key: 'Utilities',
+                    value: utilities,
+                    svg: { fill: '#88B04B' },
+                    arc: { outerRadius: '90%', padAngle: 0.05 }
+                },
+                {
+                    key: 'Groceries',
+                    value: groceries,
+                    svg: { fill: '#F7CAC9' },
+                    arc: { outerRadius: '90%', padAngle: 0.05 }
+                },
+                {
+                    key: 'Insurance',
+                    value: insurance,
+                    svg: { fill: '#92A8D1' },
+                    arc: { outerRadius: '90%', padAngle: 0.05 }
+                },
+                {
+                    key: 'Phone',
+                    value: phone,
+                    svg: { fill: '#955251' },
+                    arc: { outerRadius: '90%', padAngle: 0.05 }
+                },
+                {
+                    key: 'Car',
+                    value: car,
+                    svg: { fill: '#B565A7' },
+                    arc: { outerRadius: '90%', padAngle: 0.05 }
+                },
+                {
+                    key: 'Gas',
+                    value: gas,
+                    svg: { fill: '#009B77' },
+                    arc: { outerRadius: '90%', padAngle: 0.05 }
+                },
+                {
+                    key: 'Fun',
+                    value: fun,
+                    svg: { fill: '#DD4124' },
+                    arc: { outerRadius: '90%', padAngle: 0.05 }
+                }
 
-    // Sample data for the pie chart
-    const pieChartData = [
-        {
-            key: 'expenses',
-            value: 500,
-            svg: { fill: '#FF6F61' },
-            arc: { outerRadius: '100%', padAngle: 0.05 },
-        },
-        {
-            key: 'savings',
-            value: 300,
-            svg: { fill: '#6EC1C2' },
-            arc: { outerRadius: '90%', padAngle: 0.05 },
-        },
-        // Add more data segments as needed
-    ];
+                // Add more data segments as needed
+            ];
 
 
     return (
@@ -282,6 +328,7 @@ const Dashboard = ({ navigation }) => {
 
             <LinearGradient colors={['#67286C','#973C9F']} style={styles.section1} start = {[0,0]} end = {[1,0]}>
             <Text style={styles.title}>FinTracker</Text>
+            
             </LinearGradient>
 
             <LinearGradient colors={['#322133','#322133','#322133']} style={styles.section2}>
@@ -289,6 +336,7 @@ const Dashboard = ({ navigation }) => {
 
             
             <LinearGradient colors={['#67286C','#973C9F']} style={styles.section3} start = {[0,0]} end = {[1,0]}>
+
             <ScrollView horizontal={true} pagingEnabled={true} showsHorizontalScrollIndicator={false}>
 
             <View style={styles.mainSummaryBox}>
@@ -322,6 +370,7 @@ const Dashboard = ({ navigation }) => {
                 </View>
 
                 <View style={styles.mainSummaryBox}>
+                   
                     <Text style={styles.text}>Transactions</Text>
                                         {/* Transaction info popup */}
                     <Modal
@@ -407,6 +456,7 @@ const styles = StyleSheet.create({
         margin:10,
         borderRadius: 15,
         padding: 10,
+        width:Dimensions.get('window').width,
         width:Dimensions.get('window').width,
     },
     textBox:{
