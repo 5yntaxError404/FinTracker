@@ -133,6 +133,16 @@ function TransactionsPage() {
     }
   };
 
+  const handleTransactionAmtChange = (event) => {
+    // Validate input to allow only numbers and up to 2 decimal places
+    const value = event.target.value;
+    const regex = /^\d*\.?\d{0,2}$/;
+
+    if (regex.test(value)) {
+      document.getElementById('inputTransactionAmt').value = value;
+    }
+  };
+
   const GetTransactions = async () => {
     try {
       const userinfo = JSON.parse(localStorage.getItem('user'));
@@ -202,11 +212,11 @@ function TransactionsPage() {
                   <Col>
                     <label htmlFor="inputTransactionAmt">Transaction Amount</label>
                     <input
-                      type="number"
+                      type="text"
                       className="form-control"
                       id="inputTransactionAmt"
-                      min="0"    // To prevent negative values
-                      step="0.01" // To limit to two decimal places
+                      onChange={handleTransactionAmtChange}
+                      pattern="\d*\.?\d{0,2}"
                     />
                   </Col>
                   <Col>
