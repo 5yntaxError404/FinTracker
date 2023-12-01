@@ -119,7 +119,7 @@ function BudgetPage() {
                 console.log("Some error");
             } else {
                 setBudget(obj);
-                setMessage('Success');
+                setMessage('');
             }
 
         } catch (e) {
