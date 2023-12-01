@@ -5,8 +5,7 @@ import '../css/BudgetsPage.css';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Chart from 'chart.js/auto'; 
-import ChartDataLabels from 'chartjs-plugin-datalabels';
+import BudgetChart from './components/BudgetChart';
 
 function BudgetPage() {
     const [budget, setBudget] = useState({
@@ -119,7 +118,7 @@ function BudgetPage() {
                 console.log("Some error");
             } else {
                 setBudget(obj);
-                setMessage('Success');
+                setMessage(''); // Clear the message on success
             }
 
         } catch (e) {
@@ -159,7 +158,7 @@ function BudgetPage() {
                 var newBudget = Object.assign({}, temp, res.budgetGot.MonthlyExpenses);
 
                 setBudget(newBudget);
-                setMessage('Success');
+                setMessage('');
             }
             
         } catch (e) {
@@ -187,49 +186,47 @@ function BudgetPage() {
 
         const ctx = document.getElementById('budgetChart');
         
-        if (ctx && ctx.chart) {
+        if (ctx.chart) {
             ctx.chart.destroy();
         }
         
-        if (ctx) {
-            ctx.chart = new Chart(ctx, {
-                type: 'pie',
-                data: {
-                    labels: ["Rent", "Utilities", "Groceries", "Insurance", "Phone", "Gas", "Car", "Entertainment", "Goal"],
-                    datasets: [{
-                        data: budgetValues,
-                        backgroundColor: [
-                            '#9f6cad',
-                            '#1a2c3b',
-                            '#8b1c2b',
-                            '#00796b',
-                            '#d4af37',
-                            '#507080',
-                            '#3b4e58',
-                            '#bd5d38',
-                            '#4a5642'
-                        ],
-                    }],
-                },
-                options: {
-                    plugins: {                    
-                        legend: {
-                            display: true,
-                            labels: {
-                                color: '#f1f1f1'
-                            },
-                            fonts: {
-                                size: 24
-                            }
+        ctx.chart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ["Rent", "Utilities", "Groceries", "Insurance", "Phone", "Gas", "Car", "Entertainment", "Goal"],
+                datasets: [{
+                    data: budgetValues,
+                    backgroundColor: [
+                        '#9f6cad',
+                        '#1a2c3b',
+                        '#8b1c2b',
+                        '#00796b',
+                        '#d4af37',
+                        '#507080',
+                        '#3b4e58',
+                        '#bd5d38',
+                        '#4a5642'
+                    ],
+                }],
+            },
+            options: {
+                plugins: {                    
+                    legend: {
+                        display: true,
+                        labels: {
+                            color: '#f1f1f1'
                         },
-                        animation: {
-                            animateRotate: true,
-                            animateScale: true,
-                        },
-                    }
+                        fonts: {
+                            size: 24
+                        }
+                    },
+                    animation: {
+                        animateRotate: true,
+                        animateScale: true,
+                    },
                 }
-            });
-        }
+            }
+        });
     }, [budget]);
 
     return (
@@ -237,7 +234,7 @@ function BudgetPage() {
             <Container onLoad={GetBudget}>
                 <Row>
                     <Col sm={3} md={6} className="budgetInfo">
-                        <canvas id="budgetChart"></canvas>
+                        <BudgetChart />
                     </Col>
                     <Col sm={3} md={6} className="content">
                         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono"></link>
