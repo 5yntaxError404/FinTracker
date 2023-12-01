@@ -9,11 +9,7 @@ import Col from 'react-bootstrap/Col';
 import Chart from 'chart.js/auto'; 
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
-// Looking for correct code to import font
-
 function BudgetPage() {
-
-    // Constants needed for the page
 
     const [budget, setBudget] = useState({
         income: 0,
@@ -29,16 +25,28 @@ function BudgetPage() {
         goalDescription: '',
         goalAmt: 0,
         savedAmt: 0
-    })
-    const [message,setMessage] = useState('');
+    });
+
+    const [message, setMessage] = useState('');
     
     const base_url = process.env.NODE_ENV === "production"
     ? `https://www.fintech.davidumanzor.com`
     : `http://localhost:5000`;
 
-    // Adds and Edits Budget in DB and updates webpage
-    const AddBudget = async event =>
-    {
+    const validateInput = (inputElement, fieldName) => {
+        const value = parseFloat(inputElement.value);
+        if (isNaN(value) || value < 0) {
+            alert(`Invalid ${fieldName}: Please enter a non-negative number.`);
+            throw new Error(`Invalid ${fieldName}`);
+        }
+        if (value.toString().includes('.') && (value.toString().split('.')[1].length > 2)) {
+            alert(`Invalid ${fieldName}: Please enter up to two decimal places.`);
+            throw new Error(`Invalid ${fieldName}`);
+        }
+        return value.toFixed(2);
+    };
+
+    const AddBudget = async (event) => {
         event.preventDefault();
 
         let income = document.getElementById("inputIncome");
@@ -55,88 +63,89 @@ function BudgetPage() {
         let goalAmt = document.getElementById("inputGoalAmt");
         let savedAmt = document.getElementById("inputSavedAmt");
 
-		var obj = {
-            MonthlyIncome: income.value,
-            rent: rent.value,
-            utilities: utilities.value,
-            groceries: groceries.value,
-            insurance: insurance.value,
-            phone: phone.value,
-            car: car.value,
-            gas: gas.value,
-            fun: fun.value,
-            goal: goal.value,
-            GoalDescription: goalDescription.value,
-            GoalAmt: goalAmt.value,
-            SavedAmt: savedAmt.value,
-		};
-		var js = JSON.stringify(obj);
-        
-		try {
+        try {
             const userinfo = JSON.parse(localStorage.getItem('user'));
 
-            console.log(userinfo);
-            console.log(userinfo.UserId);
+            const validatedIncome = validateInput(income, 'Income');
+            const validatedRent = validateInput(rent, 'Rent');
+            const validatedUtilities = validateInput(utilities, 'Utilities');
+            const validatedGroceries = validateInput(groceries, 'Groceries');
+            const validatedInsurance = validateInput(insurance, 'Insurance');
+            const validatedPhone = validateInput(phone, 'Phone');
+            const validatedCar = validateInput(car, 'Car');
+            const validatedGas = validateInput(gas, 'Gas');
+            const validatedFun = validateInput(fun, 'Entertainment');
+            const validatedGoal = validateInput(goal, 'Goal');
+            const validatedGoalAmt = validateInput(goalAmt, 'Goal Amount');
+            const validatedSavedAmt = validateInput(savedAmt, 'Saved Amount');
+
+            var obj = {
+                MonthlyIncome: validatedIncome,
+                rent: validatedRent,
+                utilities: validatedUtilities,
+                groceries: validatedGroceries,
+                insurance: validatedInsurance,
+                phone: validatedPhone,
+                car: validatedCar,
+                gas: validatedGas,
+                fun: validatedFun,
+                goal: validatedGoal,
+                GoalDescription: goalDescription.value.slice(0, 500), // Limit to 500 characters
+                GoalAmt: validatedGoalAmt,
+                SavedAmt: validatedSavedAmt,
+            };
 
             const response = await fetch(
                 `${base_url}/api/budgets/add/${userinfo.UserId}`,
                 {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${userinfo.accessToken}`
-                },
-                body: js,
-                credentials: 'same-origin',
-            });
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${userinfo.accessToken}`
+                    },
+                    body: JSON.stringify(obj),
+                    credentials: 'same-origin',
+                });
 
-			var res = JSON.parse(await response.text());
-			console.log(res);
+            var res = JSON.parse(await response.text());
+            console.log(res);
 
-			if (res.error) {
-                setMessage('Unable to add Budget'); // Set an error message
+            if (res.error) {
+                setMessage('Unable to add Budget');
                 console.log("Some error");
-            } 
-            else {
+            } else {
                 setBudget(obj);
                 setMessage('Success');
             }
 
-		} catch (e) {
-			alert(e.toString());
-			return;
-		}
+        } catch (e) {
+            console.error(e);
+            return;
+        }
     };
 
-    // Obtains budget from DB and updates webpage
-    const GetBudget = async () =>
-    {
+    const GetBudget = async () => {
         try {
             const userinfo = JSON.parse(localStorage.getItem('user'));
-            console.log(userinfo);
-            console.log(userinfo.UserId);
             
             const response = await fetch(
                 `${base_url}/api/budgets/get/${userinfo.UserId}`,
                 {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${userinfo.accessToken}`
-                },
-                credentials: 'same-origin',
-            });
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${userinfo.accessToken}`
+                    },
+                    credentials: 'same-origin',
+                });
 
-			var res = JSON.parse(await response.text());
-			console.log(res);
-            console.log(res.budgetGot.MonthlyExpenses);
-            console.log(res.budgetGot.MonthlyExpenses.rent);
+            var res = JSON.parse(await response.text());
+            console.log(res);
 
-			if (res.error) {
-                setMessage('Unable to get Budget'); // Set an error message
+            if (res.error) {
+                setMessage('Unable to get Budget');
                 console.log('Some error');
-            } 
-            else {
+            } else {
                 var temp = {
                     income: res.budgetGot.MonthlyIncome,
                     goalDescription: res.budgetGot.GoalDescription,
@@ -149,14 +158,13 @@ function BudgetPage() {
                 setMessage('Success');
             }
             
-		} catch (e) {
-			alert(e.toString());
-			return;
-		}
+        } catch (e) {
+            alert(e.toString());
+            return;
+        }
     };
 
     useEffect(() => {
-        // Assume budget object contains the necessary data
         const budgetData = {
             income: budget.income,
             rent: budget.rent,
@@ -168,27 +176,14 @@ function BudgetPage() {
             gas: budget.gas,
             fun: budget.fun,
             goal: budget.goal,
-
-           /*rent: 235,
-            utilities: 68,
-            groceries: 332,
-            insurance: 400,
-            phone: 50,
-            car: 200,
-            gas: 50,
-            fun: 60,
-            goal: 100,
-            */
         };
 
         const budgetLabels = Object.keys(budgetData);
         const budgetValues = Object.values(budgetData);
 
-        // Create a pie chart
         const ctx = document.getElementById('budgetChart');
         
         if (ctx.chart) {
-            // If yes, destroy the previous instance
             ctx.chart.destroy();
         }
         
@@ -208,7 +203,7 @@ function BudgetPage() {
                         '#3b4e58',
                         '#bd5d38',
                         '#4a5642'
-                      ],
+                    ],
                 }],
             },
             options: {
@@ -225,11 +220,11 @@ function BudgetPage() {
                     animation: {
                         animateRotate: true,
                         animateScale: true,
-                      },
+                    },
                 }
             }
         });
-    }, [budget]); // Add dependency to useEffect
+    }, [budget]);
 
 
     return (
