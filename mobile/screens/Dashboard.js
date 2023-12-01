@@ -259,8 +259,9 @@ const Dashboard = ({ navigation }) => {
         }, []);
 
             const goalData = [
-                { name: 'Saved', population: SavedAmt, color: '#FF6F61', legendFontColor: '#7F7F7F', legendFontSize: 15 },
-                { name: 'Goal', population: GoalAmt, color: '#6B5B95', legendFontColor: '#7F7F7F', legendFontSize: 15 },
+                {Id: 0, value: MonthlyIncome, label: 'Income', svg: {fill: '#FF6F61'}},
+                {Id: 1, value: rent, label: 'rent',svg: {fill: '#6B5B95'}},
+                {Id: 2, value: utilities, label: 'utilities',svg: {fill: '#88B04B'}},
             ];
             // Sample data for the pie chart
             const pieChartData = [
@@ -435,10 +436,17 @@ const Dashboard = ({ navigation }) => {
 
 
                     <View style={styles.textBox}>
-
+                        
                     </View>
 
                     <Text style={styles.text}>Achievements</Text>
+                    <View style={styles.graphContainer}>
+                        <PieChart
+                        style={{ height: 300 }}
+                        data={goalData}
+                        />
+                    </View>
+
                 </View>
 
             </ScrollView>
@@ -453,10 +461,11 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     graphContainer: {
+        height: 300,
+        alignContent:'center',
         margin:10,
         borderRadius: 15,
         padding: 10,
-        width:Dimensions.get('window').width,
         width:Dimensions.get('window').width,
     },
     textBox:{
