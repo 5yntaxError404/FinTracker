@@ -20,19 +20,31 @@ function ForgotMyPassword() {
       });
 
       if (response.status === 200) {
-        setMessage('Password Reset Email Sent. Check your email for a reset link.');
+        setMessage({
+          text: 'If this email is registered to an account, you will receive an email momentarily.',
+          color: 'success', // Set color to green
+        });
       } else {
         const data = await response.json();
 
         // Check if the error message includes a string indicating an internal server error
         if (data.message && data.message.includes('internal server error')) {
-          setMessage('Internal Server Error. Please try again later.');
+          setMessage({
+            text: 'Internal Server Error. Please try again later.',
+            color: 'error', // Set color to red for error messages
+          });
         } else {
-          setMessage(data.message || 'Unable to send Password Reset Email.');
+          setMessage({
+            text: data.message || 'Unable to send Password Reset Email.',
+            color: 'error',
+          });
         }
       }
     } catch (error) {
-      setMessage('Unable to send Password Reset Email.');
+      setMessage({
+        text: 'Unable to send Password Reset Email.',
+        color: 'error',
+      });
     }
   };
 
@@ -67,10 +79,10 @@ function ForgotMyPassword() {
 
           {/* Separate container for the success message */}
           <div className="message-container">
-            {/* Display the message to check the email */}
-            {message && (
-              <p className={`forms_field-label ${message.includes('Reset Email Sent') ? 'success-message visible' : 'error-message'}`}>
-                {message}
+            {/* Display the message with the specified color */}
+            {message.text && (
+              <p className={`forms_field-label ${message.color === 'success' ? 'success-message' : 'error-message'}`}>
+                {message.text}
               </p>
             )}
           </div>
