@@ -25,22 +25,26 @@ const Dashboard = ({ navigation }) => {
     const showExpensePopup = () => setVisibleExpensePopup(true);
     const hideExpensePopup = () => setVisibleExpensePopup(false);
 
+    const [visibleCategoryBreakdownPopup, setVisibleCategoryBreakdownPopup] = useState(false);
+    const showCategoryBreakdownPopup = () => setVisibleCategoryBreakdownPopup(true);
+    const hideCategoryBreakdownPopup = () => setVisibleCategoryBreakdownPopup(false);
+
     // Budget BODY
     const[MonthlyIncome, setMonthlyIncome] = useState(1.0);
-    const[rent, setRent] = useState(0.0);
-    const[utilities, setUtilities] = useState(0.0);
-    const[groceries, setGroceries] = useState(0.0);
-    const[insurance, setInsurance] = useState(0.0);
-    const[phone, setPhone] = useState(0.0);
-    const[car, setCar] = useState(0.0);
-    const[gas, setGas] = useState(0.0);
-    const[fun, setFun] = useState(0.0);
-    const[goal, setGoal] = useState(0.0);
+    const[rent, setRent] = useState(0);
+    const[utilities, setUtilities] = useState(0);
+    const[groceries, setGroceries] = useState(0);
+    const[insurance, setInsurance] = useState(0);
+    const[phone, setPhone] = useState(0);
+    const[car, setCar] = useState(0);
+    const[gas, setGas] = useState(0);
+    const[fun, setFun] = useState(0);
+    const[goal, setGoal] = useState(0);
     const[GoalDescription, setGoalDescription] = useState('');
-    const[GoalAmt, setGoalAmt] = useState(0.0);
-    const[budgetMonthlySavingGoal, setBudgetMonthlySavingGoal] = useState(0.0);
+    const[GoalAmt, setGoalAmt] = useState(0);
+    const[budgetMonthlySavingGoal, setBudgetMonthlySavingGoal] = useState(0);
     const[SavedAmt, setSavedAmt] = useState(0.0);
-    const[MonthlyExpenses, setMonthlyExpenses] = useState(0.0);
+    const[MonthlyExpenses, setMonthlyExpenses] = useState(0);
 
     //User ID BODY
     const [userId, setUserId] = useState(0);
@@ -261,10 +265,14 @@ const Dashboard = ({ navigation }) => {
             }
         };
 
+
+        let dynamicData = [
+            {}
+        ]
     useEffect(() => {
         // readBudget();
         // getTransaction();
-        }, []);
+    }, []);
 
             const goalData = [
                 {Id: 0, value: MonthlyIncome, label: 'Income', svg: {fill: '#FF6F61'}},
@@ -337,8 +345,29 @@ const Dashboard = ({ navigation }) => {
         hideIncomePopup();
     }
 
+    useEffect(() => {
+        // This code will run after the component has re-rendered
+        console.log("Updated MonthlyExpenses: " + MonthlyExpenses);
+    }, [MonthlyExpenses]); // Run this effect when MonthlyExpenses changes
+    
 
-    const [graphColor, setGraphColor] = useState("grey");
+    function listExpenses(){
+        console.log(rent);
+        console.log(utilities);
+        console.log(groceries);
+        console.log(insurance);
+        console.log(phone);
+        console.log(car);
+        console.log(gas);
+        console.log(fun);
+        console.log(goal);
+        const sum = parseFloat(rent) + parseFloat(utilities) + parseFloat(groceries) + parseFloat(insurance) + parseFloat(phone) + parseFloat(car) + parseFloat(gas) + parseFloat(fun)+parseFloat(goal);
+        setMonthlyExpenses(sum);
+        hideExpensePopup();
+    }
+
+
+    const [graphColor, setGraphColor] = useState("white");
     // Sample data for the pie chart
     const pieChartDataInitial = [
         {
@@ -350,21 +379,20 @@ const Dashboard = ({ navigation }) => {
     ];
 
     return (
+
+
         <View style={styles.container}>
 
             <LinearGradient colors={['#67286C','#973C9F']} style={styles.section1} start = {[0,0]} end = {[1,0]}>
             <Text style={styles.title}>FinTracker</Text>
-            
             </LinearGradient>
 
             <LinearGradient colors={['#322133','#322133','#322133']} style={styles.section2}>
             </LinearGradient>
 
-            
             <LinearGradient colors={['#67286C','#973C9F']} style={styles.section3} start = {[0,0]} end = {[1,0]}>
 
             <ScrollView horizontal={true} pagingEnabled={true} showsHorizontalScrollIndicator={false}>
-
             <View style={styles.mainSummaryBox}>
 
                 <View style={styles.graphContainer}>
@@ -373,17 +401,6 @@ const Dashboard = ({ navigation }) => {
                     data={pieChartDataInitial}
                 />
                 </View>
-                
-                    {/* <Text style={styles.text}>Hello {firstName}!</Text> */}
-                    {/* <Text style={styles.monthlyIncomeText}>Monthly Income: ${parseFloat(MonthlyIncome).toFixed(2)}</Text>
-                    <Text style={styles.getStartedText}>Rent: ${parseFloat(rent).toFixed(2)}</Text>
-                    <Text style={styles.getStartedText}>Utilities: ${parseFloat(utilities).toFixed(2)}</Text>
-                    <Text style={styles.getStartedText}>Groceries: ${parseFloat(groceries).toFixed(2)}</Text>
-                    <Text style={styles.getStartedText}>Insurance Bills: ${parseFloat(insurance).toFixed(2)}</Text>
-                    <Text style={styles.getStartedText}>Phone: ${parseFloat(phone).toFixed(2)}</Text>
-                    <Text style={styles.getStartedText}>Gas: ${parseFloat(gas).toFixed(2)}</Text>
-                    <Text style={styles.getStartedText}>Entertainment: ${parseFloat(fun).toFixed(2)}</Text>
-                    <Text style={styles.getStartedText}>Income - Expenses: ${(parseFloat(MonthlyIncome) - parseFloat(MonthlyExpenses)).toFixed(2)}</Text> */}
 
                     <Modal
                     transparent={true}
@@ -431,31 +448,76 @@ const Dashboard = ({ navigation }) => {
                     transparent={true}
                     visible={visibleExpensePopup}>
                     <View style={{backgroundColor:"#000000aa",flex:1}}>
-                        <View style={{backgroundColor:"#808080",margin:30,padding:40,borderRadius:10,flex:0.5, height:50, marginTop:150}}>
+                        <View style={{backgroundColor:"#808080",margin:20,padding:40,borderRadius:10,flex:0.9, height:50, marginTop:55}}>
 
-                            <Text style={styles.loginText}>Add Expense</Text>
+                            <Text style={styles.loginText}>Add Expenses</Text>
 
                             <TextInput
                             style={styles.input}
-                            placeholder="Amount"
-                            secureTextEntry = {false}
                             keyboardType='numeric'
-                            onChangeText={text => {
-                                const transactionAmtValue = parseInt(text,10);
-                                setTransactionAmt(transactionAmtValue);
-                            }}
+                            placeholder="Rent"
+                            secureTextEntry = {false}
+                            onChangeText={text => setRent(text)}
                             />
-
                             <TextInput
                             style={styles.input}
-                            placeholder="Category"
+                            keyboardType='numeric'
+                            placeholder="Utilities"
                             secureTextEntry = {false}
-                            onChangeText={text => setTransactionCategory(text)}
+                            onChangeText={text => setUtilities(text)}
                             />
-
+                            <TextInput
+                            style={styles.input}
+                            keyboardType='numeric'
+                            placeholder="Groceries"
+                            secureTextEntry = {false}
+                            onChangeText={text => setGroceries(text)}
+                            />
+                            <TextInput
+                            style={styles.input}
+                            keyboardType='numeric'
+                            placeholder="Insurance"
+                            secureTextEntry = {false}
+                            onChangeText={text => setInsurance(text)}
+                            />
+                            <TextInput
+                            style={styles.input}
+                            keyboardType='numeric'
+                            placeholder="Phone"
+                            secureTextEntry = {false}
+                            onChangeText={text => setPhone(text)}
+                            />
+                            <TextInput
+                            style={styles.input}
+                            keyboardType='numeric'
+                            placeholder="Car"
+                            secureTextEntry = {false}
+                            onChangeText={text => setCar(text)}
+                            />
+                            <TextInput
+                            style={styles.input}
+                            keyboardType='numeric'
+                            placeholder="Gas"
+                            secureTextEntry = {false}
+                            onChangeText={text => setGas(text)}
+                            />
+                            <TextInput
+                            style={styles.input}
+                            keyboardType='numeric'
+                            placeholder="Entertainment"
+                            secureTextEntry = {false}
+                            onChangeText={text => setFun(text)}
+                            />
+                            <TextInput
+                            style={styles.input}
+                            keyboardType='numeric'
+                            placeholder="Goal"
+                            secureTextEntry = {false}
+                            onChangeText={text => setGoal(text)}
+                            />
                             <TouchableOpacity 
                                 style={styles.button}
-                                onPress={addTransaction}
+                                onPress={() => listExpenses()}
                             >
                             <Text style={styles.buttonText}>Add</Text>
                             </TouchableOpacity>
@@ -471,28 +533,12 @@ const Dashboard = ({ navigation }) => {
                     </View>
                     </Modal>
 
-
                     <TouchableOpacity
                                 style={styles.getStartedButton}
                                 onPress={showExpensePopup}> 
-                                <Text style={styles.getStartedText}>Add Transaction</Text>
+                                <Text style={styles.getStartedText}>Set Budget</Text>
                     </TouchableOpacity>
 
-                    {/* <TouchableOpacity
-                        style={styles.getStartedButton}
-                        onPress={() => navigation.navigate('Landing')}> 
-                        <Text style={styles.getStartedText}>Log Out</Text>
-                    </TouchableOpacity> */}
-                </View>
-
-                <View style={styles.mainSummaryBox}>
-
-                <Text style={styles.getStartedText}>Current Goal: {GoalDescription}</Text>
-                <Text style={styles.getStartedText}>Goal: ${parseFloat(GoalAmt).toFixed(2)}</Text>
-                <Text style={styles.getStartedText}>Saved Amount: ${parseFloat(SavedAmt).toFixed(2)}</Text>
-
-                   
-                    <Text style={styles.text}>Transactions</Text>
                     <Modal
                     transparent={true}
                     visible={visibleTransactionPopup}>
@@ -519,17 +565,6 @@ const Dashboard = ({ navigation }) => {
                             onChangeText={text => setTransactionCategory(text)}
                             />
 
-                            <TextInput
-                            style={styles.input}
-                            placeholder="Transaction ID"
-                            secureTextEntry = {false}
-                            keyboardType='numeric'
-                            onChangeText={text => {
-                                const transactionIDValue = parseInt(text,10);
-                                setTransactionID(transactionIDValue);
-                            }}
-                            />
-
                             <TouchableOpacity 
                                 style={styles.button}
                                 onPress={addTransaction}
@@ -547,25 +582,65 @@ const Dashboard = ({ navigation }) => {
                         </View>
                     </View>
                     </Modal>
+
                     <TouchableOpacity
                                 style={styles.getStartedButton}
                                 onPress={showTransactionPopup}> 
                                 <Text style={styles.getStartedText}>Add Transaction</Text>
                     </TouchableOpacity>
 
+                    
+                    <Modal
+                    transparent={true}
+                    visible={visibleCategoryBreakdownPopup}>
+                    <ScrollView horizontal={true} pagingEnabled={true} showsHorizontalScrollIndicator={false}>
 
-                    <View style={styles.textBox}>
-                        
-                    </View>
+                            
+                                <View style={styles.categoryBreakdownContainer}>
+                                    <Text style={styles.categoryBreakdownTitle}>Rent</Text>
+                                    
+                                    <PieChart
+                                        style={{ height: 300 }}
+                                        data={pieChartDataInitial}
+                                    />
+                                    
+                                    <TouchableOpacity 
+                                    style={styles.categoryButton}
+                                    onPress={hideCategoryBreakdownPopup}
+                                    >
+                                    <Text style={styles.buttonText}>Go Back</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            
+                                <View style={styles.categoryBreakdownContainer}>
+                                    <Text style={styles.categoryBreakdownTitle}>Utilities</Text>
+                                    
+                                    <PieChart
+                                        style={{ height: 300 }}
+                                        data={pieChartDataInitial}
+                                    />
+                                    
+                                    <TouchableOpacity 
+                                    style={styles.categoryButton}
+                                    onPress={hideCategoryBreakdownPopup}
+                                    >
+                                    <Text style={styles.buttonText}>Go Back</Text>
+                                    </TouchableOpacity>
+                                </View>
 
-                    <Text style={styles.text}>Achievements</Text>
-                    <View style={styles.graphContainer}>
-                        <PieChart
-                        style={{ height: 300 }}
-                        data={goalData}
-                        />
-                    </View>
+                    </ScrollView>
+                    </Modal>
+                    <TouchableOpacity
+                        style={styles.getStartedButton}
+                        onPress={showCategoryBreakdownPopup}> 
+                        <Text style={styles.getStartedText}>Category Breakdown</Text>
+                    </TouchableOpacity>
 
+                    <TouchableOpacity
+                        style={styles.getStartedButton}
+                        onPress={() => navigation.navigate('Landing')}> 
+                        <Text style={styles.getStartedText}>Log Out</Text>
+                    </TouchableOpacity>
                 </View>
 
             </ScrollView>
@@ -582,9 +657,7 @@ const styles = StyleSheet.create({
     graphContainer: {
         height: 300,
         alignContent:'center',
-        margin:10,
         borderRadius: 15,
-        padding: 10,
         width:Dimensions.get('window').width,
     },
     textBox:{
@@ -626,6 +699,19 @@ const styles = StyleSheet.create({
         color:'white',
         fontFamily: 'Montserrat-Black',
     },
+    categoryBreakdownContainer: {
+        justifyContent:'center',
+        alignContent:'center',
+        flex:1,
+        width:Dimensions.get('window').width,
+        backgroundColor:"#808080",
+    },
+    categoryBreakdownTitle:{
+        fontSize:30,
+        color:'white',
+        fontFamily: 'Montserrat-Black',
+        alignSelf:'center'
+    },
     text:{
         marginLeft:1,
         marginRight:1,
@@ -651,7 +737,7 @@ const styles = StyleSheet.create({
         alignItems:'center',
         backgroundColor:'purple',
         borderWidth:1,
-        width:170,
+        width:200,
         alignContent:'center',
         justifyContent:'center',
         alignSelf:'center',
@@ -696,13 +782,27 @@ const styles = StyleSheet.create({
         color:'white',
         fontFamily: 'Montserrat-Black',
     },
+    categoryButtonText:{
+        color:'white',
+        fontFamily: 'Montserrat-Black',
+    },
+    categoryButton: {
+        borderRadius:20,
+        padding:8,
+        alignItems:'center',
+        backgroundColor:'purple',
+        borderWidth:1,
+        width:200,
+        margin:20,
+        alignSelf:'center',
+    },
     button: {
         borderRadius:20,
         padding:8,
         alignItems:'center',
         backgroundColor:'purple',
         borderWidth:1,
-        width:120,
+        width:200,
         marginBottom:10,
         alignSelf:'center',
     },
