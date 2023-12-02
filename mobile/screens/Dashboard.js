@@ -265,7 +265,8 @@ const Dashboard = ({ navigation }) => {
     ]
 
     useEffect(() => {
-        // readBudget();
+        readBudget();
+        initiateGraph();
         // getTransaction();
     }, []);
 
