@@ -8,13 +8,14 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const { MongoClient } = require('mongodb');
-const { generateOneTimePass, verifyEmail } = require('./mailing');
+const { generateOneTimePass, verifyEmail, forgotPassword } = require('./mailing');
 require('dotenv/config');
-const port = process.env.PORT || 5000; // Heroku set port
+// const port = process.env.PORT || 5000; // Heroku set port
 const app = express();
+const bcrypt = require ("bcrypt");
+app.use(cors({origin: ["http://localhost:3000", "https://www.fintech.davidumanzor.com"]}));
 const crypto = require('crypto');
 // const bcrypt = require ("bcrypt"); -- may need this. delete later if not.
-app.use(cors());
 app.use(bodyParser.json());
 app.use(cookieParser());
 
@@ -59,12 +60,14 @@ async function main() {
       const accCollection = db.collection('Accounts');
       const achCollection = db.collection('Achievements');
       const budCollection = db.collection('Budgets');     
-      app.listen(port, () => {
-        console.log(`Server is running on ${port}`);
-      });
+ //     app.listen(port, () => {
+   //     console.log(`Server is running on ${port}`);
+     // });
   
    // Define a variable for the user counter
 let userCounter = 665;
+
+
 
 // JWT post
 app.get('/posts, authenticateToken', (req, res) => {
@@ -72,7 +75,7 @@ app.get('/posts, authenticateToken', (req, res) => {
 });
 
 
-// Register a new user
+// REGISTRATION 
 app.post('/api/register', async (req, res) => {
   const { FirstName, LastName, Email, UserName, Password } = req.body;
 
@@ -86,7 +89,7 @@ app.post('/api/register', async (req, res) => {
     }
 
     if (existingEmail) {
-      return res.status(400).json({ error: 'Email already associated with another account.'});
+      return res.status(401).json({ error: 'Email already associated with another account.'});
     }
     
     var check = await usersCollection.findOne({ UserId: userCounter });
@@ -106,7 +109,6 @@ app.post('/api/register', async (req, res) => {
       UserId: userCounter,
       FirstName,
       LastName,
-      UserId: userCounter,
       Email,
       UserName,
       Password,
@@ -114,10 +116,14 @@ app.post('/api/register', async (req, res) => {
       isVerified: false
     };
 
+
+    
+
+
     verifyEmail(newUser.Email,EmailURL);
+
     // Insert the user document into the "Users" collection
     await usersCollection.insertOne(newUser);
-
 
     // Return a success message
     res.status(201).json({ message: 'User registered successfully' });
@@ -127,7 +133,29 @@ app.post('/api/register', async (req, res) => {
   }
 });
 
-// Authenticate a user
+
+// END OF REGISTRATION
+
+// AUTHENTICATION ENDPOINTS
+
+
+function checkPassComplexity(pass){
+    
+    const minLength = 8;
+    const hasUppercase = /[A-Z]/.test(pass);
+    const hasLowercase = /[a-z]/.test(pass);
+    const hasDigit = /\d/.test(pass);
+    const hasSpecialChar = /[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]/.test(pass);
+  
+    // Check against complexity criteria
+    const isLengthValid = pass.length >= minLength;
+    const meetsComplexityCriteria = hasUppercase && hasLowercase && hasDigit && hasSpecialChar;
+  
+    // Return true if the password is sufficiently complex
+    return isLengthValid && meetsComplexityCriteria;
+}
+
+
       app.post('/api/login', async (req, res) => {
         const { UserName, Password } = req.body;
   
@@ -226,6 +254,12 @@ app.post('/api/register', async (req, res) => {
       
           const result = await usersCollection.updateOne({ _id: user._id }, { $set: { isVerified: true } });
           console.log('MongoDB update result:', result);
+
+          const tokenUpdateResult = await usersCollection.updateOne(
+            { _id: user._id },
+            { $set: { VerificationToken: null } }
+          );
+          console.log('MongoDB token update result:', tokenUpdateResult);
       
           return res.status(200).json({ message: 'Email verification successful' });
         } catch (error) {
@@ -233,9 +267,85 @@ app.post('/api/register', async (req, res) => {
           return res.status(500).json({ error: 'Internal server error' });
         }
       });
+
+      app.post('/forgot-password-email', async (req, res) => {
+
+        const { Email } = req.body;
+
+        try {
+          const user = await usersCollection.findOne({ Email: Email });
+
+          if (!user) {
+            console.log('User Email Not Found:', Email);
+            return res.status(404).json({ error: 'No Account with that Email Record.' });
+          }
+
+          const name = user.FirstName;
+          const VerificationToken = crypto.randomBytes(32).toString('hex');
+          usersCollection.updateOne( { _id: user._id }, { $set: {ResetPasswordToken: VerificationToken}});
+          const EmailURL = `https://www.fintech.davidumanzor.com/ResetPassword?token=${VerificationToken}`;
+
+        forgotPassword(name, Email, EmailURL);
+      
+          console.log('Email Sent To:', user);
+          return res.status(200).json({message: 'Email sent.'});
+        }
+
+        catch (error) {
+          console.error('Error during forgot-password-email:', error);
+          return res.status(500).json({ error: 'Internal server error' });
+        }
+        
+    
+      })
+
+
+      app.post('/reset-password', async (req, res) => {
+        const token  = req.query.token.trim();
+        const { Password } = req.body;
+        console.log('Reset Password Token Received:', token);
+      
+        try {
+          const user = await usersCollection.findOne({ ResetPasswordToken: token });
+      
+          if (!user) {
+            console.log('User not found for verification token:', token);
+            return res.status(404).json({ error: 'Invalid verification token' });
+          }
+      
+          console.log('Found user for verification:', user);
+
+          if(!checkPassComplexity(Password)){
+            return res.status(402).json({ message: 'Password is too weak. It must be at least 8 characters long with a digit, special characte, an uppercase character and a lowercase character.' });
+          }
+      
+          // Update password
+          const passwordUpdateResult = await usersCollection.updateOne(
+            { _id: user._id },
+            { $set: { Password: Password } }
+          );
+          console.log('MongoDB password update result:', passwordUpdateResult);
+      
+          // Nullify reset password token
+          const tokenUpdateResult = await usersCollection.updateOne(
+            { _id: user._id },
+            { $set: { ResetPasswordToken: null } }
+          );
+          console.log('MongoDB token update result:', tokenUpdateResult);
+      
+          // You can check if both updates were successful and handle accordingly
+      
+          return res.status(200).json({ message: 'Password reset successful' });
+        } catch (error) {
+          console.error('Error during password reset:', error);
+          return res.status(500).json({ error: 'Internal server error' });
+        }
+      });
+      
+     
       
 
-app.get('/api/info/:UserId', authenticateToken, async (req, res) => {
+app.post('/api/info/:UserId', authenticateToken, async (req, res) => {
   try {
 
     if(parseInt(req.params.UserId) != req.user.UserId){
@@ -398,6 +508,7 @@ app.get('/api/accounts', authenticateToken, async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 app.get('/api/info/:UserId', authenticateToken, async (req, res) => {
   try {
 
@@ -547,13 +658,13 @@ app.post('/api/accounts/add/:UserId', authenticateToken, async (req, res) => {
 });
 
 // Get all accounts for the authenticated user
-app.get('/api/accounts', authenticateToken, async (req, res) => {
+app.post('/api/accounts', authenticateToken, async (req, res) => {
   try {
     const UserId = req.user.UserId; // Get UserId from the JWT
 
     // Query your database to fetch all the user's account information based on the UserId
     //Doesn't work because it would be an array - we can workshop this
-    const userAccounts = await accCollection.find({ UserIdRef: UserId }).toArray;
+    const userAccounts = await accCollection.find({ UserIdRef: UserId }).toArray();
 
     res.status(200).json(userAccounts);
   } catch (error) {
@@ -563,7 +674,7 @@ app.get('/api/accounts', authenticateToken, async (req, res) => {
 });
 
 // Get a specific account
-app.get('/api/account', authenticateToken, async (req, res) => {
+app.post('/api/account', authenticateToken, async (req, res) => {
   try {
     const UserId = req.user.UserId; // Get UserId from the JWT
     const AccountNum = req.body.AccountNum; // Get the AccountNum from the request body
@@ -582,6 +693,24 @@ app.get('/api/account', authenticateToken, async (req, res) => {
   }
 });
 
+app.get('/api/users/get/', authenticateToken, async (req, res) => {
+  try {
+    const UserId = req.user.UserId; // Get UserId from the JWT
+    // const { UserId } = req.body; // Get the AccountNum from the request body
+    console.log(UserId);
+    // Query your database to fetch the specific account information based on the UserId and AccountNum
+    const UserInfo = await usersCollection.findOne({ UserId });
+
+    if (!UserInfo) {
+      return res.status(404).json({ error: 'User Not Found' });
+    }
+
+    res.status(200).json(UserInfo);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 
 
@@ -687,9 +816,7 @@ app.post('/api/budgets/add/:UserId', authenticateToken, async (req, res) => {
       MonthlyExpensesAmt += MonthlyExpenses[x];
     }
     
-    var Transactions = {
-      
-    };
+    var Transactions = [];
     var TransactionsAmt = 0;
     for (x in Transactions) {
       TransactionsAmt += Transactions[x];
@@ -804,7 +931,7 @@ app.put('/api/budgets/edit/:UserId', authenticateToken, async (req, res) => {
   }
 });
 
-app.get('/api/budgets/get/:UserId', authenticateToken, async (req, res) => {
+app.post('/api/budgets/get/:UserId', authenticateToken, async (req, res) => {
   try {
 
     if(parseInt(req.params.UserId) != req.user.UserId){
@@ -814,7 +941,7 @@ app.get('/api/budgets/get/:UserId', authenticateToken, async (req, res) => {
     const budgetGot = await budCollection.findOne({UserIdRef : parseInt(req.params.UserId)});
 
     // Return a success message
-    res.status(201).json({ message: JSON.stringify(budgetGot) });
+    res.status(201).json({budgetGot});
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });
@@ -825,7 +952,7 @@ app.get('/api/budgets/get/:UserId', authenticateToken, async (req, res) => {
 // add transaction + update budget
 app.post('/api/budgets/transactions/:UserId', authenticateToken, async (req, res) => {
   
-  var TransactionID = Math.floor(Math.random() * 999) + 1;
+  var TransactionID = Math.floor(Math.random() * 99999) + 1;
   var Transactions = {
     transactionID : TransactionID,
     transactionAmt : req.body.transactionAmt,
@@ -941,7 +1068,7 @@ app.put('/api/budgets/transactions/edit/:UserId', authenticateToken, async (req,
     }
 
     var Transactions = {
-      transactionID : Math.floor(Math.random() * 999) + 1,
+      transactionID : Math.floor(Math.random() * 99999) + 1,
       transactionAmt : req.body.transactionAmt,
       transactionCategory : req.body.transactionCategory
     };
@@ -975,7 +1102,7 @@ app.put('/api/budgets/transactions/edit/:UserId', authenticateToken, async (req,
 });
 
 //get transaction
-app.get('/api/budgets/transactions/get/:UserId', authenticateToken, async (req, res) => {
+app.post('/api/budgets/transactions/get/:UserId', authenticateToken, async (req, res) => {
   
   try {
 
@@ -1040,13 +1167,28 @@ app.get('/api/achievements/get/:UserId', authenticateToken, async (req, res) => 
   }
 }); 
     
+
+
+
     }
     catch
     {
-      //console.error(error);
+      console.error(error);
     }
   }
-  
+
   
   main().catch(console.error);
+
+  function startServer() {
+    const port = process.env.PORT || 5000; // Use port from environment variable or default to 5000
+    app.listen(port, () => {
+      console.log(`Server is running on ${port}`);
+    });
+  }
+  // Start the server only if the file is executed directly
+  if (require.main === module) {
+    startServer();
+  }
+  module.exports = {app, startServer}; // Export the app for testing purposes
 

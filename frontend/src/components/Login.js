@@ -1,114 +1,178 @@
-import React, { useState } from 'react';
+// Login.js
 
+import React, { useState } from 'react';
 import '../css/LoginPage.css';
 
 function Login() {
+  const base_url = process.env.NODE_ENV === 'production' ? 'https://www.fintech.davidumanzor.com' : 'http://localhost:5000';
 
-    var username,password;
-    const [message,setMessage] = useState('');
+  var username, password;
+  const [message, setMessage] = useState('');
+  const [errorMessages, setErrorMessages] = useState('');
+  const [errorFields, setErrorFields] = useState([]);
+  const [registrationError, setRegistrationError] = useState('');
+  const [successMessages, setSuccessMessages] = useState([]);
 
-	const doLogin = async event => 
-    {
-        event.preventDefault();
+  // Function to parse JWT token
+  function parseJwt(token) {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+    return JSON.parse(jsonPayload);
+  }
 
-		var obj = {
-			"UserName": username.value,
-			"Password": password.value
-		};
-		var js = JSON.stringify(obj);
-	
-		try {
+  const errorPush = (message, fields) => {
+    setErrorMessages(message);
+    setErrorFields(fields);
+    setRegistrationError('');
+    setSuccessMessages([]);
+  };
 
-			const response = await fetch('https://www.fintech.davidumanzor.com/api/login', {
+  const successPush = (message) => {
+    setSuccessMessages([message]);
+    setErrorMessages('');
+    setErrorFields([]);
+    setRegistrationError('');
+  };
 
-				method: 'post',
-				body: js,
-				headers: 
-                { 
-                    'Content-Type': 'application/json' 
-                }
-			});
-			var res = JSON.parse(await response.text());
-			console.log(res);
+  // Function to perform login
+  const doLogin = async (event) => {
+    event.preventDefault();
 
-			 if (res.error) {
-                setMessage('Unable to Login'); // Set an error message
-                console.log("Some error");
-            } 
-            else {
-                setMessage('Logged In.'); // Set a success message
-                var user =
-				{
-                    firstName:res.firstName,
-                    lastName:res.lastName,
-                    id:res.id
-                }
+    // Clear previous error messages
+    setErrorMessages('');
+    setErrorFields([]);
+    setRegistrationError('');
 
-				localStorage.setItem('user_data', JSON.stringify(user));
-
-				setMessage('');
-				window.location.href = '/dash';
-                console.log("Logged In");
-            }
-		} catch (e) {
-			alert(e.toString());
-			return;
-		}
+    // Check for empty username
+    if (!username.value) {
+      errorPush('Username cannot be empty', ['username']);
+      return;
     }
 
-    return (
-	<div className="login-container">
-        <div className="login-form">
-            <form className='form' onSubmit={doLogin}>
-            <h3>Sign In</h3>
+    // Check for empty password
+    if (!password.value) {
+      errorPush('Password cannot be empty', ['password']);
+      return;
+    }
 
-            <div className="mb-3">
-            <label>Username</label>
-            <input 
-						type="text" 
-						id="username" 
-						className="user-input-field" 
-						placeholder="Username" 
-						ref={(c) => username = c}/><br />
-            </div>
+    const obj = {
+      UserName: username.value,
+      Password: password.value,
+    };
 
-            <div className="mb-3">
-            <label>Password</label>
-            <input 
-						type="password" 
-						id="password" 
-						className="user-input-field" 
-						placeholder="Password" 
-						ref={(c) => password = c}/><br />
-            </div>
+    const js = JSON.stringify(obj);
 
-            <div className="mb-3">
+    try {
+      const response = await fetch(`${base_url}/api/login/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: js,
+        credentials: 'same-origin',
+      });
+
+      if (response.status === 401) {
+        // Invalid credentials
+        errorPush('Invalid Username or Password', ['username', 'password']);
+      } else if (response.status === 400) {
+        // User needs to verify their email
+        errorPush('Please verify your email before logging in.', []);
+      } else if (response.ok) {
+        // Successful login
+        setMessage('Logged In.');
+
+        const res = await response.json();
+        const parsedToken = parseJwt(res.accessToken);
+        const userinfo = {
+          accessToken: res.accessToken,
+          UserId: parsedToken.UserId,
+        };
+        localStorage.setItem('user', JSON.stringify(userinfo));
+
+        try {
+          const infoResponse = await fetch(`${base_url}/api/info/${userinfo.UserId}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${userinfo.accessToken}`,
+            },
+            credentials: 'same-origin',
+          });
+
+          if (!infoResponse.ok) {
+            throw new Error('Network response was not ok');
+          }
+
+          const data = await infoResponse.json();
+          console.log('Parsed JSON data:', data);
+        } catch (error) {
+          console.error('There was a problem with the fetch operation:', error);
+        }
+
+        // Redirect or perform other actions on successful login
+        // window.location.href = '/dash';
+      } else {
+        // Other error scenarios
+        errorPush('Unable to Login', []);
+      }
+    } catch (e) {
+      console.error('Error during fetch:', e.message);
+      setRegistrationError(e.message || 'Unknown error');
+    }
+  };
+
+  return (
+    <div className="login-container">
+      <div className="login-form">
+        <form className="form" onSubmit={doLogin}>
+          <h1>Login</h1>
+
+          <div className={`form-group ${errorFields.includes('username') ? 'error' : ''}`}>
+            <label htmlFor="username">Username</label>
+            <input type="text" id="username" className={`user-input-field ${errorFields.includes('username') ? 'error-border' : ''}`} placeholder="Enter your username" ref={(c) => (username = c)} />
+          </div>
+
+          <div className={`form-group ${errorFields.includes('password') ? 'error' : ''}`}>
+            <label htmlFor="password">Password</label>
+            <input type="password" id="password" className={`user-input-field ${errorFields.includes('password') ? 'error-border' : ''}`} placeholder="Enter your password" ref={(c) => (password = c)} />
+          </div>
+
+          <div className="form-group">
             <div className="custom-control custom-checkbox">
-                <input
-                type="checkbox"
-                className="custom-control-input"
-                id="customCheck1"
-                />
-                <label className="custom-control-label" htmlFor="customCheck1">
+              <input type="checkbox" className="custom-control-input" id="customCheck1" />
+              <label className="custom-control-label" htmlFor="customCheck1">
                 Remember me
-                </label>
+              </label>
             </div>
-            </div>
+          </div>
 
-            <div className="d-grid">
-            <button onClick={doLogin} type="submit" className="btn btn-primary">
-                Submit
+          <div className="d-grid">
+            <button type="submit" className="btn btn-primary">
+              Sign In
             </button>
-            </div>
-            <p className="forgot-password text-right">
-            Forgot <a href="#">password?</a>
-            </p>
-			<p className="new-account test-right"> 
-			New <a href="/signup">account?</a>
-			</p>
+          </div>
+
+          <p className="forgot-password">
+            <a href="/ForgotPassword">Forgot your password?</a>
+          </p>
+
+          <p className="new-account">
+            Don't have an account? <a href="/signup">Sign up!</a>
+          </p>
+
+          {/* Display general login error message at the bottom */}
+          <p className="error-messages">{errorMessages}</p>
         </form>
-        </div> 
-	</div>
-);
+      </div>
+    </div>
+  );
 }
+
 export default Login;

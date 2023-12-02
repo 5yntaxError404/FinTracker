@@ -1,132 +1,238 @@
+// SignUp.js
+
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import '../css/SignUpPage.css';
 
-import '../css/LoginPage.css';
+function SignUp() {
+  const navigate = useNavigate();
 
-function SignUp(){
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [fname, setFname] = useState('');
+  const [lname, setLname] = useState('');
+  const [email, setEmail] = useState('');
+  const [errorMessages, setErrorMessages] = useState('');
+  const [errorFields, setErrorFields] = useState([]);
+  const [registrationError, setRegistrationError] = useState('');
+  const [successMessages, setSuccessMessages] = useState([]);
 
-	var username,password,fname,lname,email;
+  // Function to check strong password
+  const isStrongPassword = (value) => {
+    // Check for at least 1 capital letter
+    const capitalLetterRegex = /[A-Z]/;
+    if (!capitalLetterRegex.test(value)) {
+      return false;
+    }
 
-	const [message,setMessage] = useState('');
-    
-	const doSignup = async event => {
-		event.preventDefault();
-	
-		var obj = {
-			"FirstName": fname.value,
-			"LastName": lname.value,
-			"Email": email.value,
-			"UserName": username.value,
-			"Password": password.value
-		};
-		var js = JSON.stringify(obj);
-	
-		try {
+    // Check for at least 1 lowercase letter
+    const lowercaseLetterRegex = /[a-z]/;
+    if (!lowercaseLetterRegex.test(value)) {
+      return false;
+    }
 
-			  const response = await fetch('https://www.fintech.davidumanzor.com/api/register', {
+    // Check for at least 1 digit
+    const digitRegex = /\d/;
+    if (!digitRegex.test(value)) {
+      return false;
+    }
 
-				method: 'post',
-				body: js,
-				headers: { 'Content-Type': 'application/json' }
-			});
-			var res = JSON.parse(await response.text());
-			console.log(res);
-			if (res.error !== '') {
-				setMessage('Unable to Register');
-			} else {
-				alert('Registered.');
-			}
-		} catch (e) {
-			alert(e.toString());
-			return;
-		}
-	};
-	
+    // Check for at least 1 special character
+    const specialCharacterRegex = /[!@#$%^&*(),.?":{}|<>]/;
+    if (!specialCharacterRegex.test(value)) {
+      return false;
+    }
 
-	return (
-		<div className="login-container">
-			<div className="login-form">
-				<form className='form' onSubmit={doSignup}>
-				<h3>Sign Up</h3>
+    // Check for minimum 8 characters in length
+    if (value.length < 8) {
+      return false;
+    }
 
-				<div className="mb-3">
-					<label>Firstname</label>
-					
-					<input 
-						type="text" 
-						id="fName" 
-						class="user-input-field" 
-						placeholder="First Name" 
-						ref={(c) => fname = c}/><br />
-					
-				</div>
+    return true;
+  };
 
-				<div className="mb-3">
-				<label>Lastname</label>
-				<input 
-						type="text" 
-						id="lName" 
-						class="user-input-field" 
-						placeholder="Last Name" 
-						ref={(c) => lname = c}/><br />
-				</div>
+  // Function to handle errors
+  const errorPush = (message, fields) => {
+    setErrorMessages(message);
+    setErrorFields(fields);
+    setRegistrationError('');
+    setSuccessMessages([]);
+  };
 
-				<div className="mb-3">
-				<label>Username</label>
-				<input 
-						type="text" 
-						id="userName" 
-						class="user-input-field" 
-						placeholder="Username" 
-						ref={(c) => username = c}/><br />
-				</div>
+  // Function to handle success
+  const successPush = (message) => {
+    setSuccessMessages([message]);
+    setErrorMessages('');
+    setErrorFields([]);
+    setRegistrationError('');
+  };
 
-				<div className="mb-3">
-				<label>Password</label>
-				<input
-					type="password"
-					id="password"
-					class="user-input-field" 
-					placeholder="Password"
-					ref={(c) => password = c}/><br />
-				</div>
+  // Function to perform signup
+  const doSignup = async (event) => {
+    event.preventDefault();
 
-				<div className="mb-3">
-				<label>Email</label>
-				<input 
-						type="text" 
-						id="email" 
-						class="user-input-field" 
-						placeholder="Email" 
-						ref={(c) => email = c}/><br />
-				</div>
+    // Validate form fields
+    const errors = [];
+    const fieldsWithErrors = [];
+    if (!fname) {
+      errors.push('First Name is required.');
+      fieldsWithErrors.push('fName');
+    }
+    if (!lname) {
+      errors.push('Last Name is required.');
+      fieldsWithErrors.push('lName');
+    }
+    if (!username) {
+      errors.push('Username is required.');
+      fieldsWithErrors.push('userName');
+    }
+    if (!password) {
+      errors.push('Password is required.');
+      fieldsWithErrors.push('password');
+    } else if (!isStrongPassword(password)) {
+      errors.push('Password must be strong (at least 1 uppercase, 1 lowercase, 1 digit, 1 special character, and minimum 8 characters).');
+      fieldsWithErrors.push('password');
+    }
+    if (!email) {
+      errors.push('Email is required.');
+      fieldsWithErrors.push('email');
+    }
 
-				<div className="mb-3">
-				<div className="custom-control custom-checkbox">
-					<input
-					type="checkbox"
-					className="custom-control-input"
-					id="customCheck1"
-					/>
-					<label className="custom-control-label" htmlFor="customCheck1">
-					Remember me
-					</label>
-				</div>
-				</div>
+    if (errors.length > 0) {
+      errorPush(errors.join('\n'), fieldsWithErrors);
+      return;
+    }
 
-				<div className="d-grid">
-				<button>
-					Submit
-				</button>
-				</div>
-				<p className="forgot-password text-right">
-				Forgot <a href="#">password?</a>
-				</p>
-				<p className="new-account test-right"> 
-				Have an <a href="/login">account?</a>
-				</p>
-			</form>
-			</div> 
-		</div>
-	);
+    // Reset error messages and fields
+    setErrorMessages('');
+    setErrorFields([]);
+    setRegistrationError('');
+
+    try {
+      const response = await fetch('https://www.fintech.davidumanzor.com/api/register', {
+        method: 'post',
+        body: JSON.stringify({
+          UserName: username,
+          Email: email,
+          FirstName: fname,
+          LastName: lname,
+          Password: password,
+        }),
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      if (response.ok) {
+        // Redirect to login page after successful account creation
+        navigate('/Login');
+      } else {
+        // Handle errors based on response status
+        if (response.status === 400) {
+          errorPush('Username is already in use.', ['userName']);
+        } else if (response.status === 401) {
+          errorPush('Email is already in use.', ['email']);
+        } else {
+          throw new Error(`Server responded with status ${response.status}`);
+        }
+      }
+    } catch (e) {
+      console.error('Error during fetch:', e.message);
+      setRegistrationError(e.message || 'Unknown error');
+    }
+  };
+
+  return (
+    <div className="signup-container">
+      <div className="signup-form">
+        <form className="form" onSubmit={doSignup}>
+          <h3>Sign Up</h3>
+
+          <div className={`mb-3 ${errorFields.includes('fName') ? 'error' : ''}`}>
+            <label htmlFor="fName" className="required-field">First Name</label>
+            <input 
+                type="text" 
+                id="fName" 
+                className={`user-input-field ${errorFields.includes('fName') ? 'error-border' : ''}`} 
+                placeholder="First Name" 
+                value={fname}
+                onChange={(e) => setFname(e.target.value)}
+            />
+          </div>
+
+          <div className={`mb-3 ${errorFields.includes('lName') ? 'error' : ''}`}>
+            <label htmlFor="lName" className="required-field">Last Name</label>
+            <input 
+                type="text" 
+                id="lName" 
+                className={`user-input-field ${errorFields.includes('lName') ? 'error-border' : ''}`} 
+                placeholder="Last Name" 
+                value={lname}
+                onChange={(e) => setLname(e.target.value)}
+            />
+          </div>
+
+          <div className={`mb-3 ${errorFields.includes('userName') ? 'error' : ''}`}>
+            <label htmlFor="userName" className="required-field">Username</label>
+            <input 
+                type="text" 
+                id="userName" 
+                className={`user-input-field ${errorFields.includes('userName') ? 'error-border' : ''}`} 
+                placeholder="Username" 
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+            />
+          </div>
+
+          <div className={`mb-3 ${errorFields.includes('password') ? 'error' : ''}`}>
+            <label htmlFor="password" className="required-field">Password</label>
+            <input
+                type="password"
+                id="password"
+                className={`user-input-field ${errorFields.includes('password') ? 'error-border' : ''}`} 
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+
+          <div className={`mb-3 ${errorFields.includes('email') ? 'error' : ''}`}>
+            <label htmlFor="email" className="required-field">Email</label>
+            <input 
+                type="text" 
+                id="email" 
+                className={`user-input-field ${errorFields.includes('email') ? 'error-border' : ''}`} 
+                placeholder="Email" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+
+          <div className="d-grid">
+            <button type="submit" className="btn btn-primary">
+              Submit
+            </button>
+          </div>
+
+          <p className="error-messages">{errorMessages}</p>
+          <p className="registration-error">{registrationError}</p>
+          {successMessages.length > 0 && (
+            <p className="success-message">{successMessages.join('\n')}</p>
+          )}
+
+          <p className="check-email-message text-right mb-3">
+            Once redirected, please check your email.
+          </p>
+
+          <p className="forgot-password text-right">
+            <a href="/ForgotPassword"> Forgot password?</a>
+          </p>
+          
+          <p className="new-account test-right"> 
+            <a href="/Login"> Already have an account?</a>
+          </p>
+        </form>
+      </div>
+    </div>
+  );
 }
+
 export default SignUp;

@@ -1,0 +1,57 @@
+/* src/EmailVerification.css */
+
+.email-verification-container {
+    background-image: linear-gradient(to bottom right, #6e2b62, #33243f);
+    color: white;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+  }
+  
+  .verified-container {
+    font-family: 'IBM Plex Mono', Impact;
+    text-align: center;
+    height: 60vh;
+    max-width: 800px; /* You can adjust this value to make the container wider */
+    background-image: linear-gradient(to bottom right, #211522, #613659);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    border-radius: 30px;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    animation: fadeInAnimation ease 3s;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+  }
+  
+  .verified-circle {
+    background-color: #00e348;
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  
+  .verified-text {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .redirecting-text {
+    font-size: 1.2rem;
+  }
+  
+  .verifying-text {
+    font-size: 1.2rem;
+  }
+  
