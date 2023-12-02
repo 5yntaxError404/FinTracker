@@ -337,8 +337,11 @@ const Dashboard = ({ navigation }) => {
 
 
     function initiateGraph(){
-        setGraphColor("green");
-        hideIncomePopup();
+        if(MonthlyIncome>1)
+        {
+            setGraphColor("green");
+            hideIncomePopup();
+        }
     }
 
     useEffect(() => {
