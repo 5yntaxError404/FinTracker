@@ -6,9 +6,7 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import ProgressBar from 'react-bootstrap/ProgressBar';
-import { Pie } from 'react-chartjs-2'
-
-import CircleProgress from './CircleChart'
+import { Doughnut } from 'react-chartjs-2'
 
 import {
     Chart as ChartJS,
@@ -49,40 +47,40 @@ const Dash = (props) => {
     ? `https://www.fintech.davidumanzor.com`
     : `http://localhost:5000`;
 
-        // Obtains budget from DB and updates webpage
-        const GetAccounts = async () =>
-        {
-            try {
-                const userinfo = JSON.parse(localStorage.getItem('user'));
-                
-                const response = await fetch(
-                    `${base_url}/api/accounts/`,
-                    {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${userinfo.accessToken}`
-                    },
-                    credentials: 'same-origin',
-                });
+    // Obtains accounts from DB and updates webpage
+    const GetAccounts = async () =>
+    {
+        try {
+            const userinfo = JSON.parse(localStorage.getItem('user'));
+            
+            const response = await fetch(
+                `${base_url}/api/accounts/`,
+                {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${userinfo.accessToken}`
+                },
+                credentials: 'same-origin',
+            });
 
-                var res = JSON.parse(await response.text());
-                console.log(res);
+            var res = JSON.parse(await response.text());
+            console.log(res);
 
-                if (res.error) {
-                    setMessage('Unable to get accounts'); // Set an error message
-                    console.log('Some error');
-                } 
-                else {
-                    setAccounts(res);
-                    setMessage('Success');
-                }
-                
-            } catch (e) {
-                alert(e.toString());
-                return;
+            if (res.error) {
+                setMessage('Unable to get accounts'); // Set an error message
+                console.log('Some error');
+            } 
+            else {
+                setAccounts(res);
+                setMessage('Success');
             }
-        };
+            
+        } catch (e) {
+            alert(e.toString());
+            return;
+        }
+    };
 
     // Obtains budget from DB and updates webpage
     const GetBudget = async () =>
@@ -129,7 +127,7 @@ const Dash = (props) => {
         }
     };
 
-    // Obtains budget from DB and updates webpage
+    // Obtains transactions from DB and updates webpage
     const GetTransactions = async() =>
     {
         try {
@@ -169,7 +167,7 @@ const Dash = (props) => {
         }
     };
 
-    // Obtains budget from DB and updates webpage
+    // Obtains achievements from DB and updates webpage
     const GetAchievements = async() =>
     {
         try {
@@ -257,14 +255,14 @@ const Dash = (props) => {
     {
         window.location.href="/transactions";
     }
-
+    const remainingIncome = budget.income - budget.transactionsAmt
     const data = {
         labels: ['Income', 'Expenses'],
         datasets: [
           {
-            data: [budget.income, budget.monthlyExpensesAmt],
-            backgroundColor: ['#FF6384', '#FFFFFF'],
-            hoverBackgroundColor: ['#FF6384', '#36A2EB']
+            data: [budget.income, remainingIncome],
+            backgroundColor: ['#8f5985', '#FFFFFF'],
+            hoverBackgroundColor: ['green', '#36A2EB']
           }
         ]
     };
@@ -305,8 +303,13 @@ const Dash = (props) => {
                         </div>
                         </Col>
                         <Col>
-                            {/*<CircleProgress spent={(budget.savedAmt)} income={budget.income}/>*/}
-                            <Pie data={data} />
+                            {/* Conditional rendering of the Pie chart */}
+                            {(
+                                <div style={{ width: '300px', height: '300px'}}>
+                                     <Doughnut data={data}/>
+                                </div>
+                               
+                            )}
                         </Col>
                         <Col>
                             {/* Placeholder for transactions and achievements */}
