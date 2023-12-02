@@ -59,6 +59,7 @@ const [Email, setSignupEmail] = useState('');
         console.log("Login unsuccessful");
         console.log(data);
         setShowError(true);
+        //Email not yet verified
       }
       Keyboard.dismiss();
     } catch(error) {
