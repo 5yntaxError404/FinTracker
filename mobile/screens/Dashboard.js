@@ -46,11 +46,6 @@ const Dashboard = ({ navigation }) => {
     const[SavedAmt, setSavedAmt] = useState(0.0);
     const[MonthlyExpenses, setMonthlyExpenses] = useState(0);
 
-    //User ID BODY
-    const [userId, setUserId] = useState(0);
-    const [Password, setPassword] = useState('');
-    const [firstName, setFirstName] = useState('');
-
     //transaction BODY
     const [transactionAmt, setTransactionAmt] = useState(0);
     const [transactionCategory, setTransactionCategory] = useState('');
@@ -265,20 +260,20 @@ const Dashboard = ({ navigation }) => {
             }
         };
 
+    let dynamicTransactionData = [
+        {}
+    ]
 
-        let dynamicData = [
-            {}
-        ]
     useEffect(() => {
         // readBudget();
         // getTransaction();
     }, []);
 
-            const goalData = [
-                {Id: 0, value: MonthlyIncome, label: 'Income', svg: {fill: '#FF6F61'}},
-                {Id: 1, value: rent, label: 'rent',svg: {fill: '#6B5B95'}},
-                {Id: 2, value: utilities, label: 'utilities',svg: {fill: '#88B04B'}},
-            ];
+    const goalData = [
+        {Id: 0, value: MonthlyIncome, label: 'Income', svg: {fill: '#FF6F61'}},
+        {Id: 1, value: rent, label: 'rent',svg: {fill: '#6B5B95'}},
+        {Id: 2, value: utilities, label: 'utilities',svg: {fill: '#88B04B'}},
+    ];
             // // Sample data for the pie chart
             // const pieChartData = [
             //     {
@@ -350,7 +345,6 @@ const Dashboard = ({ navigation }) => {
         console.log("Updated MonthlyExpenses: " + MonthlyExpenses);
     }, [MonthlyExpenses]); // Run this effect when MonthlyExpenses changes
     
-
     function listExpenses(){
         console.log(rent);
         console.log(utilities);
@@ -402,7 +396,7 @@ const Dashboard = ({ navigation }) => {
                 />
                 </View>
 
-                    <Modal
+                <Modal
                     transparent={true}
                     visible={visibleIncomePopup}>
                     <View style={{backgroundColor:"#000000aa",flex:1}}>
@@ -437,14 +431,14 @@ const Dashboard = ({ navigation }) => {
 
                         </View>
                     </View>
-                    </Modal>
-                    <TouchableOpacity
+                </Modal>
+                <TouchableOpacity
                                 style={styles.getStartedButton}
                                 onPress={showIncomePopup}> 
                                 <Text style={styles.getStartedText}>Set Income</Text>
-                    </TouchableOpacity>
+                </TouchableOpacity>
 
-                    <Modal
+                <Modal
                     transparent={true}
                     visible={visibleExpensePopup}>
                     <View style={{backgroundColor:"#000000aa",flex:1}}>
@@ -531,15 +525,15 @@ const Dashboard = ({ navigation }) => {
 
                         </View>
                     </View>
-                    </Modal>
+                </Modal>
 
-                    <TouchableOpacity
+                <TouchableOpacity
                                 style={styles.getStartedButton}
                                 onPress={showExpensePopup}> 
                                 <Text style={styles.getStartedText}>Set Budget</Text>
-                    </TouchableOpacity>
+                </TouchableOpacity>
 
-                    <Modal
+                <Modal
                     transparent={true}
                     visible={visibleTransactionPopup}>
                     <View style={{backgroundColor:"#000000aa",flex:1}}>
@@ -581,16 +575,15 @@ const Dashboard = ({ navigation }) => {
 
                         </View>
                     </View>
-                    </Modal>
+                </Modal>
 
-                    <TouchableOpacity
+                <TouchableOpacity
                                 style={styles.getStartedButton}
                                 onPress={showTransactionPopup}> 
                                 <Text style={styles.getStartedText}>Add Transaction</Text>
-                    </TouchableOpacity>
-
-                    
-                    <Modal
+                </TouchableOpacity>
+       
+                <Modal
                     transparent={true}
                     visible={visibleCategoryBreakdownPopup}>
                     <ScrollView horizontal={true} pagingEnabled={true} showsHorizontalScrollIndicator={false}>
@@ -629,18 +622,19 @@ const Dashboard = ({ navigation }) => {
                                 </View>
 
                     </ScrollView>
-                    </Modal>
-                    <TouchableOpacity
+                </Modal>
+                <TouchableOpacity
                         style={styles.getStartedButton}
                         onPress={showCategoryBreakdownPopup}> 
                         <Text style={styles.getStartedText}>Category Breakdown</Text>
-                    </TouchableOpacity>
+                </TouchableOpacity>
 
-                    <TouchableOpacity
+                <TouchableOpacity
                         style={styles.getStartedButton}
                         onPress={() => navigation.navigate('Landing')}> 
                         <Text style={styles.getStartedText}>Log Out</Text>
-                    </TouchableOpacity>
+                </TouchableOpacity>
+
                 </View>
 
             </ScrollView>
