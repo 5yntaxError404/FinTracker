@@ -635,8 +635,11 @@ const Dashboard = ({ navigation }) => {
                         <Text style={styles.getStartedText}>Log Out</Text>
                 </TouchableOpacity>
 
-                </View>
+            </View>
 
+            <View style={styles.mainSummaryBox}>
+                <Text style={styles.text}>Budget Goal</Text>
+            </View>
             </ScrollView>
             </LinearGradient>
         </View>
