@@ -22,7 +22,6 @@
 .accountsInfo {
     font-family: 'Montserrat' !important;
     text-align: left;
-    height: 80vh;
     max-width: 600px;
     background-image: linear-gradient(to bottom right, #211522, #613659);
     color: white;
@@ -37,7 +36,9 @@
     animation-iteration-count: 1;
     animation-fill-mode: forwards;
     overflow-y: scroll;
+    height: 80vh; /* Set a fixed height for the container */
 }
+
 
 .account {
     position: relative;
