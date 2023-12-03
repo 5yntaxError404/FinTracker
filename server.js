@@ -179,7 +179,7 @@ function checkPassComplexity(pass){
           };
           const accessToken = generateJWTToken(payload);
           const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
-          res.status(200).json({ message: 'Login successful', accessToken: accessToken, refreshToken: refreshToken});
+          res.status(200).json({ message: 'Login successful', accessToken: accessToken, refreshToken: refreshToken, UserId:user.UserId});
           
 
           } catch (error) {
