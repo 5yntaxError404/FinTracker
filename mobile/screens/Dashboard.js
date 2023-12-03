@@ -162,7 +162,7 @@ const Dashboard = ({ navigation }) => {
     //CRUD for transactions
     const addTransaction = async() => {
         try {
-            const response = await fetch('http://192.168.1.29:5000/api/budgets/transactions/667', {
+            const response = await fetch('http://www.fintech.davidumanzor.com/api/budgets/transactions/667', {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json',
@@ -172,6 +172,8 @@ const Dashboard = ({ navigation }) => {
             });
             const data = await response.json();
             console.log(data);
+            dynamicTransactionData.push({[transactionCategory]:transactionAmt});
+            console.log(dynamicTransactionData);
             hideTransactionPopup();
             } catch(error) {
                 console.error("An error occured: ", error)
@@ -196,7 +198,7 @@ const Dashboard = ({ navigation }) => {
         };
     const getTransaction = async() => {
         try {
-            const response = await fetch('http://192.168.1.29:5000/api/budgets/transactions/get/667', {
+            const response = await fetch('http://www.fintech.davidumanzor.com/api/budgets/transactions/get/667', {
                 method: 'GET',
                 headers: {
                 'Content-Type': 'application/json',
@@ -261,13 +263,12 @@ const Dashboard = ({ navigation }) => {
         };
 
     let dynamicTransactionData = [
-        {}
     ]
 
     useEffect(() => {
         readBudget();
         initiateGraph();
-        // getTransaction();
+        getTransaction();
     }, []);
 
     const goalData = [
@@ -275,7 +276,7 @@ const Dashboard = ({ navigation }) => {
         {Id: 1, value: rent, label: 'rent',svg: {fill: '#6B5B95'}},
         {Id: 2, value: utilities, label: 'utilities',svg: {fill: '#88B04B'}},
     ];
-            // // Sample data for the pie chart
+            // Sample data for the pie chart
             // const pieChartData = [
             //     {
             //         key: 'Income',
@@ -287,49 +288,49 @@ const Dashboard = ({ navigation }) => {
             //         key: 'Rent',
             //         value: rent,
             //         svg: { fill: '#6B5B95' },
-            //         arc: { outerRadius: '90%', padAngle: 0.05 }
+            //         arc: { outerRadius: '100%', padAngle: 0.05 }
             //     },
             //     {
             //         key: 'Utilities',
             //         value: utilities,
             //         svg: { fill: '#88B04B' },
-            //         arc: { outerRadius: '90%', padAngle: 0.05 }
+            //         arc: { outerRadius: '100%', padAngle: 0.05 }
             //     },
             //     {
             //         key: 'Groceries',
             //         value: groceries,
             //         svg: { fill: '#F7CAC9' },
-            //         arc: { outerRadius: '90%', padAngle: 0.05 }
+            //         arc: { outerRadius: '100%', padAngle: 0.05 }
             //     },
             //     {
             //         key: 'Insurance',
             //         value: insurance,
             //         svg: { fill: '#92A8D1' },
-            //         arc: { outerRadius: '90%', padAngle: 0.05 }
+            //         arc: { outerRadius: '100%', padAngle: 0.05 }
             //     },
             //     {
             //         key: 'Phone',
             //         value: phone,
             //         svg: { fill: '#955251' },
-            //         arc: { outerRadius: '90%', padAngle: 0.05 }
+            //         arc: { outerRadius: '100%', padAngle: 0.05 }
             //     },
             //     {
             //         key: 'Car',
             //         value: car,
             //         svg: { fill: '#B565A7' },
-            //         arc: { outerRadius: '90%', padAngle: 0.05 }
+            //         arc: { outerRadius: '100%', padAngle: 0.05 }
             //     },
             //     {
             //         key: 'Gas',
             //         value: gas,
             //         svg: { fill: '#009B77' },
-            //         arc: { outerRadius: '90%', padAngle: 0.05 }
+            //         arc: { outerRadius: '100%', padAngle: 0.05 }
             //     },
             //     {
             //         key: 'Fun',
             //         value: fun,
             //         svg: { fill: '#DD4124' },
-            //         arc: { outerRadius: '90%', padAngle: 0.05 }
+            //         arc: { outerRadius: '100%', padAngle: 0.05 }
             //     }
 
             //     // Add more data segments as needed
@@ -375,6 +376,23 @@ const Dashboard = ({ navigation }) => {
             arc: { outerRadius: '100%', padAngle: 0.05 },
         },
     ];
+
+    const DynamicPieChart = () => {
+  const [data, setData] = useState([
+    { key: 1, value: 100, svg: { fill: 'rgba(131, 167, 234, 1)' } },
+    { key: 2, value: 50, svg: { fill: 'rgba(255, 99, 71, 1)' } },
+  ]);
+
+  const addDataPoint = () => {
+    // Add a new data point to the chart
+    const newDataPoint = {
+      key: data.length + 1,
+      value: Math.floor(Math.random() * 100) + 1, // You can replace this with your own logic for generating data
+      svg: { fill: `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 1)` },
+    };
+
+    setData([...data, newDataPoint]);
+  };
 
     return (
 

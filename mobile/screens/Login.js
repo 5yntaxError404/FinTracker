@@ -11,8 +11,6 @@ import { useIsFocused } from '@react-navigation/native';
 import { useEffect } from 'react';
 import { useFonts } from 'expo-font';
 
-
-
 const Login = ({ navigation }) => {
 
 const [showError, setShowError] = useState(false);
