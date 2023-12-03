@@ -40,15 +40,15 @@
 }
 
 .account {
-    top: 95%;
     position: relative;
-    height: 50vh;
+    height: auto; /* Change to auto to adjust based on content */
     background-image: linear-gradient(to bottom right, #211522, #613659);
     border-radius: 30px;
-    margin-top: 20vh;
+    margin-top: 10px; /* Adjust margin as needed */
     padding: 10px;
     box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
 }
+
 
 .account_button {
     border-radius: 30px;
