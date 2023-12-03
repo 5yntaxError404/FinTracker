@@ -277,7 +277,7 @@ function BudgetPage() {
     }, [budget]);
 
     return (
-        <div className="landing-container">
+        <div className="transaction-container">
             <Container onLoad={GetBudget}>
                 <Row>
                     <Col sm={3} md={6} className="budgetInfo">
