@@ -73,41 +73,46 @@ function AccountsPage() {
     };
 
     // Obtains budget from DB and updates webpage
-    const GetAccounts = async () =>
-    {
+    const GetAccounts = async () => {
         try {
             const userinfo = JSON.parse(localStorage.getItem('user'));
             console.log(userinfo);
             console.log(userinfo.UserId);
-            
+    
             const response = await fetch(
                 `${base_url}/api/accounts/`,
                 {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${userinfo.accessToken}`
-                },
-                credentials: 'same-origin',
-            });
-
-			var res = JSON.parse(await response.text());
-			console.log(res);
-
-			if (res.error) {
-                setMessage('Unable to get accounts'); // Set an error message
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${userinfo.accessToken}`
+                    },
+                    credentials: 'same-origin',
+                }
+            );
+    
+            var res = JSON.parse(await response.text());
+            console.log(res);
+    
+            if (res.error) {
+                setMessage('Unable to get accounts');
                 console.log('Some error');
-            } 
-            else {
+            } else {
                 setAccounts(res);
                 setMessage('Success');
+    
+                // Scroll to the top of the container
+                const accountsContainer = document.querySelector('.accountsInfo');
+                if (accountsContainer) {
+                    accountsContainer.scrollTop = 0;
+                }
             }
-            
-		} catch (e) {
-			alert(e.toString());
-			return;
-		}
+        } catch (e) {
+            alert(e.toString());
+            return;
+        }
     };
+    
 
     const EditAccount = async (AccountNum) => 
     {
