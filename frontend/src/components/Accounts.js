@@ -21,56 +21,58 @@ function AccountsPage() {
     : `http://localhost:5000`;
 
     // Adds and Edits Budget in DB and updates webpage
-    const addAccount = async event =>
-    {
+    const addAccount = async (event) => {
         event.preventDefault();
-
+    
         let AccountNum = document.getElementById("inputAccountNum").value;
         let RouteNum = document.getElementById("inputRouteNum").value;
         let BankName = document.getElementById("inputBankName").value;
-
-		var obj = {
+    
+        var obj = {
             AccountNum: AccountNum,
             RouteNum: RouteNum,
             BankName: BankName,
-		};
-		var js = JSON.stringify(obj);
-        
-		try {
+        };
+    
+        var js = JSON.stringify(obj);
+    
+        try {
             const userinfo = JSON.parse(localStorage.getItem('user'));
-
-            console.log(userinfo);
-            console.log(userinfo.UserId);
-
             const response = await fetch(
                 `${base_url}/api/accounts/add/${userinfo.UserId}`,
                 {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${userinfo.accessToken}`
-                },
-                body: js,
-                credentials: 'same-origin',
-            });
-
-			var res = JSON.parse(await response.text());
-			console.log(res);
-
-			if (res.error) {
-                setMessage('Unable to get accounts'); // Set an error message
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${userinfo.accessToken}`
+                    },
+                    body: js,
+                    credentials: 'same-origin',
+                });
+    
+            var res = JSON.parse(await response.text());
+            console.log(res);
+    
+            if (res.error) {
+                setMessage('Unable to get accounts');
                 console.log("Some error");
-            } 
-            else {
+            } else {
                 setMessage('Success');
                 GetAccounts();
+    
+                // Scroll to the top of the container after adding an account
+                const accountsContainer = document.querySelector('.accountsInfo');
+                if (accountsContainer) {
+                    accountsContainer.scrollTop = 0;
+                }
             }
-
-		} catch (e) {
-			alert(e.toString());
-			return;
-		}
+    
+        } catch (e) {
+            alert(e.toString());
+            return;
+        }
     };
+    
 
     // Obtains budget from DB and updates webpage
     const GetAccounts = async () => {
