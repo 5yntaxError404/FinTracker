@@ -106,14 +106,70 @@ function Login() {
             credentials: 'same-origin',
           });
 
-          if (!infoResponse.ok) {
-            throw new Error('Network response was not ok');
-          }
+            const response = await fetch(
+                `${base_url}/api/login/`,
+                {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: js,
+                credentials: 'same-origin',
+            });
+    
+            const res = await response.json();
+            console.log(res);
+    
+            if (res.error) {
+                setMessage('Unable to Login');
+                console.log("Some error");
+            } else {
+                setMessage('Logged In.');
+    
+                const parsedToken = parseJwt(res.accessToken);
+                console.log(parsedToken);
+    
+                const userinfo = {
+                    accessToken: res.accessToken,
+                    UserId: parsedToken.UserId
+                };
+                const accessToken = res.accessToken;
+                localStorage.setItem('user', JSON.stringify(userinfo));
+                res.cookie = `refreshToken=${accessToken};path=/;`
+                console.log(localStorage.getItem('user'));
+    
+                try {
+                    console.log("Making Get Call");
 
-          const data = await infoResponse.json();
-          console.log('Parsed JSON data:', data);
-        } catch (error) {
-          console.error('There was a problem with the fetch operation:', error);
+                    const infoResponse = await fetch(
+                        `${base_url}/api/info/${userinfo.UserId}`,
+                        {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${userinfo.accessToken}`
+                        },
+                        credentials: 'same-origin',
+                    });
+
+                    if (!infoResponse.ok) {
+                        console.log(infoResponse.status, infoResponse.statusText);
+                        throw new Error('Network response was not ok');
+                    }
+    
+                    const data = await infoResponse.json();
+                    console.log("Parsed JSON data:", data);
+            
+                } 
+                catch (error) {
+                    console.error('There was a problem with the fetch operation:', error);
+                }
+            window.location.href = '/dash';
+            }
+        } 
+        catch (e) {
+        alert(e.toString());
+        return;
         }
 
         // Redirect or perform other actions on successful login

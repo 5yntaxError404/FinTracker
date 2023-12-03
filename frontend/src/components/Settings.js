@@ -87,11 +87,15 @@ function SettingsPage() {
     // Obtains budget from DB and updates webpage
     const DeleteUser = async () =>
     {
+        if (!window.confirm("Are you sure you want to delete this user?")) {
+            console.log("User deletion cancelled.");
+            return; // Exit the function if user cancels
+        }
+
         try {
             const userinfo = JSON.parse(localStorage.getItem('user'));
             console.log(userinfo);
             console.log(userinfo.UserId);
-            /*
             const response = await fetch(
                 `${base_url}/api/user/delete/`,
                 {
@@ -102,9 +106,8 @@ function SettingsPage() {
                 },
                 credentials: 'same-origin',
             });
-            */
-
-			//var res = JSON.parse(await response.text());
+            
+            var res = JSON.parse(await response.text());
             var res = {message: "2000"};
 			console.log(res);
 
@@ -115,6 +118,8 @@ function SettingsPage() {
             else {
                 setMessage('Success');
                 console.log("Reached delete state");
+                window.location.href = '/login';
+                localStorage.removeItem("user");
             }
             
 		} catch (e) {

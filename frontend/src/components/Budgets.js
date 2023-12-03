@@ -67,7 +67,24 @@ function BudgetPage() {
         let goalAmt = document.getElementById("inputGoalAmt");
         let savedAmt = document.getElementById("inputSavedAmt");
 
-        try {
+		var obj = {
+            MonthlyIncome: parseFloat(income.value),
+            rent: parseFloat(rent.value),
+            utilities: parseFloat(utilities.value),
+            groceries: parseFloat(groceries.value),
+            insurance: parseFloat(insurance.value),
+            phone: parseFloat(phone.value),
+            car: parseFloat(car.value),
+            gas: parseFloat(gas.value),
+            fun: parseFloat(fun.value),
+            goal: parseFloat(goal.value),
+            GoalDescription: goalDescription.value,
+            GoalAmt: parseFloat(goalAmt.value),
+            SavedAmt: parseFloat(savedAmt.value),
+		};
+		var js = JSON.stringify(obj);
+        
+		try {
             const userinfo = JSON.parse(localStorage.getItem('user'));
 
             const validatedIncome = validateInput(income, 'Income');
@@ -117,9 +134,18 @@ function BudgetPage() {
             if (res.error) {
                 setMessage('Unable to add Budget');
                 console.log("Some error");
-            } else {
-                setBudget(obj);
-                setMessage('');
+            } 
+            else {
+                var temp = {
+                    income: res.budgetGot.MonthlyIncome,
+                    goalDescription: res.budgetGot.GoalDescription,
+                    goalAmt: res.budgetGot.GoalAmt,
+                    savedAmt: res.budgetGot.SavedAmt,
+                }
+                var newBudget = Object.assign({}, temp, res.budgetGot.MonthlyExpenses);
+
+                setBudget(newBudget);
+                setMessage('Success');
             }
 
         } catch (e) {

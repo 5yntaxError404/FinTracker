@@ -48,8 +48,7 @@
 
 .account_button {
     border-radius: 30px;
-    margin: 5px;
-}
+    padding: -5px;
 
 .error-message {
     color: red;
@@ -60,4 +59,4 @@
   .error {
     border: 2px solid red;
   }
-  
+
