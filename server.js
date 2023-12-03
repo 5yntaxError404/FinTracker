@@ -89,7 +89,7 @@ app.post('/api/register', async (req, res) => {
     }
 
     if (existingEmail) {
-      return res.status(400).json({ error: 'Email already associated with another account.'});
+      return res.status(401).json({ error: 'Email already associated with another account.'});
     }
     
     var check = await usersCollection.findOne({ UserId: userCounter });
@@ -117,10 +117,7 @@ app.post('/api/register', async (req, res) => {
     };
 
 
-    if(!checkPassComplexity(Password)){
-      return res.status(402).json({ message: 'Password is too weak. It must be at least 8 characters long with a digit, special characte, an uppercase character and a lowercase character.' });
-    }
-
+    
 
 
     verifyEmail(newUser.Email,EmailURL);

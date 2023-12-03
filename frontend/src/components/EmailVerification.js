@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../css/LandingPage.css';
+import '../css/EmailVerification.css';
 import Button from 'react-bootstrap/Button';
 import { Link } from 'react-router-dom';
 

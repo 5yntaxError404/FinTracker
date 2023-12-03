@@ -1,18 +1,14 @@
 // src/BudgetPage.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../css/LandingPage.css';
 import '../css/BudgetsPage.css';
-
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-
-// Looking for correct code to import font
+import Chart from 'chart.js/auto'; 
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 function BudgetPage() {
-
-    // Constants needed for the page
-
     const [budget, setBudget] = useState({
         income: 0,
         rent: 0,
@@ -27,16 +23,34 @@ function BudgetPage() {
         goalDescription: '',
         goalAmt: 0,
         savedAmt: 0
-    })
-    const [message,setMessage] = useState('');
-    
-    const base_url = process.env.NODE_ENV === "production"
-    ? `https://www.fintech.davidumanzor.com`
-    : `http://localhost:5000`;
+    });
 
-    // Adds and Edits Budget in DB and updates webpage
-    const AddBudget = async event =>
-    {
+    const [message, setMessage] = useState('');
+
+    const base_url = process.env.NODE_ENV === "production"
+        ? `https://www.fintech.davidumanzor.com`
+        : `http://localhost:5000`;
+
+    const validateInput = (inputElement, fieldName) => {
+        try {
+            const value = parseFloat(inputElement.value);
+
+            if (isNaN(value) || value < 0) {
+                throw new Error(`Invalid ${fieldName}: Please enter a non-negative number.`);
+            }
+
+            if (value.toString().includes('.') && (value.toString().split('.')[1].length > 2)) {
+                throw new Error(`Invalid ${fieldName}: Please enter up to two decimal places.`);
+            }
+
+            return value.toFixed(2);
+        } catch (error) {
+            setMessage(error.message);
+            throw error;
+        }
+    };
+
+    const AddBudget = async (event) => {
         event.preventDefault();
 
         let income = document.getElementById("inputIncome");
@@ -73,26 +87,52 @@ function BudgetPage() {
 		try {
             const userinfo = JSON.parse(localStorage.getItem('user'));
 
-            console.log(userinfo);
-            console.log(userinfo.UserId);
+            const validatedIncome = validateInput(income, 'Income');
+            const validatedRent = validateInput(rent, 'Rent');
+            const validatedUtilities = validateInput(utilities, 'Utilities');
+            const validatedGroceries = validateInput(groceries, 'Groceries');
+            const validatedInsurance = validateInput(insurance, 'Insurance');
+            const validatedPhone = validateInput(phone, 'Phone');
+            const validatedCar = validateInput(car, 'Car');
+            const validatedGas = validateInput(gas, 'Gas');
+            const validatedFun = validateInput(fun, 'Entertainment');
+            const validatedGoal = validateInput(goal, 'Goal');
+            const validatedGoalAmt = validateInput(goalAmt, 'Goal Amount');
+            const validatedSavedAmt = validateInput(savedAmt, 'Saved Amount');
+
+            var obj = {
+                MonthlyIncome: validatedIncome,
+                rent: validatedRent,
+                utilities: validatedUtilities,
+                groceries: validatedGroceries,
+                insurance: validatedInsurance,
+                phone: validatedPhone,
+                car: validatedCar,
+                gas: validatedGas,
+                fun: validatedFun,
+                goal: validatedGoal,
+                GoalDescription: goalDescription.value.slice(0, 500), // Limit to 500 characters
+                GoalAmt: validatedGoalAmt,
+                SavedAmt: validatedSavedAmt,
+            };
 
             const response = await fetch(
                 `${base_url}/api/budgets/add/${userinfo.UserId}`,
                 {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${userinfo.accessToken}`
-                },
-                body: js,
-                credentials: 'same-origin',
-            });
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${userinfo.accessToken}`
+                    },
+                    body: JSON.stringify(obj),
+                    credentials: 'same-origin',
+                });
 
-			var res = JSON.parse(await response.text());
-			console.log(res);
+            var res = JSON.parse(await response.text());
+            console.log(res);
 
-			if (res.error) {
-                setMessage('Unable to add Budget'); // Set an error message
+            if (res.error) {
+                setMessage('Unable to add Budget');
                 console.log("Some error");
             } 
             else {
@@ -108,41 +148,34 @@ function BudgetPage() {
                 setMessage('Success');
             }
 
-		} catch (e) {
-			alert(e.toString());
-			return;
-		}
+        } catch (e) {
+            console.error(e);
+            return;
+        }
     };
 
-    // Obtains budget from DB and updates webpage
-    const GetBudget = async () =>
-    {
+    const GetBudget = async () => {
         try {
             const userinfo = JSON.parse(localStorage.getItem('user'));
-            console.log(userinfo);
-            console.log(userinfo.UserId);
             
             const response = await fetch(
                 `${base_url}/api/budgets/get/${userinfo.UserId}`,
                 {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${userinfo.accessToken}`
-                },
-                credentials: 'same-origin',
-            });
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${userinfo.accessToken}`
+                    },
+                    credentials: 'same-origin',
+                });
 
-			var res = JSON.parse(await response.text());
-			console.log(res);
-            console.log(res.budgetGot.MonthlyExpenses);
-            console.log(res.budgetGot.MonthlyExpenses.rent);
+            var res = JSON.parse(await response.text());
+            console.log(res);
 
-			if (res.error) {
-                setMessage('Unable to get Budget'); // Set an error message
+            if (res.error) {
+                setMessage('Unable to get Budget');
                 console.log('Some error');
-            } 
-            else {
+            } else {
                 var temp = {
                     income: res.budgetGot.MonthlyIncome,
                     goalDescription: res.budgetGot.GoalDescription,
@@ -152,172 +185,167 @@ function BudgetPage() {
                 var newBudget = Object.assign({}, temp, res.budgetGot.MonthlyExpenses);
 
                 setBudget(newBudget);
-                setMessage('Success');
+                setMessage('');
             }
             
-		} catch (e) {
-			alert(e.toString());
-			return;
-		}
+        } catch (e) {
+            alert(e.toString());
+            return;
+        }
     };
 
-    return (
+    useEffect(() => {
+        const budgetData = {
+            income: budget.income,
+            rent: budget.rent,
+            utilities: budget.utilities,
+            groceries: budget.groceries,
+            insurance: budget.insurance,
+            phone: budget.phone,
+            car: budget.car,
+            gas: budget.gas,
+            fun: budget.fun,
+            goal: budget.goal,
+        };
 
+        const budgetLabels = Object.keys(budgetData);
+        const budgetValues = Object.values(budgetData);
+
+        const ctx = document.getElementById('budgetChart');
+        
+        if (ctx && ctx.chart) {
+            ctx.chart.destroy();
+        }
+        
+        if (ctx) {
+            ctx.chart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ["Rent", "Utilities", "Groceries", "Insurance", "Phone", "Gas", "Car", "Entertainment", "Goal"],
+                    datasets: [{
+                        data: budgetValues,
+                        backgroundColor: [
+                            '#9f6cad',
+                            '#1a2c3b',
+                            '#8b1c2b',
+                            '#00796b',
+                            '#d4af37',
+                            '#507080',
+                            '#3b4e58',
+                            '#bd5d38',
+                            '#4a5642'
+                        ],
+                    }],
+                },
+                options: {
+                    plugins: {                    
+                        legend: {
+                            display: true,
+                            labels: {
+                                color: '#f1f1f1'
+                            },
+                            fonts: {
+                                size: 24
+                            }
+                        },
+                        animation: {
+                            animateRotate: true,
+                            animateScale: true,
+                        },
+                    }
+                }
+            });
+        }
+    }, [budget]);
+
+    return (
         <div className="landing-container">
             <Container onLoad={GetBudget}>
                 <Row>
                     <Col sm={3} md={6} className="budgetInfo">
-                        <Row>
-                            <Col>
-                                Income
-                                <p>{budget.income}</p>
-                            </Col>
-                            <Col>
-                                Rent
-                                <p>{budget.rent}</p>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col>
-                            Utilities
-                            <p>{budget.utilities}</p>
-                            </Col>
-                            <Col>
-                            Groceries
-                            <p>{budget.groceries}</p>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col>
-                            Insurance
-                            <p>{budget.insurance}</p>
-                            </Col>
-                            <Col>
-                            Phone
-                            <p>{budget.phone}</p>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col>
-                            Car
-                            <p>{budget.car}</p>
-                            </Col>
-                            <Col>
-                            Gas
-                            <p>{budget.gas}</p>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col>
-                            Fun
-                            <p>{budget.fun}</p>
-                            </Col>
-                            <Col>
-                            Goal
-                            <p>{budget.goal}</p>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col>
-                            Goal Description
-                            <p>{budget.goalDescription}</p>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col>
-                            Goal Amount
-                            <p>{budget.goalAmt}</p>
-                            </Col>
-                            <Col>
-                            Amount Saved towards Goal
-                            <p>{budget.savedAmt}</p>
-                            </Col>
-                        </Row>
-                        
-
+                        <canvas id="budgetChart"></canvas>
                     </Col>
                     <Col sm={3} md={6} className="content">
-                    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono"></link>
+                        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono"></link>
                         <form className='addBudgetForm'>
-                                <Container>
-                                    <Row>
-                                        <Col>
+                            <Container>
+                                <Row>
+                                    <Col>
                                         <label htmlFor="inputIncome">Income</label>
                                         <input type="number" className="form-control" id="inputIncome"/>
-                                        </Col>
-                                        
-                                        <Col>
+                                    </Col>
+                                    
+                                    <Col>
                                         <label htmlFor="inputRent">Rent</label>
                                         <input type="number" className="form-control" id="inputRent"/>
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col>
                                         <label htmlFor="inputUtilities">Utilities</label>
                                         <input type="number" className="form-control" id="inputUtilities"/>
-                                        </Col>
-                                        <Col>
+                                    </Col>
+                                    <Col>
                                         <label htmlFor="inputGroceries">Groceries</label>
                                         <input type="number" className="form-control" id="inputGroceries"/>
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col>
                                         <label htmlFor="inputInsurance">Insurance</label>
                                         <input type="number" className="form-control" id="inputInsurance"/>
-                                        </Col>
-                                        <Col>
+                                    </Col>
+                                    <Col>
                                         <label htmlFor="inputPhone">Phone</label>
                                         <input type="number" className="form-control" id="inputPhone"/>
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col>
                                         <label htmlFor="inputCar">Car</label>
                                         <input type="number" className="form-control" id="inputCar"/>
-                                        </Col>
-                                        <Col>
+                                    </Col>
+                                    <Col>
                                         <label htmlFor="inputGas">Gas</label>
                                         <input type="number" className="form-control" id="inputGas"/>
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col>
-                                        <label htmlFor="inputFun">Fun</label>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col>
+                                        <label htmlFor="inputFun">Entertainment</label>
                                         <input type="number" className="form-control" id="inputFun"/>
-                                        </Col>
-                                        <Col>
+                                    </Col>
+                                    <Col>
                                         <label htmlFor="inputGoal">Goal</label>
                                         <input type="number" className="form-control" id="inputGoal"/>
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col>
                                         <label htmlFor="inputGoal">Goal Description</label>
                                         <input type="text" className="form-control" id="inputGoalDescription"/>
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col>
                                         <label htmlFor="inputGoal">Goal Amount</label>
                                         <input type="number" className="form-control" id="inputGoalAmt"/>
-                                        </Col>
-                                        <Col>
+                                    </Col>
+                                    <Col>
                                         <label htmlFor="inputGoal">Saved Amount</label>
                                         <input type="number" className="form-control" id="inputSavedAmt"/>
-                                        </Col>
-                                    </Row>
-                                    <Row>
+                                    </Col>
+                                </Row>
+                                <Row>
                                     <button type="submit" className="btn btn-primary" onClick={AddBudget}>Edit Budget</button>
-                                    </Row>
-                                </Container>
+                                </Row>
+                                {message && <div style={{ color: 'red', marginTop: '10px' }}>{message}</div>}
+                            </Container>
                         </form>
                     </Col>
                 </Row>
             </Container>
         </div>
-
-        
     );
 }
 

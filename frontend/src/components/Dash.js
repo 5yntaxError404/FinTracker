@@ -18,6 +18,7 @@ import {
     Legend
   } from 'chart.js';
 
+
 const Dash = (props) => {
 
     // Constants needed for the page
@@ -46,7 +47,7 @@ const Dash = (props) => {
     const base_url = process.env.NODE_ENV === "production"
     ? `https://www.fintech.davidumanzor.com`
     : `http://localhost:5000`;
-
+  
     // Obtains accounts from DB and updates webpage
     const GetAccounts = async () =>
     {
@@ -87,7 +88,6 @@ const Dash = (props) => {
     {
         try {
             const userinfo = JSON.parse(localStorage.getItem('user'));
-
             const response = await fetch(
                 `${base_url}/api/budgets/get/${userinfo.UserId}`,
                 {
@@ -286,7 +286,6 @@ const Dash = (props) => {
         Tooltip,
         Legend
       );
-
     return (
         <div className="background">
         <Container className='widget-box'>
