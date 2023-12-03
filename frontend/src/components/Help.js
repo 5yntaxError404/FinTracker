@@ -16,7 +16,7 @@ const LandingPage = (props) => {
 
     return (
 
-        <div className="landing-container">
+        <div className="help-container">
             <div className="content">
             <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono"></link>
                 <p>Struggling with keeping tabs on your expenses?</p>

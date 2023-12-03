@@ -2,7 +2,7 @@
 .landing-container {
     background-image: linear-gradient(to bottom right, #6e2b62, #33243f);
     color: white;
-    height: 100vh;
+    height: 40vh;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -18,10 +18,18 @@
     background-image: linear-gradient(to bottom right, 411845, 973C9F)
 }
 
-.content {
+.dashboard-image {
+    filter: invert(100%); /* Invert colors to white */
+    width: 50%; /* Adjust size as needed */
+    object-fit: contain; /* Adjust this as needed */
+    /* Add additional styling as required */
+    padding-bottom: 20px;
+}
+
+.landing-content {
     font-family: 'IBM Plex Mono', Impact;
     text-align: center;
-    height: 40vh;
+    height: flex;
     max-width: 600px;
     background-image: linear-gradient(to bottom right, #211522, #613659);
     color: white;
