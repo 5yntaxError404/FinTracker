@@ -173,7 +173,7 @@ function Login() {
         }
 
         // Redirect or perform other actions on successful login
-        // window.location.href = '/dash';
+        window.location.href = '/dash';
       } else {
         // Other error scenarios
         errorPush('Unable to Login', []);
