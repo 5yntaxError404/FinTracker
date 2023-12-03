@@ -254,7 +254,7 @@ function BudgetPage() {
                     },
                     plugins: {                    
                         legend: {
-                            display: true,
+                            display: false,
                             labels: {
                                 color: '#f1f1f1'
                             },
@@ -282,6 +282,7 @@ function BudgetPage() {
                 <Row>
                     <Col sm={3} md={6} className="budgetInfo">
                         <canvas id="budgetChart"></canvas>
+                        <p> {budget.transactionsAmt} / {budget.income} </p>
                     </Col>
                     <Col sm={3} md={6} className="content">
                         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono"></link>
