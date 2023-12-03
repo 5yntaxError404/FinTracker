@@ -85,7 +85,9 @@ function AccountsPage() {
                 setMessage('Unable to get accounts');
                 console.log('Some error');
             } else {
-                setAccounts(res);
+                // Prepend new accounts to the existing list
+                setAccounts((prevAccounts) => [...res, ...prevAccounts]);
+
                 setMessage('Success');
 
                 // Scroll to the top of the container
