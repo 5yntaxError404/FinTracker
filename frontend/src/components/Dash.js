@@ -112,7 +112,7 @@ const Dash = (props) => {
                     goalDescription: res.budgetGot.GoalDescription,
                     goalAmt: res.budgetGot.GoalAmt,
                     savedAmt: res.budgetGot.SavedAmt,
-                    transactionAmt: res.budgetGot.TransactionAmt,
+                    transactionsAmt: res.budgetGot.TransactionsAmt,
                     monthlyExpensesAmt: res.budgetGot.MonthlyExpensesAmt
                 }
                 var newBudget = Object.assign({}, temp, res.budgetGot.MonthlyExpenses);
@@ -255,17 +255,25 @@ const Dash = (props) => {
     {
         window.location.href="/transactions";
     }
-    const remainingIncome = budget.income - budget.transactionsAmt
+
+    const remainingIncome = (budget.income - budget.transactionsAmt) < 0 ? 0 : (budget.income - budget.transactionsAmt);
     const data = {
-        labels: ['Income', 'Expenses'],
         datasets: [
           {
-            data: [budget.income, remainingIncome],
-            backgroundColor: ['#8f5985', '#FFFFFF'],
-            hoverBackgroundColor: ['green', '#36A2EB']
+            data: [remainingIncome, budget.transactionsAmt],
+            backgroundColor: ['#8f5985', 'red'],
+            hoverBackgroundColor: ['green', 'white'],
+            borderWidth: 1, // No border to make the chart smoother
+            hoverBorderWidth: 0, // Keep edges smooth on hover
+            borderColor: 'black'
           }
-        ]
-    };
+        ],
+        // Include animation options for smooth drawing
+        animation: {
+          animateScale: true,
+          animateRotate: true
+        }
+      };
 
     const completedAchievements = achievements.filter(achievement => achievement.achievementAdded.Completed);
       
@@ -294,7 +302,7 @@ const Dash = (props) => {
                             <h4>Monthly Expenses:</h4>
                             <ul>
                                 {Object.keys(budget).map((key) => {
-                                    if (key !== 'income' && key !== 'goal' && key !== 'goalDescription' && key !== 'goalAmt' && key !== 'savedAmt' && key !== 'transactionAmt' && key !== 'monthlyExpensesAmt') {
+                                    if (key !== 'income' && key !== 'goal' && key !== 'goalDescription' && key !== 'goalAmt' && key !== 'savedAmt' && key !== 'transactionsAmt' && key !== 'monthlyExpensesAmt') {
                                         return <li className='expenses-list' key={key}>{key.charAt(0).toUpperCase() + key.slice(1)}: ${budget[key]}</li>;
                                     }
                                     return null;
@@ -305,8 +313,9 @@ const Dash = (props) => {
                         <Col>
                             {/* Conditional rendering of the Pie chart */}
                             {(
-                                <div style={{ width: '300px', height: '300px'}}>
+                                <div className='doughnut-chart' style={{ width: '300px', height: '300px'}}>
                                      <Doughnut data={data}/>
+                                     <p> {budget.transactionsAmt} / {budget.income} </p>
                                 </div>
                                
                             )}
@@ -315,12 +324,17 @@ const Dash = (props) => {
                             {/* Placeholder for transactions and achievements */}
                             <div className="transactions">
                                 <h4>Transactions</h4>
-                                {/* Map through transactions and display them */}
-                                {transactions.map(transactions => (
-                                <Row className="transaction" key={transactions.Transactions.transactionID}>
-                                    <p>{transactions.Transactions.transactionCategory} Transaction for: ${transactions.Transactions.transactionAmt}</p>
-                                </Row>
-                        ))}
+                                {/* Check if there are transactions */}
+                                {transactions.length > 0 ? (
+                                    transactions.map((transaction) => (
+                                        <Row className="transaction" key={transaction.Transactions.transactionID}>
+                                            <p>{transaction.Transactions.transactionCategory} Transaction for: ${transaction.Transactions.transactionAmt}</p>
+                                        </Row>
+                                    ))
+                                ) : (
+                                    // Display a message when there are no transactions
+                                    <p>No transactions available.</p>
+                                )}
                             </div>
                             <button className="btn btn-primary">Add Transaction</button>
                         </Col>
@@ -331,11 +345,11 @@ const Dash = (props) => {
             </Row>
             <Row>
                 <Col className='widget'>
-                    {/* Current Budget Goal */}
+                    {/* Current Budget Goal and Category Expenses */}
                     <div className="budget-goal">
                         <h3>Current Budget Goal: {budget.goalDescription}</h3>
-                        <p>Total: ${budget.savedAmt.toLocaleString()} / ${budget.goalAmt.toLocaleString()} </p>
-                        <ProgressBar now={`${budget.savedAmt}`} min={0} max={budget.goalAmt} label={`${budget.savedAmt/budget.goalAmt}%`} />
+                        <p>Total: ${budget.savedAmt.toLocaleString()} / ${budget.goalAmt.toLocaleString()}</p>
+                        <ProgressBar now={budget.savedAmt} min={0} max={budget.goalAmt} label={`${(budget.savedAmt / budget.goalAmt * 100).toFixed(2)}%`} />
                     </div>
                 </Col>
                 <Col className='widget'>

@@ -28,7 +28,7 @@ function TransactionsPage() {
         let transactionCategory = document.getElementById("inputTransactionCategory");
 
 		var obj = {
-            transactionAmt: transactionAmt.value,
+            transactionAmt: parseFloat(transactionAmt.value),
             transactionCategory: transactionCategory.value,
 		};
 		var js = JSON.stringify(obj);
@@ -76,7 +76,7 @@ function TransactionsPage() {
 		var obj = {
             transactionID: id,
             transactionAmt: parseFloat(transactionAmt.value),
-            transactionCategory: parseFloat(transactionCategory.value),
+            transactionCategory: transactionCategory.value,
 		};
 		var js = JSON.stringify(obj);
         

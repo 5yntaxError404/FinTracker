@@ -110,8 +110,30 @@
 
 .achievements {
 	padding-top: 20px;
-	height: flex 50vh;
+	height: 40vh;
 }
+
+.budget-goal {
+	padding-top: 20px;
+	height: 40vh;
+}
+
+.doughnut-chart {
+	position: relative; /* This is important for absolute positioning within */
+	width: 300px;
+	height: 300px;
+	margin: auto; /* Center the doughnut chart in its parent */
+}
+
+.doughnut-chart p {
+	position: absolute; /* Position the paragraph absolutely within .doughnut-chart */
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%); /* Center the paragraph */
+	color: #fff; /* Assuming you want white text */
+	font-size: 1.2em; /* Example font size */
+	text-align: center; /* Center the text within the paragraph */
+  }
 
 /* General configs */
 * {
