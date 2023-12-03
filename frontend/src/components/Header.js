@@ -26,7 +26,6 @@ function Header()
             <NavDropdown.Item href="/budgets">Budgets</NavDropdown.Item>
             <NavDropdown.Item href="/transactions">Transactions</NavDropdown.Item>
             <NavDropdown.Item href="/settings">Settings</NavDropdown.Item>
-            <NavDropdown.Item href="/help">Help</NavDropdown.Item>
             <NavDropdown.Divider />
             <NavDropdown.Item onClick={doLogout}>Log Out</NavDropdown.Item>
         </NavDropdown>

@@ -1,3 +1,30 @@
+.transaction-container {
+  background-image: linear-gradient(to bottom right, #6e2b62, #33243f, #211522, #613659);
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 10px;
+}
+
+.transactionInfo {
+  font-family: 'Montserrat' !important;
+  text-align: left;
+  height: 80vh;
+  max-width: 800px; /* Adjusted max-width for better layout */
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  justify-content: left;
+  padding: 40px;
+  border-radius: 30px;
+  animation: fadeInAnimation ease 3s;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+}
+
 .content {
     font-family: 'IBM Plex Mono', Impact;
     text-align: center;
@@ -17,39 +44,6 @@
     animation-fill-mode: forwards;
 }
 
-.accountsInfo {
-    font-family: 'IBM Plex Mono', Impact;
-    text-align: left;
-    height: 80vh;
-    background-image: linear-gradient(to bottom right, #211522, #613659);
-    color: white;
-    display: flex;
-    flex-direction: column;
-    align-items: left;
-    justify-content: center;
-    border-radius: 30px;
-    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
-    animation: fadeInAnimation ease 3s;
-    animation-iteration-count: 1;
-    animation-fill-mode: forwards;
-    overflow-y: auto;
-}
-
-.account {
-    top: auto;
-    position: sticky;
-    height: fit-content;
-    background-image: linear-gradient(to bottom right, #211522, #613659);
-    border-radius: 30px;
-    margin-top: 0vh;
-    padding: flex 5px;
-    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
-}
-
-.account_button {
-    border-radius: 30px;
-    padding: -5px;
-}
 .error-message {
     color: red;
     font-size: 14px;
