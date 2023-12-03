@@ -1,3 +1,9 @@
+/* Add this style for the first entry in the list */
+.accountsInfo .account:first-child {
+    margin-top: 0; /* Adjust the top margin as needed */
+}
+
+/* Rest of your existing styles */
 @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
 
 /* Reset default margin and padding for all elements */
