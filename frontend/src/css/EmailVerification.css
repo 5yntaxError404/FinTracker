@@ -1,4 +1,5 @@
 /* src/EmailVerification.css */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
 
 .email-verification-container {
     background-image: linear-gradient(to bottom right, #6e2b62, #33243f);
@@ -12,7 +13,7 @@
   }
   
   .verified-container {
-    font-family: 'IBM Plex Mono', Impact;
+    font-family: 'Montserrat' !important;
     text-align: center;
     height: 60vh;
     max-width: 800px; /* You can adjust this value to make the container wider */

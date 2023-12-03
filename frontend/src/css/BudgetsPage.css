@@ -10,7 +10,8 @@
     padding: 40px;
 }
 
-.landing-container .content,
+
+.landing-container .content-budget,
 .landing-container .budgetInfo {
     font-family: 'Montserrat' !important;
     text-align: left;

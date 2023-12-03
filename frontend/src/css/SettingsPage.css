@@ -1,5 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+
 .content {
-    font-family: 'IBM Plex Mono', Impact;
+    font-family: 'Montserrat' !important;
     text-align: center;
     height: 80vh;
     max-width: 600px;
@@ -18,7 +20,7 @@
 }
 
 .accountsInfo {
-    font-family: 'IBM Plex Mono', Impact;
+    font-family: 'Montserrat' !important;
     text-align: left;
     height: 80vh;
     max-width: 600px;

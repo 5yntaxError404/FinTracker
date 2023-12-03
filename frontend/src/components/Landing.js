@@ -21,7 +21,7 @@ const LandingPage = (props) => {
             <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono"></link>
                 <p>Struggling with keeping tabs on your expenses?</p>
                 <p>Lost in the maze of monthly bills, savings, and investment options?</p>
-                <p>Say hello to <strong>FinTrack+</strong>, the ultimate tool designed specifically to help you master your money.</p>
+                <p>Say hello to <strong>FinTracker</strong>, the ultimate tool designed specifically to help you master your money.</p>
                 <Button className="button" onClick={goToLogin}>Get Started</Button>
             </div>
         </div>

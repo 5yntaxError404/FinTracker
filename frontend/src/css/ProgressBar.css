@@ -1,0 +1,26 @@
+
+.progress-bar-gameified {
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: transparent;
+    background-image: url('https://i.imgur.com/gEBfraW.jpg');
+}
+
+@keyframes walkAnimation {
+    0% {
+        background-position: 0 0; /* Initial frame of the walking animation */
+    }
+    100% {
+        background-position: 0 -400px; /* Assuming each frame is 100px in height and you have 4 frames */
+    }
+}
+
+.progress-bar-gameified::before {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-image: url('https://i.imgur.com/ATfZQ1p.png');
+    background-size: cover;
+    animation: walkAnimation 1s steps(4) infinite; 
+}
