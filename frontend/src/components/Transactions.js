@@ -42,7 +42,7 @@ function TransactionsPage() {
     setNegativeError(false);
 
     var obj = {
-      transactionAmt: transactionAmt.value,
+      transactionAmt: parseFloat(transactionAmt.value),
       transactionCategory: transactionCategory.value,
     };
     var js = JSON.stringify(obj);
@@ -83,7 +83,7 @@ function TransactionsPage() {
 
     var obj = {
       transactionID: id,
-      transactionAmt: transactionAmt.value,
+      transactionAmt: parseFloat(transactionAmt.value),
       transactionCategory: transactionCategory.value,
     };
     var js = JSON.stringify(obj);
@@ -171,8 +171,6 @@ function TransactionsPage() {
       var check = response.text();
       var res = JSON.parse(await check);
       console.log(res);
-      console.log(res[0]);
-      console.log(res[0].Transactions);
 
       if (res.error) {
         setMessage('Unable to get Budget');
