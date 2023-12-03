@@ -41,6 +41,8 @@ body {
     animation-iteration-count: 1;
     animation-fill-mode: forwards;
     overflow-y: auto; /* Change 'scroll' to 'auto' */
+    scroll-snap-type: y mandatory;
+    scroll-snap-align: start;
 }
 
 .account {
