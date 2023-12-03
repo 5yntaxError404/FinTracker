@@ -1,4 +1,5 @@
 // src/BudgetPage.js
+
 import React, { useState, useEffect } from 'react';
 import '../css/LandingPage.css';
 import '../css/BudgetsPage.css';
@@ -219,25 +220,38 @@ function BudgetPage() {
         
         if (ctx) {
             ctx.chart = new Chart(ctx, {
-                type: 'pie',
+                type: 'doughnut',
                 data: {
-                    labels: ["Rent", "Utilities", "Groceries", "Insurance", "Phone", "Gas", "Car", "Entertainment", "Goal"],
+                    labels: ["Income", "Rent", "Utilities", "Groceries", "Insurance", "Phone", "Gas", "Car", "Entertainment", "Goal"],
                     datasets: [{
                         data: budgetValues,
                         backgroundColor: [
-                            '#9f6cad',
-                            '#1a2c3b',
-                            '#8b1c2b',
-                            '#00796b',
-                            '#d4af37',
-                            '#507080',
-                            '#3b4e58',
-                            '#bd5d38',
-                            '#4a5642'
+                            '#FF6384', // Vivid Pink
+                            '#36A2EB', // Bright Blue
+                            '#FFCE56', // Soft Yellow
+                            '#4BC0C0', // Turquoise
+                            '#9966FF', // Amethyst Purple
+                            '#FF9F40', // Tangerine Orange
+                            '#7CDDDD', // Powder Blue
+                            '#C9CB3A', // Olive Green
+                            '#FF9999', // Light Coral
+                            '#99C24D'  // Apple Green
                         ],
+                        
+                        borderWidth: 1, // Width of the border between segments
+                        borderColor: 'white', // Color of the border, white creates visible gaps
+                        borderRadius: 5,
                     }],
                 },
                 options: {
+                    layout: {
+                        padding: {
+                            top: 20,
+                            right: 20,
+                            bottom: 20,
+                            left: 20
+                        }
+                    },
                     plugins: {                    
                         legend: {
                             display: true,
@@ -252,7 +266,11 @@ function BudgetPage() {
                             animateRotate: true,
                             animateScale: true,
                         },
-                    }
+                    },
+                    onHover: (event, chartElement) => {
+                        event.native.target.style.cursor = chartElement[0] ? 'pointer' : 'default';
+                    },
+                    hoverOffset: 20, // Adjust as needed, this controls the offset on hover
                 }
             });
         }
