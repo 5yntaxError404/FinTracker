@@ -1,22 +1,23 @@
+/* Assuming this is your CSS file */
+
 @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
 
-.content {
-    font-family: 'Montserrat' !important;
-    text-align: center;
-    height: 80vh;
-    max-width: 600px;
-    background-image: linear-gradient(to bottom right, #211522, #613659);
-    color: white;
+/* Reset default margin and padding for all elements */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+}
+
+.landing-container {
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 40px;
-    border-radius: 30px;
-    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
-    animation: fadeInAnimation ease 3s;
-    animation-iteration-count: 1;
-    animation-fill-mode: forwards;
+    height: 100vh;
 }
 
 .accountsInfo {
@@ -36,29 +37,23 @@
     animation-iteration-count: 1;
     animation-fill-mode: forwards;
     overflow-y: scroll;
-    height: 80vh; /* Set a fixed height for the container */
 }
 
-
 .account {
-    position: relative;
-    height: auto; /* Change to auto to adjust based on content */
     background-image: linear-gradient(to bottom right, #211522, #613659);
     border-radius: 30px;
-    margin-top: 10px; /* Adjust margin as needed */
-    padding: 10px;
+    margin-bottom: 10px;
+    padding: 15px;
     box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
 }
 
-
 .account_button {
     border-radius: 30px;
-    padding: -5px;
     background-color: #6e2b62;
-	color: #fff;
-	padding: 12px 20px;
-	font-size: 16px;
-	border: none;
-	border-radius: 5px;
-	cursor: pointer;
+    color: #fff;
+    padding: 12px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
 }
