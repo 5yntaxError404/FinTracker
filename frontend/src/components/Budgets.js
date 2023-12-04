@@ -284,7 +284,7 @@ function BudgetPage() {
                         <canvas id="budgetChart"></canvas>
                         <p> {budget.transactionsAmt} / {budget.income} </p>
                     </Col>
-                    <Col sm={3} md={6} className="content">
+                    <Col sm={3} md={6} className="content-budget">
                         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono"></link>
                         <form className='addBudgetForm'>
                             <Container>

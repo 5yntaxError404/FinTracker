@@ -294,11 +294,11 @@ const Dash = (props) => {
                     <Row>
                         <Col>
                         <h2>Hello User!</h2>
-                        <p>Monthly Income: ${budget.income.toLocaleString()}</p>
+                        <p1>Monthly Income: ${budget.income.toLocaleString()}</p1>
 
                         {/* Expenses List */}
                         <div>
-                            <h4>Monthly Expenses:</h4>
+                            <h44>Monthly Expenses:</h44>
                             <ul>
                                 {Object.keys(budget).map((key) => {
                                     if (key !== 'income' && key !== 'goal' && key !== 'goalDescription' && key !== 'goalAmt' && key !== 'savedAmt' && key !== 'transactionsAmt' && key !== 'monthlyExpensesAmt') {
@@ -312,9 +312,9 @@ const Dash = (props) => {
                         <Col>
                             {/* Conditional rendering of the Pie chart */}
                             {(
-                                <div className='doughnut-chart' style={{ width: '300px', height: '300px'}}>
+                                <div className='doughnut-chart' style={{ width: '350px', height: '350px'}}>
                                      <Doughnut data={data}/>
-                                     <p> {budget.transactionsAmt} / {budget.income} </p>
+                                     <p> ${budget.transactionsAmt} / ${budget.income} </p>
                                 </div>
                                
                             )}
@@ -325,9 +325,9 @@ const Dash = (props) => {
                                 <h4>Transactions</h4>
                                 {/* Check if there are transactions */}
                                 {transactions.length > 0 ? (
-                                    transactions.map((transaction) => (
+                                    transactions.slice(0, 5).map((transaction) => (
                                         <Row className="transaction" key={transaction.Transactions.transactionID}>
-                                            <p>{transaction.Transactions.transactionCategory} Transaction for: ${transaction.Transactions.transactionAmt}</p>
+                                            <p> {transaction.Transactions.transactionCategory}: - ${transaction.Transactions.transactionAmt}</p>
                                         </Row>
                                     ))
                                 ) : (
@@ -343,15 +343,26 @@ const Dash = (props) => {
                 {/* Transactions and Achievements could be other <Col> components */}
             </Row>
             <Row>
-                <Col className='widget'>
+                <Col className='widget-budget'>
                     {/* Current Budget Goal and Category Expenses */}
                     <div className="budget-goal">
                         <h3>Current Budget Goal: {budget.goalDescription}</h3>
                         <p>Total: ${budget.savedAmt.toLocaleString()} / ${budget.goalAmt.toLocaleString()}</p>
-                        <ProgressBar now={budget.savedAmt} min={0} max={budget.goalAmt} label={`${(budget.savedAmt / budget.goalAmt * 100).toFixed(2)}%`} />
+                        <ProgressBar className = "progress-bar-gameified"
+                            now={budget.savedAmt}
+                            min={0}
+                            max={budget.goalAmt}
+                            style={{
+                                borderRadius: '10px',
+                                height: '50px',
+                                overflow: 'hidden',
+                                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.3)',
+                            }}
+                            variant = 'success'
+                            label={`${(budget.savedAmt / budget.goalAmt * 100).toFixed(2)}%`}/>
                     </div>
                 </Col>
-                <Col className='widget'>
+                <Col className='widget-ach'>
                     <div className="achievements">
                         <h4>Achievements</h4>
                         {/* Check if there are any completed achievements */}
