@@ -1,6 +1,6 @@
 // src/BudgetPage.js
+
 import React, { useState, useEffect } from 'react';
-import '../css/LandingPage.css';
 import '../css/BudgetsPage.css';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -67,7 +67,24 @@ function BudgetPage() {
         let goalAmt = document.getElementById("inputGoalAmt");
         let savedAmt = document.getElementById("inputSavedAmt");
 
-        try {
+		var obj = {
+            MonthlyIncome: parseFloat(income.value),
+            rent: parseFloat(rent.value),
+            utilities: parseFloat(utilities.value),
+            groceries: parseFloat(groceries.value),
+            insurance: parseFloat(insurance.value),
+            phone: parseFloat(phone.value),
+            car: parseFloat(car.value),
+            gas: parseFloat(gas.value),
+            fun: parseFloat(fun.value),
+            goal: parseFloat(goal.value),
+            GoalDescription: goalDescription.value,
+            GoalAmt: parseFloat(goalAmt.value),
+            SavedAmt: parseFloat(savedAmt.value),
+		};
+		var js = JSON.stringify(obj);
+        
+		try {
             const userinfo = JSON.parse(localStorage.getItem('user'));
 
             const validatedIncome = validateInput(income, 'Income');
@@ -117,9 +134,18 @@ function BudgetPage() {
             if (res.error) {
                 setMessage('Unable to add Budget');
                 console.log("Some error");
-            } else {
-                setBudget(obj);
-                setMessage('');
+            } 
+            else {
+                var temp = {
+                    income: res.budgetGot.MonthlyIncome,
+                    goalDescription: res.budgetGot.GoalDescription,
+                    goalAmt: res.budgetGot.GoalAmt,
+                    savedAmt: res.budgetGot.SavedAmt,
+                }
+                var newBudget = Object.assign({}, temp, res.budgetGot.MonthlyExpenses);
+
+                setBudget(newBudget);
+                setMessage('Success');
             }
 
         } catch (e) {
@@ -193,28 +219,41 @@ function BudgetPage() {
         
         if (ctx) {
             ctx.chart = new Chart(ctx, {
-                type: 'pie',
+                type: 'doughnut',
                 data: {
-                    labels: ["Rent", "Utilities", "Groceries", "Insurance", "Phone", "Gas", "Car", "Entertainment", "Goal"],
+                    labels: ["Income", "Rent", "Utilities", "Groceries", "Insurance", "Phone", "Gas", "Car", "Entertainment", "Goal"],
                     datasets: [{
                         data: budgetValues,
                         backgroundColor: [
-                            '#9f6cad',
-                            '#1a2c3b',
-                            '#8b1c2b',
-                            '#00796b',
-                            '#d4af37',
-                            '#507080',
-                            '#3b4e58',
-                            '#bd5d38',
-                            '#4a5642'
+                            '#FF6384', // Vivid Pink
+                            '#36A2EB', // Bright Blue
+                            '#FFCE56', // Soft Yellow
+                            '#4BC0C0', // Turquoise
+                            '#9966FF', // Amethyst Purple
+                            '#FF9F40', // Tangerine Orange
+                            '#7CDDDD', // Powder Blue
+                            '#C9CB3A', // Olive Green
+                            '#FF9999', // Light Coral
+                            '#99C24D'  // Apple Green
                         ],
+                        
+                        borderWidth: 1, // Width of the border between segments
+                        borderColor: 'white', // Color of the border, white creates visible gaps
+                        borderRadius: 5,
                     }],
                 },
                 options: {
+                    layout: {
+                        padding: {
+                            top: 20,
+                            right: 20,
+                            bottom: 20,
+                            left: 20
+                        }
+                    },
                     plugins: {                    
                         legend: {
-                            display: true,
+                            display: false,
                             labels: {
                                 color: '#f1f1f1'
                             },
@@ -226,20 +265,25 @@ function BudgetPage() {
                             animateRotate: true,
                             animateScale: true,
                         },
-                    }
+                    },
+                    onHover: (event, chartElement) => {
+                        event.native.target.style.cursor = chartElement[0] ? 'pointer' : 'default';
+                    },
+                    hoverOffset: 20, // Adjust as needed, this controls the offset on hover
                 }
             });
         }
     }, [budget]);
 
     return (
-        <div className="landing-container">
+        <div className="budget-container">
             <Container onLoad={GetBudget}>
                 <Row>
                     <Col sm={3} md={6} className="budgetInfo">
                         <canvas id="budgetChart"></canvas>
+                        <p> {budget.transactionsAmt} / {budget.income} </p>
                     </Col>
-                    <Col sm={3} md={6} className="content">
+                    <Col sm={3} md={6} className="budget-content">
                         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono"></link>
                         <form className='addBudgetForm'>
                             <Container>

@@ -1,5 +1,5 @@
 // src/SettingsPage.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../css/LandingPage.css';
 import '../css/SettingsPage.css';
 
@@ -25,6 +25,17 @@ function SettingsPage() {
     const base_url = process.env.NODE_ENV === "production"
     ? `https://www.fintech.davidumanzor.com`
     : `http://localhost:5000`;
+
+    useEffect(() => {
+        GetUser();
+        const handleStorageChange = () => {
+            GetUser();
+        };
+        window.addEventListener('storage', handleStorageChange);
+        return () => {
+            window.removeEventListener('storage', handleStorageChange);
+        };
+    }, []);
 
     // Adds and Edits Budget in DB and updates webpage
     const EditUser = async event =>
@@ -87,11 +98,15 @@ function SettingsPage() {
     // Obtains budget from DB and updates webpage
     const DeleteUser = async () =>
     {
+        if (!window.confirm("Are you sure you want to delete this user?")) {
+            console.log("User deletion cancelled.");
+            return; // Exit the function if user cancels
+        }
+
         try {
             const userinfo = JSON.parse(localStorage.getItem('user'));
             console.log(userinfo);
             console.log(userinfo.UserId);
-            /*
             const response = await fetch(
                 `${base_url}/api/user/delete/`,
                 {
@@ -102,9 +117,8 @@ function SettingsPage() {
                 },
                 credentials: 'same-origin',
             });
-            */
-
-			//var res = JSON.parse(await response.text());
+            
+            var res = JSON.parse(await response.text());
             var res = {message: "2000"};
 			console.log(res);
 
@@ -115,6 +129,8 @@ function SettingsPage() {
             else {
                 setMessage('Success');
                 console.log("Reached delete state");
+                window.location.href = '/login';
+                localStorage.removeItem("user");
             }
             
 		} catch (e) {
@@ -125,13 +141,11 @@ function SettingsPage() {
 
     const GetUser = async () => {
         try {
-            const userinfo = JSON.parse(localStorage.getItem('user'));
-            console.log(userinfo);
-            console.log(userinfo.UserId);
-            
-            const response = await fetch(
-                `${base_url}/api/info/${userinfo.UserId}`,
-                {
+            const userinfo = JSON.parse(localStorage.getItem('user') || '{}');
+            if (!userinfo || !userinfo.UserId) {
+                throw new Error('User information not available');
+            }
+            const response = await fetch(`${base_url}/api/info/${userinfo.UserId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -140,53 +154,51 @@ function SettingsPage() {
                 credentials: 'same-origin',
             });
 
-			var res = JSON.parse(await response.text());
-			console.log(res);
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            var res = await response.json();
 
-			if (res.error) {
-                setMessage('Unable to get User'); // Set an error message
-                console.log('Some error');
-            } 
-            else {
+            if (res.error) {
+                setMessage('Unable to get User');
+            } else {
                 setSettings(res.UserAccount);
                 setMessage('Success');
             }
-            
-		} catch (e) {
-			alert(e.toString());
-			return;
-		}
-    }
+        } catch (e) {
+            setMessage(`Error: ${e.message}`);
+        }
+    };
 
     return (
 
-        <div className="landing-container">
+        <div className="settings-container">
             <Container onLoad={GetUser}>
                 <Row>
-                    <Col sm={3} md={6} className="budgetInfo">
+                    <Col sm={3} md={6} className="settingsInfo">
                         <Row>
-                            Username
+                            <h3> Username </h3>
                             <p>{settings.UserName}</p>
                         </Row>
                         <Row>
-                            Password
+                            <h3>Password</h3>
                             <p>{settings.Password}</p>
                         </Row>
                         <Row>
-                            First Name
+                            <h3>First Name</h3>
                             <p>{settings.FirstName}</p>
                         </Row>
                         <Row>
-                            Last Name
+                            <h3>Last Name</h3>
                             <p>{settings.LastName}</p>
                         </Row>
                         <Row>
-                            Email
+                            <h3>Email</h3>
                             <p>{settings.Email}</p>
                         </Row>
 
                     </Col>
-                    <Col sm={3} md={6} className="content">
+                    <Col sm={3} md={6} className="settings-content">
                     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono"></link>
                         <form className='addBudgetForm'>
                         <div className="form-row">
