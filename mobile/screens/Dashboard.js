@@ -1,4 +1,4 @@
-import React, {useState, useEffect } from 'react';
+import React, {useState, useEffect,useReducer  } from 'react';
 import { View, TextInput, Button, StyleSheet, Image, Modal, TouchableOpacity, Text, Dimensions, ScrollView } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -30,7 +30,7 @@ const Dashboard = ({ navigation }) => {
     const hideCategoryBreakdownPopup = () => setVisibleCategoryBreakdownPopup(false);
 
     // Budget BODY
-    const[MonthlyIncome, setMonthlyIncome] = useState(1.0);
+    const[MonthlyIncome, setMonthlyIncome] = useState(1);
     const[rent, setRent] = useState(0);
     const[utilities, setUtilities] = useState(0);
     const[groceries, setGroceries] = useState(0);
@@ -53,6 +53,7 @@ const Dashboard = ({ navigation }) => {
 
     //achievement BODY
     const [achievementToAdd, setAchievementToAdd] = useState(0);
+    const [userId, setUserId] = useState("");
 
     //CRUD operations for Budget
     const createBudget = async() => {
@@ -87,50 +88,77 @@ const Dashboard = ({ navigation }) => {
             });
     
             const data = await response.json();
-            console.log(data);
-            console.log("UserIdRef:", data?.budgetGot?.UserIdRef);
 
             console.log("monthly income:", data?.budgetGot?.MonthlyIncome);
             setMonthlyIncome(data?.budgetGot?.MonthlyIncome);
+            
 
             console.log("rent:", data?.budgetGot?.MonthlyExpenses?.rent);
             setRent(data?.budgetGot?.MonthlyExpenses?.rent)
 
+
             console.log("utilities:", data?.budgetGot?.MonthlyExpenses?.utilities);
             setUtilities(data?.budgetGot?.MonthlyExpenses?.utilities)
 
+            
             console.log("groceries:", data?.budgetGot?.MonthlyExpenses?.groceries);
             setGroceries(data?.budgetGot?.MonthlyExpenses?.groceries)
+
 
             console.log("insurance:", data?.budgetGot?.MonthlyExpenses?.insurance);
             setInsurance(data?.budgetGot?.MonthlyExpenses?.insurance)
 
+
             console.log("phone:", data?.budgetGot?.MonthlyExpenses?.phone);
             setPhone(data?.budgetGot?.MonthlyExpenses?.phone)
+
 
             console.log("car:", data?.budgetGot?.MonthlyExpenses?.car);
             setCar(data?.budgetGot?.MonthlyExpenses?.car)
 
+
             console.log("gas:", data?.budgetGot?.MonthlyExpenses?.gas);
             setGas(data?.budgetGot?.MonthlyExpenses?.gas)
+
 
             console.log("fun:", data?.budgetGot?.MonthlyExpenses?.fun);
             setFun(data?.budgetGot?.MonthlyExpenses?.fun);
 
+
             console.log("goal:", data?.budgetGot?.MonthlyExpenses?.goal);
             setGoal(data?.budgetGot?.MonthlyExpenses?.goal);
 
+
             console.log("monthly expenses amount:", data?.budgetGot?.MonthlyExpensesAmt);
-            setMonthlyExpenses(data?.budgetGot?.MonthlyExpensesAmt);
+            // setMonthlyExpenses(data?.budgetGot?.MonthlyExpensesAmt);
+            setMonthlyExpenses(rent+utilities+groceries+insurance+phone+car+gas+fun+goal);
+            console.log("setMonthlyExpenses which is now: " + MonthlyExpenses);
+            // addDataPoint("MonthlyExpensesAmt",MonthlyExpensesAmt);
 
             console.log("goal description:", data?.budgetGot?.GoalDescription);
             setGoalDescription(data?.budgetGot?.GoalDescription);
 
             console.log("goal amount:", data?.budgetGot?.GoalAmt);
             setGoalAmt(data?.budgetGot?.GoalAmt);
+            // addDataPoint("GoalAmt",GoalAmt);
 
             console.log("saved amount:", data?.budgetGot?.SavedAmt);
             setSavedAmt(data?.budgetGot?.SavedAmt);
+            // addDataPoint("SavedAmt",SavedAmt);
+
+            addDataPoint("MonthlyIncome", (MonthlyIncome/MonthlyIncome)*100);
+            addDataPoint("MonthlyExpensesAmt",(MonthlyExpenses/MonthlyIncome)* 100);
+            // addDataPoint("rent",(rent/MonthlyIncome)* 100);
+            // addDataPoint("utilities",(utilities/MonthlyIncome)* 100);
+            // addDataPoint("groceries",(groceries/MonthlyIncome)* 100);
+            // addDataPoint("insurance",(insurance/MonthlyIncome)* 100);
+            // addDataPoint("phone",(phone/MonthlyIncome)* 100);
+            // addDataPoint("car",(car/MonthlyIncome)* 100);
+            // addDataPoint("gas",(gas/MonthlyIncome)* 100);
+            // addDataPoint("fun",(fun/MonthlyIncome)* 100);
+            // addDataPoint("goal",(goal/MonthlyIncome)* 100);
+            
+
 
             // hideBudgetPopup();
         } catch(error) {
@@ -174,6 +202,7 @@ const Dashboard = ({ navigation }) => {
             console.log(data);
             dynamicTransactionData.push({[transactionCategory]:transactionAmt});
             console.log(dynamicTransactionData);
+            addDataPoint("Transaction,",transactionAmt/MonthlyIncome*100);
             hideTransactionPopup();
             } catch(error) {
                 console.error("An error occured: ", error)
@@ -265,134 +294,86 @@ const Dashboard = ({ navigation }) => {
     let dynamicTransactionData = [
     ]
 
-    useEffect(() => {
-        readBudget();
-        initiateGraph();
-        getTransaction();
-    }, []);
+    const clearData = () => {
+            setData([{ key: 1, value: 0.1, svg: { fill: 'white' } }]);
+        };
 
-    const goalData = [
-        {Id: 0, value: MonthlyIncome, label: 'Income', svg: {fill: '#FF6F61'}},
-        {Id: 1, value: rent, label: 'rent',svg: {fill: '#6B5B95'}},
-        {Id: 2, value: utilities, label: 'utilities',svg: {fill: '#88B04B'}},
-    ];
-            // Sample data for the pie chart
-            // const pieChartData = [
-            //     {
-            //         key: 'Income',
-            //         value: MonthlyIncome,
-            //         svg: { fill: '#FF6F61' },
-            //         arc: { outerRadius: '100%', padAngle: 0.05 },
-            //     },
-            //     {
-            //         key: 'Rent',
-            //         value: rent,
-            //         svg: { fill: '#6B5B95' },
-            //         arc: { outerRadius: '100%', padAngle: 0.05 }
-            //     },
-            //     {
-            //         key: 'Utilities',
-            //         value: utilities,
-            //         svg: { fill: '#88B04B' },
-            //         arc: { outerRadius: '100%', padAngle: 0.05 }
-            //     },
-            //     {
-            //         key: 'Groceries',
-            //         value: groceries,
-            //         svg: { fill: '#F7CAC9' },
-            //         arc: { outerRadius: '100%', padAngle: 0.05 }
-            //     },
-            //     {
-            //         key: 'Insurance',
-            //         value: insurance,
-            //         svg: { fill: '#92A8D1' },
-            //         arc: { outerRadius: '100%', padAngle: 0.05 }
-            //     },
-            //     {
-            //         key: 'Phone',
-            //         value: phone,
-            //         svg: { fill: '#955251' },
-            //         arc: { outerRadius: '100%', padAngle: 0.05 }
-            //     },
-            //     {
-            //         key: 'Car',
-            //         value: car,
-            //         svg: { fill: '#B565A7' },
-            //         arc: { outerRadius: '100%', padAngle: 0.05 }
-            //     },
-            //     {
-            //         key: 'Gas',
-            //         value: gas,
-            //         svg: { fill: '#009B77' },
-            //         arc: { outerRadius: '100%', padAngle: 0.05 }
-            //     },
-            //     {
-            //         key: 'Fun',
-            //         value: fun,
-            //         svg: { fill: '#DD4124' },
-            //         arc: { outerRadius: '100%', padAngle: 0.05 }
-            //     }
+    // function parseJwt(token) {
+    //     const base64Url = token.split('.')[1];
+    //     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    //     const jsonPayload = decodeURIComponent(
+    //         atob(base64)
+    //         .split('')
+    //         .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+    //         .join('')
+    //     );
+    //     return JSON.parse(jsonPayload);
+    //     }
 
-            //     // Add more data segments as needed
-            // ];
+        const [, forceUpdate] = useReducer((x) => x + 1, 0);
 
+        useEffect(() => {
+          const fetchData = async () => {
+            // parseJwt(getAccessToken);
+            clearData();
+            await readAllValues();
+            await readBudget();
+            await readAllValues();
+            // await getTransaction();
+            await forceUpdate(); // Manually trigger re-render
+          };
+        
+          fetchData();
+        }, []);
 
-    function initiateGraph(){
-        if(MonthlyIncome>1)
+    // function initiateGraph(){
+    //     if(MonthlyIncome>1)
+    //     {
+    //         setGraphColor("green");
+    //         hideIncomePopup();
+    //     }
+    // }
+
+    const [data, setData] = useState([
+        { key: 1, value: 0.01, svg: { fill: 'white' } }
+      ]);
+
+    const addDataPoint = (name, cost) => {
+        let color = "white"
+        console.log("name is: " + name);
+        if(name === "MonthlyExpensesAmt")
         {
-            setGraphColor("green");
-            hideIncomePopup();
+            color = "red";
         }
-    }
-
-    useEffect(() => {
-        // This code will run after the component has re-rendered
-        console.log("Updated MonthlyExpenses: " + MonthlyExpenses);
-    }, [MonthlyExpenses]); // Run this effect when MonthlyExpenses changes
-    
-    function listExpenses(){
-        console.log(rent);
-        console.log(utilities);
-        console.log(groceries);
-        console.log(insurance);
-        console.log(phone);
-        console.log(car);
-        console.log(gas);
-        console.log(fun);
-        console.log(goal);
-        const sum = parseFloat(rent) + parseFloat(utilities) + parseFloat(groceries) + parseFloat(insurance) + parseFloat(phone) + parseFloat(car) + parseFloat(gas) + parseFloat(fun)+parseFloat(goal);
-        setMonthlyExpenses(sum);
-        hideExpensePopup();
-    }
-
-
-    const [graphColor, setGraphColor] = useState("white");
-    // Sample data for the pie chart
-    const pieChartDataInitial = [
+        else if(name === "MonthlyIncome")
         {
-            key: 'MonthlyIncome',
-            value: MonthlyIncome,
-            svg: { fill: graphColor },
-            arc: { outerRadius: '100%', padAngle: 0.05 },
-        },
-    ];
+            color = `green`;
+        }
+        else
+        {
+            color = `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 1)`;
+            console.log("name is " + name );
+        }
+        console.log("cost: " + cost + " color: " + color);
+        setData(prevData => {
+          const newDataPoint = {
+            key: prevData.length + 1,
+            value: cost,
+            // svg: { fill: `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 1)` },
+            svg:{fill:color},
+            name: name,
+          };
+      
+          return [...prevData, newDataPoint];
+        });
+      };
 
-    const DynamicPieChart = () => {
-  const [data, setData] = useState([
-    { key: 1, value: 100, svg: { fill: 'rgba(131, 167, 234, 1)' } },
-    { key: 2, value: 50, svg: { fill: 'rgba(255, 99, 71, 1)' } },
-  ]);
-
-  const addDataPoint = () => {
-    // Add a new data point to the chart
-    const newDataPoint = {
-      key: data.length + 1,
-      value: Math.floor(Math.random() * 100) + 1, // You can replace this with your own logic for generating data
-      svg: { fill: `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 1)` },
+      // Function to read all values
+    const readAllValues = () => {
+        data.forEach(item => {
+        console.log(`Key: ${item.key}, Value: ${item.value}, Fill: ${item.svg.fill}`);
+        });
     };
-
-    setData([...data, newDataPoint]);
-  };
 
     return (
 
@@ -412,10 +393,18 @@ const Dashboard = ({ navigation }) => {
             <View style={styles.mainSummaryBox}>
 
                 <View style={styles.graphContainer}>
-                <PieChart
-                    style={{ height: 300 }}
-                    data={pieChartDataInitial}
-                />
+                    {/* <PieChart
+                        style={{ height: 300 }}
+                        data={pieChartDataInitial}
+                    /> */}
+
+                    <PieChart
+                        style={{ height: 300 }}
+                        data={data}
+                        innerRadius={'40%'}
+                        outerRadius={'80%'}
+                        labelRadius={'75%'}
+                    />
                 </View>
 
                 <Modal
@@ -439,7 +428,7 @@ const Dashboard = ({ navigation }) => {
 
                             <TouchableOpacity 
                                 style={styles.button}
-                                onPress={() => initiateGraph()}
+                                // onPress={() => initiateGraph()}
                             >
                             <Text style={styles.buttonText}>Set Income</Text>
                             </TouchableOpacity>
@@ -614,10 +603,10 @@ const Dashboard = ({ navigation }) => {
                                 <View style={styles.categoryBreakdownContainer}>
                                     <Text style={styles.categoryBreakdownTitle}>Rent</Text>
                                     
-                                    <PieChart
+                                    {/* <PieChart
                                         style={{ height: 300 }}
                                         data={pieChartDataInitial}
-                                    />
+                                    /> */}
                                     
                                     <TouchableOpacity 
                                     style={styles.categoryButton}
@@ -630,10 +619,10 @@ const Dashboard = ({ navigation }) => {
                                 <View style={styles.categoryBreakdownContainer}>
                                     <Text style={styles.categoryBreakdownTitle}>Utilities</Text>
                                     
-                                    <PieChart
+                                    {/* <PieChart
                                         style={{ height: 300 }}
                                         data={pieChartDataInitial}
-                                    />
+                                    /> */}
                                     
                                     <TouchableOpacity 
                                     style={styles.categoryButton}

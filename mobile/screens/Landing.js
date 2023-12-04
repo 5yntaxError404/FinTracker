@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { View, TextInput, Button, StyleSheet, Image, Modal, Text, TouchableOpacity } from 'react-native';
+import { View, TextInput, Button, StyleSheet, Image, Modal, Text, TouchableOpacity,Keyboard } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
