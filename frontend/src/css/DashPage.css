@@ -48,7 +48,7 @@ body {
 }
 
 .widget p1{
-	margin-left: -102px;
+	margin-left: -82px;
 	color: rgb(2, 178, 2);
 	font-size: 20px;;
 }
@@ -191,7 +191,7 @@ body {
 }
 
 .doughnut-chart {
-  position: fixed;
+  position: absolute;
   width: 350px;
   height: 350px;
   margin: auto;

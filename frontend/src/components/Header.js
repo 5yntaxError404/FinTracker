@@ -39,8 +39,7 @@ function Header()
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
-                        <Nav.Link href="#home">Get Started</Nav.Link>
-                        <Nav.Link href="#link">About Us</Nav.Link>
+                        <Nav.Link href="/signup">Get Started</Nav.Link>
                         {userMenu} {/* This will only render if user is logged in */}
                     </Nav>
                 </Navbar.Collapse>

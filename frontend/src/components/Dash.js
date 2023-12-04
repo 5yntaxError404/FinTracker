@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../css/DashPage.css';
-import '../css/ProgressBar.css';
 
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -315,7 +314,7 @@ const Dash = (props) => {
                             {(
                                 <div className='doughnut-chart' style={{ width: '350px', height: '350px'}}>
                                      <Doughnut data={data}/>
-                                     <p> {budget.transactionsAmt} / {budget.income} </p>
+                                     <p> ${budget.transactionsAmt} / ${budget.income} </p>
                                 </div>
                                
                             )}
@@ -355,10 +354,11 @@ const Dash = (props) => {
                             max={budget.goalAmt}
                             style={{
                                 borderRadius: '10px',
-                                height: '80px',
+                                height: '50px',
                                 overflow: 'hidden',
                                 boxShadow: '0 4px 8px rgba(0, 0, 0, 0.3)',
                             }}
+                            variant = 'success'
                             label={`${(budget.savedAmt / budget.goalAmt * 100).toFixed(2)}%`}/>
                     </div>
                 </Col>

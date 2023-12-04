@@ -17,8 +17,12 @@
     cursor: pointer;
 }
 
-.button {
-    background-image: linear-gradient(to bottom right, 411845, 973C9F)
+.content button {
+    background-image: linear-gradient(to bottom right, 411845, 973C9F);
+    height: 60px;
+    width: 200px;
+    font-size: 20px;
+    
 }
 
 .content {
@@ -38,6 +42,11 @@
     animation: fadeInAnimation ease 3s;
     animation-iteration-count: 1;
     animation-fill-mode: forwards;
+}
+
+.content p{
+    font-size: 25px;
+    padding-bottom: 10px;;
 }
 
 @keyframes fadeInAnimation {
