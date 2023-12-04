@@ -335,7 +335,7 @@ const Dash = (props) => {
                                     <p>No transactions available.</p>
                                 )}
                             </div>
-                            <button className="btn btn-primary">Add Transaction</button>
+                            <button className="btn btn-primary" onClick={() => window.location.href='/transactions'}>Add Transaction</button>
                         </Col>
 
                     </Row>

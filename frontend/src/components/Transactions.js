@@ -1,7 +1,6 @@
 // src/TransactionPage.js
 
 import React, { useState } from 'react';
-import '../css/LandingPage.css';
 import '../css/TransactionPage.css';
 
 import Container from 'react-bootstrap/Container';
@@ -154,57 +153,60 @@ function TransactionsPage() {
 
   const GetTransactions = async () => {
     try {
-      const userinfo = JSON.parse(localStorage.getItem('user'));
+        const userinfo = JSON.parse(localStorage.getItem('user'));
 
-      const response = await fetch(
-        `${base_url}/api/budgets/transactions/get/${userinfo.UserId}`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${userinfo.accessToken}`,
-          },
-          credentials: 'same-origin',
+        const response = await fetch(
+            `${base_url}/api/budgets/transactions/get/${userinfo.UserId}`,
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${userinfo.accessToken}`,
+                },
+                credentials: 'same-origin',
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
         }
-      );
 
-      var check = response.text();
-      var res = JSON.parse(await check);
-      console.log(res);
+        var res = JSON.parse(await response.text());
 
-      if (res.error) {
-        setMessage('Unable to get Budget');
-      } else {
+        // No need to throw an error for an empty array, just set it.
+        if (!Array.isArray(res)) {
+            throw new Error('Response format is incorrect, expected an array.');
+        }
+
+        console.log(res);
         setTransactions(res);
-        setMessage('Success');
-      }
+        setMessage(res.length > 0 ? 'Transactions loaded successfully.' : 'No transactions to display.');
     } catch (e) {
-      console.log(check);
-      if (check.value === 'Forbidden') {
-        window.location.href = '/login';
-      }
-      alert(e.toString());
-      return;
+        console.error(e);
+        setMessage(`Unable to get transactions: ${e.message}`);
+        // Optionally, you can implement retry logic here if needed.
     }
-  };
+};
+
+
 
   return (
-    <div className="landing-container">
+    <div className="transaction-container">
       <Container onLoad={GetTransactions}>
         <Row>
-          <Col sm={1} md={3} className="accountsInfo">
+          <Col sm={1} md={3} className="transactionInfo">
             {transactions.map((transaction) => (
-              <Row className="account" key={transaction.Transactions.transactionID}>
+              <Row className="transaction" key={transaction.Transactions.transactionID}>
                 <p>Transaction</p>
                 <p>Amount: ${transaction.Transactions.transactionAmt}</p>
                 <p>Category: {transaction.Transactions.transactionCategory}</p>
                 <Col>
-                  <button className="account_button" onClick={() => EditTransaction(transaction.Transactions.transactionID)}>
+                  <button className="transaction_button" onClick={() => EditTransaction(transaction.Transactions.transactionID)}>
                     Edit Transaction
                   </button>
                 </Col>
                 <Col>
-                  <button className="account_button" onClick={() => deleteTransaction(transaction.Transactions.transactionID)}>
+                  <button className="transaction_button" onClick={() => deleteTransaction(transaction.Transactions.transactionID)}>
                     Delete Transaction
                   </button>
                 </Col>
@@ -235,7 +237,7 @@ function TransactionsPage() {
                       <option value="Rent">Rent</option>
                       <option value="Gas">Gas</option>
                       <option value="Groceries">Groceries</option>
-                      <option value="Fun">Fun</option>
+                      <option value="Fun">Entertainment</option>
                       <option value="Insurance">Insurance</option>
                       <option value="Utilities">Utilities</option>
                     </select>
