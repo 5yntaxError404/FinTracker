@@ -200,18 +200,9 @@ function Login() {
             <input type="password" id="password" className={`user-input-field ${errorFields.includes('password') ? 'error-border' : ''}`} placeholder="Enter your password" ref={(c) => (password = c)} />
           </div>
 
-          <div className="form-group">
-            <div className="custom-control custom-checkbox">
-              <input type="checkbox" className="custom-control-input" id="customCheck1" />
-              <label className="custom-control-label" htmlFor="customCheck1">
-                Remember me
-              </label>
-            </div>
-          </div>
-
           <div className="d-grid">
             <button type="submit" className="btn btn-primary">
-              Sign In
+              Log In
             </button>
           </div>
 

@@ -1,6 +1,5 @@
 // src/LandingPage.js
 import React, {useState} from 'react';
-import '../css/LandingPage.css';
 import '../css/AccountsPage.css';
 
 import Container from 'react-bootstrap/Container';
@@ -91,16 +90,24 @@ function AccountsPage() {
                 credentials: 'same-origin',
             });
 
-			var res = JSON.parse(await response.text());
-			console.log(res);
+            if (!response.ok){
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
 
-			if (res.error) {
-                setMessage('Unable to get accounts'); // Set an error message
-                console.log('Some error');
-            } 
-            else {
-                setAccounts(res);
-                setMessage('Success');
+            if (response.headers.get('Content-Type').includes('application/json')) {
+                var res = JSON.parse(await response.text());
+                console.log(res);
+    
+                if (res.error) {
+                    setMessage('Unable to get accounts'); // Set an error message
+                    console.log('Some error');
+                } 
+                else {
+                    setAccounts(res);
+                    setMessage('Success');
+                }
+            } else {
+                throw new Error('Did not receive JSON');
             }
             
 		} catch (e) {
@@ -200,11 +207,11 @@ function AccountsPage() {
 
     return (
 
-        <div className="landing-container">
+        <div className="accounts-container">
             <Container onLoad={GetAccounts}>
                 <Row>
 
-                    <Col sm={1} md={3} className="accountsInfo">
+                    <Col md={3} className="accountsInfo">
                         {accounts.map(accounts => (
                             <Row className="account" key={accounts._id}>
                                 <p>Bank Name: {accounts.BankName}</p>
@@ -216,11 +223,10 @@ function AccountsPage() {
                                 <Col>
                                 <button className="account_button" onClick={() => deleteAccount(accounts.AccountNum)}> Delete Account </button>
                                 </Col>
-                                
                             </Row>
                         ))}
                     </Col>
-                    <Col sm={3} md={6} className="content">
+                    <Col className="accounts-content">
                     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono"></link>
                         <form className='addBudgetForm'>
                         <div className="form-row">
@@ -237,7 +243,7 @@ function AccountsPage() {
                             <label htmlFor="inputBankName">Bank Name</label>
                             <input type="text" className="form-control" id="inputBankName"/>
                         </div>
-                        <button type="submit" className="btn btn-primary" onClick={addAccount}>Add Budget</button>
+                        <button type="submit" className="btn btn-primary" onClick={addAccount}>Add Account</button>
                         </form>
                     </Col>
                 </Row>
