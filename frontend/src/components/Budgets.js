@@ -1,7 +1,6 @@
 // src/BudgetPage.js
 
 import React, { useState, useEffect } from 'react';
-import '../css/LandingPage.css';
 import '../css/BudgetsPage.css';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -277,14 +276,14 @@ function BudgetPage() {
     }, [budget]);
 
     return (
-        <div className="transaction-container">
+        <div className="budget-container">
             <Container onLoad={GetBudget}>
                 <Row>
                     <Col sm={3} md={6} className="budgetInfo">
                         <canvas id="budgetChart"></canvas>
                         <p> {budget.transactionsAmt} / {budget.income} </p>
                     </Col>
-                    <Col sm={3} md={6} className="content-budget">
+                    <Col sm={3} md={6} className="budget-content">
                         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono"></link>
                         <form className='addBudgetForm'>
                             <Container>
