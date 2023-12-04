@@ -1,7 +1,7 @@
-.content {
+.settings-content, .settingsInfo {
     font-family: 'IBM Plex Mono', Impact;
     text-align: center;
-    height: 80vh;
+    max-height: 80vh; /* Adjusted for .content, use 60vh for .settings-content and .settingsInfo */
     max-width: 600px;
     background-image: linear-gradient(to bottom right, #211522, #613659);
     color: white;
@@ -12,7 +12,22 @@
     padding: 40px;
     border-radius: 30px;
     box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    overflow: auto; /* Add this to handle overflow */
     animation: fadeInAnimation ease 3s;
     animation-iteration-count: 1;
     animation-fill-mode: forwards;
+}
+
+.settings-container {
+	background-image: linear-gradient(to bottom right, #6e2b62, #33243f, #211522, #613659);
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 50px;
+    overflow-y: auto; /* Changed from 'fit' to 'auto' */
+}
+
+.settingsInfo p {
+    text-align: center;
 }
