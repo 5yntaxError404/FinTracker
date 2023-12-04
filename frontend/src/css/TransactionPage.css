@@ -1,3 +1,6 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+
 .transaction-container {
 	background-image: linear-gradient(to bottom right, #6e2b62, #33243f, #211522, #613659);
 	height: 100vh;
@@ -49,8 +52,6 @@
 }
 
 .transaction {
-    /* Remove the fixed height to allow content to determine the height */
-    /* Remove the margin-top that's pushing content down */
     background-image: linear-gradient(to bottom right, #211522, #613659);
     border-radius: 30px;
     padding: 10px;

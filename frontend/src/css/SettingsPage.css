@@ -1,5 +1,11 @@
+
 .settings-content, .settingsInfo {
     font-family: 'IBM Plex Mono', Impact;
+}
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+
+.settings-content {
+    font-family: 'Montserrat' !important;
     text-align: center;
     max-height: 80vh; /* Adjusted for .content, use 60vh for .settings-content and .settingsInfo */
     max-width: 600px;
@@ -30,4 +36,21 @@
 
 .settingsInfo p {
     text-align: center;
+    font-family: 'Montserrat' !important;
+    text-align: left;
+    height: 80vh;
+    max-width: 600px;
+    background-image: linear-gradient(to bottom right, #211522, #613659);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    justify-content: center;
+    padding: 20px;
+    border-radius: 30px;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    animation: fadeInAnimation ease 3s;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+    overflow-y: scroll;
 }

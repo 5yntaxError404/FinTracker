@@ -1,4 +1,7 @@
 /* src/LandingPage.css */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+
+
 .landing-container {
     background-image: linear-gradient(to bottom right, #6e2b62, #33243f);
     color: white;
@@ -14,8 +17,12 @@
     cursor: pointer;
 }
 
-.button {
-    background-image: linear-gradient(to bottom right, 411845, 973C9F)
+.content button {
+    background-image: linear-gradient(to bottom right, 411845, 973C9F);
+    height: 60px;
+    width: 200px;
+    font-size: 20px;
+    
 }
 
 .dashboard-image {
@@ -27,7 +34,7 @@
 }
 
 .landing-content {
-    font-family: 'IBM Plex Mono', Impact;
+    font-family: 'Montserrat' !important;
     text-align: center;
     height: flex;
     max-width: 600px;
@@ -43,6 +50,11 @@
     animation: fadeInAnimation ease 3s;
     animation-iteration-count: 1;
     animation-fill-mode: forwards;
+}
+
+.content p{
+    font-size: 25px;
+    padding-bottom: 10px;;
 }
 
 @keyframes fadeInAnimation {
