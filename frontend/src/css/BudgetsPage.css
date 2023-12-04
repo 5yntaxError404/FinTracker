@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
-
 .budget-container {
     background-image: linear-gradient(to bottom right, #6e2b62, #33243f, #211522, #613659);
 	height: 100vh;
@@ -7,13 +5,13 @@
 	flex-direction: column;
 	align-items: center;
 	padding: 50px;
-    overflow-y: auto; /* Changed from 'fit' to 'auto' */
+    overflow-y: auto;
 }
 
 .budget-content {
-    font-family: 'Montserrat' !important;
+    font-family: 'Montserrat', sans-serif;
     text-align: center;
-    height: 80vh;
+    max-height: 80vh;
     max-width: 600px;
     background-image: linear-gradient(to bottom right, #211522, #613659);
     color: white;
@@ -24,32 +22,31 @@
     padding: 40px;
     border-radius: 30px;
     box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    overflow: auto;
     animation: fadeInAnimation ease 3s;
     animation-iteration-count: 1;
     animation-fill-mode: forwards;
 }
 
-.landing-container .budget-content,
-.budget-container .budgetInfo {
-    font-family: 'Montserrat' !important;
-    text-align: left;
-    height: 80vh;
-    max-width: 800px; /* Adjusted max-width for better layout */
-    color: white;
+.budgetInfo {
+    font-family: 'Montserrat', sans-serif;
+    max-width: 800px;
     display: flex;
     flex-direction: column;
-    align-items: left;
-    justify-content: left;
-    padding: 40px;
-    border-radius: 30px;
-    animation: fadeInAnimation ease 3s;
-    animation-iteration-count: 1;
-    animation-fill-mode: forwards;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
 }
 
 .addBudgetForm {
     width: 80%;
-    margin: 0 auto; /* Center the form within the container */
+    margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+    .addBudgetForm {
+        width: 100%;
+    }
 }
 
 .btn.btn-primary {
@@ -64,4 +61,4 @@
     background-color: #5c2257;
 }
 
-/* Add the rest of your CSS styles as needed */
+/* Additional styles as needed */
