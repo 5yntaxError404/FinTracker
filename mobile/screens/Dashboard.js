@@ -55,7 +55,7 @@ const Dashboard = ({ navigation }) => {
 
     //achievement BODY
     const [achievementToAdd, setAchievementToAdd] = useState(0);
-    const [userId, setUserId] = useState("");
+    let userId = "";
 
     //CRUD operations for Budget
     const createBudget = async() => {
@@ -89,131 +89,162 @@ const Dashboard = ({ navigation }) => {
                 'Authorization': `Bearer ${getAccessToken()}`,
             },
             });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
     
             const data = await response.json();
 
-            console.log("monthly income:", data?.budgetGot?.MonthlyIncome);
+            // console.log("monthly income:", data?.budgetGot?.MonthlyIncome);
             setMonthlyIncome(parseFloat(data?.budgetGot?.MonthlyIncome));
             
 
-            console.log("rent:", data?.budgetGot?.MonthlyExpenses?.rent);
+            // console.log("rent:", data?.budgetGot?.MonthlyExpenses?.rent);
             setRent(parseFloat(data?.budgetGot?.MonthlyExpenses?.rent))
 
 
-            console.log("utilities:", data?.budgetGot?.MonthlyExpenses?.utilities);
+            // console.log("utilities:", data?.budgetGot?.MonthlyExpenses?.utilities);
             setUtilities(parseFloat(data?.budgetGot?.MonthlyExpenses?.utilities))
 
             
-            console.log("groceries:", data?.budgetGot?.MonthlyExpenses?.groceries);
+            // console.log("groceries:", data?.budgetGot?.MonthlyExpenses?.groceries);
             setGroceries(parseFloat(data?.budgetGot?.MonthlyExpenses?.groceries))
 
 
-            console.log("insurance:", data?.budgetGot?.MonthlyExpenses?.insurance);
+            // console.log("insurance:", data?.budgetGot?.MonthlyExpenses?.insurance);
             setInsurance(parseFloat(data?.budgetGot?.MonthlyExpenses?.insurance))
 
 
-            console.log("phone:", data?.budgetGot?.MonthlyExpenses?.phone);
+            // console.log("phone:", data?.budgetGot?.MonthlyExpenses?.phone);
             setPhone(parseFloat(data?.budgetGot?.MonthlyExpenses?.phone))
 
 
-            console.log("car:", data?.budgetGot?.MonthlyExpenses?.car);
+            // console.log("car:", data?.budgetGot?.MonthlyExpenses?.car);
             setCar(parseFloat(data?.budgetGot?.MonthlyExpenses?.car))
 
 
-            console.log("gas:", data?.budgetGot?.MonthlyExpenses?.gas);
+            // console.log("gas:", data?.budgetGot?.MonthlyExpenses?.gas);
             setGas(parseFloat(data?.budgetGot?.MonthlyExpenses?.gas))
 
 
-            console.log("fun:", data?.budgetGot?.MonthlyExpenses?.fun);
+            // console.log("fun:", data?.budgetGot?.MonthlyExpenses?.fun);
             setFun(parseFloat(data?.budgetGot?.MonthlyExpenses?.fun));
 
 
-            console.log("goal:", data?.budgetGot?.MonthlyExpenses?.goal);
+            // console.log("goal:", data?.budgetGot?.MonthlyExpenses?.goal);
             setGoal(parseFloat(data?.budgetGot?.MonthlyExpenses?.goal));
 
-            console.log("monthly expenses amount:", parseFloat(data?.budgetGot?.MonthlyExpensesAmt));
+            // console.log("monthly expenses amount:", parseFloat(data?.budgetGot?.MonthlyExpensesAmt));
             setMonthlyExpenses(parseFloat(data?.budgetGot?.MonthlyExpensesAmt));
 
-            console.log("goal description:", data?.budgetGot?.GoalDescription);
+            // console.log("goal description:", data?.budgetGot?.GoalDescription);
             setGoalDescription(data?.budgetGot?.GoalDescription);
 
-            console.log("goal amount:", data?.budgetGot?.GoalAmt);
+            // console.log("goal amount:", data?.budgetGot?.GoalAmt);
             setGoalAmt(data?.budgetGot?.GoalAmt);
-            // addDataPoint("GoalAmt",GoalAmt);
 
-            console.log("saved amount:", data?.budgetGot?.SavedAmt);
+            // console.log("saved amount:", data?.budgetGot?.SavedAmt);
             setSavedAmt(data?.budgetGot?.SavedAmt);
-            // addDataPoint("SavedAmt",SavedAmt);
 
-            updateChartData("main","MonthlyIncome", 100 - (MonthlyExpenses/MonthlyIncome)* 100);
-            updateChartData("main","MonthlyExpensesAmt",(MonthlyExpenses/MonthlyIncome)* 100);
-            // updateChartData("main","rent",(rent/MonthlyIncome)* 100);
-            // updateChartData("main","utilities",(utilities/MonthlyIncome)* 100);
-            // updateChartData("main","groceries",(groceries/MonthlyIncome)* 100);
-            // updateChartData("main","insurance",(insurance/MonthlyIncome)* 100);
-            // updateChartData("main","phone",(phone/MonthlyIncome)* 100);
-            // updateChartData("main","car",(car/MonthlyIncome)* 100);
-            // updateChartData("main","gas",(gas/MonthlyIncome)* 100);
-            // updateChartData("main","fun",(fun/MonthlyIncome)* 100);
-            // updateChartData("main","goal",(goal/MonthlyIncome)* 100);
-
-            // updateChartData("rent",(rent/MonthlyExpenses)* 100);
-            // updateChartData("rent","MonthlyExpensesAmt",100-(rent/MonthlyExpenses)* 100);
-
-            // updateChartData("utilities",(utilities/MonthlyExpenses)* 100);
-            // updateChartData("utilities","MonthlyExpensesAmt",(MonthlyExpenses/MonthlyIncome)* 100);
-
-            // updateChartData("groceries",(groceries/MonthlyExpenses)* 100);
-            // updateChartData("groceries","MonthlyExpensesAmt",(MonthlyExpenses/MonthlyIncome)* 100);
+            // updateChartData("rent","rent",(rent/MonthlyIncome)* 100);
             
-            // updateChartData("insurance",(insurance/MonthlyExpenses)* 100);
-            // updateChartData("insurance","MonthlyExpensesAmt",(MonthlyExpenses/MonthlyIncome)* 100);
-
-            // updateChartData("phone",(phone/MonthlyExpenses)* 100);
-            // updateChartData("phone","MonthlyExpensesAmt",(MonthlyExpenses/MonthlyIncome)* 100);
-
-            // updateChartData("car",(car/MonthlyExpenses)* 100);
-            // updateChartData("car","MonthlyExpensesAmt",(MonthlyExpenses/MonthlyIncome)* 100);
-
-            // updateChartData("gas",(gas/MonthlyExpenses)* 100);
-            // updateChartData("gas","MonthlyExpensesAmt",(MonthlyExpenses/MonthlyIncome)* 100);
-
-            // updateChartData("fun",(fun/MonthlyExpenses)* 100);
-            // updateChartData("fun","MonthlyExpensesAmt",(MonthlyExpenses/MonthlyIncome)* 100);
-
-            // updateChartData("goal",(goal/MonthlyExpenses)* 100);
-            // updateChartData("goal","MonthlyExpensesAmt",(MonthlyExpenses/MonthlyIncome)* 100);
-            
-
-
             // hideBudgetPopup();
         } catch(error) {
             console.error("An error occured: ", error)
         }
         };
 
-        useEffect(() => {
-            console.log("setMonthlyExpenses which is now:", MonthlyExpenses);
-            updateChartData("main","MonthlyExpensesAmt",(MonthlyExpenses/MonthlyIncome)* 100);
-            readAllValues();
-            // updateChartData("main","rent",(rent/MonthlyIncome)* 100);
-            // updateChartData("main","utilities",(utilities/MonthlyIncome)* 100);
-            // updateChartData("main","groceries",(groceries/MonthlyIncome)* 100);
-            // updateChartData("main","insurance",(insurance/MonthlyIncome)* 100);
-            // updateChartData("main","phone",(phone/MonthlyIncome)* 100);
-            // updateChartData("main","car",(car/MonthlyIncome)* 100);
-            // updateChartData("main","gas",(gas/MonthlyIncome)* 100);
-            // updateChartData("main","fun",(fun/MonthlyIncome)* 100);
-            // updateChartData("main","goal",(goal/MonthlyIncome)* 100);
+        const [firstEffectRun, setFirstEffectRun] = useState(false);
 
-            // updateChartData("rent","rent",(rent/MonthlyIncome)* 100);
-            // updateChartData("rent","monthlyExpenses",(rent/MonthlyIncome)* 100);
+        useEffect(() => {
+            if(MonthlyExpenses != 0)
+            {
+                // console.log("");
+                // console.log("setMonthlyExpenses percentage which is now: ", + (MonthlyExpenses/MonthlyIncome)* 100);
+                // console.log("MonthlyIncome percentage which is now: " + 100 - (MonthlyExpenses/MonthlyIncome) * 100);
+                console.log(MonthlyIncome);
+                console.log(MonthlyExpenses);
+                updateChartData("main","MonthlyIncome", 100 - (MonthlyExpenses/MonthlyIncome)* 100);
+                updateChartData("main","MonthlyExpensesAmt",(MonthlyExpenses/MonthlyIncome)* 100);
+                // readAllValues();
+                setFirstEffectRun(true);
+            }
         }, [MonthlyExpenses]); // This will trigger the effect whenever MonthlyExpenses changes
 
-        // useEffect(() => {
-        //     console.log("setRent which is now:", rent);
-        //     updateChartData("rent","rent",(rent/MonthlyExpenses)* 100);
-        // }, [rent]);
+        useEffect(() => {
+            console.log("we are under the rent part, MonthlyExpenses is: " + MonthlyExpenses + " Boolean is: " + firstEffectRun);
+            if (firstEffectRun && MonthlyExpenses !== 0) {
+                updateChartData("rent", "MonthlyExpensesAmt", 100 - (rent / MonthlyExpenses) * 100);
+                updateChartData("rent", "rent", (rent / MonthlyExpenses) * 100);
+            }
+            // readAllValues();
+        }, [rent, firstEffectRun]);
+
+        useEffect(() => {
+            if (firstEffectRun && MonthlyExpenses !== 0) {
+                updateChartData("utilities", "MonthlyExpensesAmt", 100 - (utilities / MonthlyExpenses) * 100);
+                updateChartData("utilities", "utilities", (utilities / MonthlyExpenses) * 100);
+            }
+            // readAllValues();
+        }, [utilities, firstEffectRun]); // This will trigger the effect whenever MonthlyExpenses changes
+
+        useEffect(() => {
+            if (firstEffectRun && MonthlyExpenses !== 0) {
+                updateChartData("groceries", "MonthlyExpensesAmt", 100 - (groceries / MonthlyExpenses) * 100);
+                updateChartData("groceries", "groceries", (groceries / MonthlyExpenses) * 100);
+            }
+            // readAllValues();
+        }, [groceries, firstEffectRun]); // This will trigger the effect whenever MonthlyExpenses changes
+
+        useEffect(() => {
+            if (firstEffectRun && MonthlyExpenses !== 0) {
+                updateChartData("insurance", "MonthlyExpensesAmt", 100 - (insurance / MonthlyExpenses) * 100);
+                updateChartData("insurance", "insurance", (insurance / MonthlyExpenses) * 100);
+            }
+            // readAllValues();
+        }, [insurance, firstEffectRun]); // This will trigger the effect whenever MonthlyExpenses changes
+
+        useEffect(() => {
+            if (firstEffectRun && MonthlyExpenses !== 0) {
+                updateChartData("phone", "MonthlyExpensesAmt", 100 - (phone / MonthlyExpenses) * 100);
+                updateChartData("phone", "phone", (phone / MonthlyExpenses) * 100);
+            }
+            // readAllValues();
+        }, [phone, firstEffectRun]); // This will trigger the effect whenever MonthlyExpenses changes
+
+        useEffect(() => {
+            if (firstEffectRun && MonthlyExpenses !== 0) {
+                updateChartData("car", "MonthlyExpensesAmt", 100 - (car / MonthlyExpenses) * 100);
+                updateChartData("car", "car", (car / MonthlyExpenses) * 100);
+            }
+            // readAllValues();
+        }, [car, firstEffectRun]); // This will trigger the effect whenever MonthlyExpenses changes
+
+        useEffect(() => {
+            if (firstEffectRun && MonthlyExpenses !== 0) {
+                updateChartData("gas", "MonthlyExpensesAmt", 100 - (gas / MonthlyExpenses) * 100);
+                updateChartData("gas", "gas", (gas / MonthlyExpenses) * 100);
+            }
+            // readAllValues();
+        }, [gas, firstEffectRun]); // This will trigger the effect whenever MonthlyExpenses changes
+
+        useEffect(() => {
+            if (firstEffectRun && MonthlyExpenses !== 0) {
+                updateChartData("fun", "MonthlyExpensesAmt", 100 - (fun / MonthlyExpenses) * 100);
+                updateChartData("fun", "fun", (fun / MonthlyExpenses) * 100);
+            }
+            // readAllValues();
+        }, [fun, firstEffectRun]); // This will trigger the effect whenever MonthlyExpenses changes
+
+        useEffect(() => {
+            if (firstEffectRun && MonthlyExpenses !== 0) {
+                updateChartData("goal", "MonthlyExpensesAmt", 100 - (goal / MonthlyExpenses) * 100);
+                updateChartData("goal", "goal", (goal / MonthlyExpenses) * 100);
+            }
+            // readAllValues();
+        }, [goal, firstEffectRun]); // This will trigger the effect whenever MonthlyExpenses changes
+
 
     const updateBudget = async() => {
         //update
@@ -279,8 +310,7 @@ const Dashboard = ({ navigation }) => {
             console.error("An error occurred: ", error);
         }
     };
-    
-    
+      
     const editTransaction = async() => {
         try {
             const userId = getUserId();
@@ -381,12 +411,11 @@ const Dashboard = ({ navigation }) => {
         useEffect(() => {
           const fetchData = async () => {
             // parseJwt(getAccessToken);
+            userId = getUserId();
             clearData();
-            await readAllValues();
             await readBudget();
-            await readAllValues();
             // await getTransaction();
-            await forceUpdate(); // Manually trigger re-render
+            // await forceUpdate(); // Manually trigger re-render
           };
         
           fetchData();
@@ -440,6 +469,10 @@ const Dashboard = ({ navigation }) => {
     const [goalData, setGoalData] = useState([
     { key: 1, value: 0.01, svg: { fill: 'white' } }
     ]);
+
+    const [transactionData, setTransactionData] = useState([
+        { key: 1, value: 0.01, svg: { fill: 'white' } }
+        ]);
 
     // const addDataPoint = (name, cost) => {
     //     let color = "white"
@@ -532,7 +565,11 @@ const Dashboard = ({ navigation }) => {
           svg: { fill: color },
           name: name,
         };
-      
+
+        console.log("This is the chart: " + chartType);
+        console.log("This is the name: " + name);
+        console.log("This is the cost: " + cost);
+        console.log(" ");
         switch (chartType) {
             case "main":
             setData((prevData) => [...prevData, newDataPoint]);
@@ -803,10 +840,13 @@ const Dashboard = ({ navigation }) => {
                                     
                                     <TouchableOpacity 
                                     style={styles.categoryButton}
-                                    onPress={hideCategoryBreakdownPopup}
+                                    // onPress={hideCategoryBreakdownPopup}
+                                    onPress={() => readAllValues()}
                                     >
                                     <Text style={styles.buttonText}>Go Back</Text>
                                     </TouchableOpacity>
+
+                                    
                                 </View>
                             
                                 <View style={styles.categoryBreakdownContainer}>
@@ -814,7 +854,7 @@ const Dashboard = ({ navigation }) => {
                                     
                                     <PieChart
                                     style={{ height: 300 }}
-                                    data={data}
+                                    data={utilitiesData}
                                     innerRadius={'40%'}
                                     outerRadius={'80%'}
                                     labelRadius={'75%'}
@@ -833,7 +873,7 @@ const Dashboard = ({ navigation }) => {
                                     
                                     <PieChart
                                     style={{ height: 300 }}
-                                    data={data}
+                                    data={groceriesData}
                                     innerRadius={'40%'}
                                     outerRadius={'80%'}
                                     labelRadius={'75%'}
@@ -852,7 +892,7 @@ const Dashboard = ({ navigation }) => {
                                     
                                     <PieChart
                                     style={{ height: 300 }}
-                                    data={data}
+                                    data={insuranceData}
                                     innerRadius={'40%'}
                                     outerRadius={'80%'}
                                     labelRadius={'75%'}
@@ -871,7 +911,7 @@ const Dashboard = ({ navigation }) => {
                                     
                                     <PieChart
                                     style={{ height: 300 }}
-                                    data={data}
+                                    data={phoneData}
                                     innerRadius={'40%'}
                                     outerRadius={'80%'}
                                     labelRadius={'75%'}
@@ -890,7 +930,7 @@ const Dashboard = ({ navigation }) => {
                                     
                                     <PieChart
                                     style={{ height: 300 }}
-                                    data={data}
+                                    data={carData}
                                     innerRadius={'40%'}
                                     outerRadius={'80%'}
                                     labelRadius={'75%'}
@@ -909,7 +949,7 @@ const Dashboard = ({ navigation }) => {
                                     
                                     <PieChart
                                     style={{ height: 300 }}
-                                    data={data}
+                                    data={gasData}
                                     innerRadius={'40%'}
                                     outerRadius={'80%'}
                                     labelRadius={'75%'}
@@ -928,7 +968,7 @@ const Dashboard = ({ navigation }) => {
                                     
                                     <PieChart
                                     style={{ height: 300 }}
-                                    data={data}
+                                    data={funData}
                                     innerRadius={'40%'}
                                     outerRadius={'80%'}
                                     labelRadius={'75%'}
@@ -947,7 +987,7 @@ const Dashboard = ({ navigation }) => {
                                     
                                     <PieChart
                                     style={{ height: 300 }}
-                                    data={data}
+                                    data={goalData}
                                     innerRadius={'40%'}
                                     outerRadius={'80%'}
                                     labelRadius={'75%'}
@@ -966,7 +1006,7 @@ const Dashboard = ({ navigation }) => {
                                     
                                     <PieChart
                                     style={{ height: 300 }}
-                                    data={data}
+                                    data={transactionData}
                                     innerRadius={'40%'}
                                     outerRadius={'80%'}
                                     labelRadius={'75%'}
