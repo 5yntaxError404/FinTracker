@@ -62,7 +62,7 @@ const Dashboard = ({ navigation }) => {
         //create
         try {
             
-            const response = await fetch('http://192.168.1.29:5000/api/budgets/add/667', {
+            const response = await fetch(`https://fintech.davidumanzor.com/api/budgets/add/${userId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -82,7 +82,7 @@ const Dashboard = ({ navigation }) => {
     const readBudget = async() => {
         //read
         try {
-            const response = await fetch('https://www.fintech.davidumanzor.com/api/budgets/get/667', {
+            const response = await fetch(`https://www.fintech.davidumanzor.com/api/budgets/get/${userId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -217,7 +217,7 @@ const Dashboard = ({ navigation }) => {
     const updateBudget = async() => {
         //update
         try {
-            const response = await fetch('http://192.168.1.29:5000/api/budgets/edit/667', {
+            const response = await fetch(`https://www.fintech.davidumanzor.com/api/budgets/edit/${userId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -282,7 +282,8 @@ const Dashboard = ({ navigation }) => {
     
     const editTransaction = async() => {
         try {
-            const response = await fetch('http://192.168.1.29:5000/api/budgets/transactions/edit/667', {
+            const userId = getUserId();
+            const response = await fetch(`https://fintech.davidumanzor.com/api/budgets/transactions/edit/${userId}`, {
                 method: 'PUT',
                 headers: {
                 'Content-Type': 'application/json',
@@ -299,7 +300,8 @@ const Dashboard = ({ navigation }) => {
         };
     const getTransaction = async() => {
         try {
-            const response = await fetch('http://www.fintech.davidumanzor.com/api/budgets/transactions/get/667', {
+            const userId = getUserId();
+            const response = await fetch(`https://www.fintech.davidumanzor.com/api/budgets/transactions/get/${userId}`, {
                 method: 'GET',
                 headers: {
                 'Content-Type': 'application/json',
@@ -315,7 +317,8 @@ const Dashboard = ({ navigation }) => {
         };
     const deleteTransaction = async() => {
         try {
-            const response = await fetch('http://192.168.1.29:5000/api/budgets/transactions/delete/667', {
+            const userId = getUserId();
+            const response = await fetch(`https://fintech.davidumanzor.com/api/budgets/transactions/delete/${userId}`, {
                 method: 'DELETE',
                 headers: {
                 'Content-Type': 'application/json',
@@ -333,7 +336,8 @@ const Dashboard = ({ navigation }) => {
     
     const getAchievements = async() => {
         try {
-            const response = await fetch('http://192.168.1.29:5000/api/achievements/get/667', {
+            const userId = getUserId();
+            const response = await fetch(`https://fintech.davidumanzor.com/api/achievements/get/${userId}`, {
                 method: 'GET',
                 headers: {
                 'Content-Type': 'application/json',
@@ -349,7 +353,8 @@ const Dashboard = ({ navigation }) => {
 
     const getAPIdashinfo = async() => {
         try {
-            const response = await fetch('http://192.168.1.29:5000/api/info/667', {
+            const userId = getUserId();
+            const response = await fetch(`https://fintech.davidumanzor.com/api/info/${userId}`, {
                 method: 'GET',
                 headers: {
                 'Content-Type': 'application/json',
