@@ -90,50 +90,46 @@ const Dashboard = ({ navigation }) => {
             const data = await response.json();
 
             console.log("monthly income:", data?.budgetGot?.MonthlyIncome);
-            setMonthlyIncome(data?.budgetGot?.MonthlyIncome);
+            setMonthlyIncome(parseFloat(data?.budgetGot?.MonthlyIncome));
             
 
             console.log("rent:", data?.budgetGot?.MonthlyExpenses?.rent);
-            setRent(data?.budgetGot?.MonthlyExpenses?.rent)
+            setRent(parseFloat(data?.budgetGot?.MonthlyExpenses?.rent))
 
 
             console.log("utilities:", data?.budgetGot?.MonthlyExpenses?.utilities);
-            setUtilities(data?.budgetGot?.MonthlyExpenses?.utilities)
+            setUtilities(parseFloat(data?.budgetGot?.MonthlyExpenses?.utilities))
 
             
             console.log("groceries:", data?.budgetGot?.MonthlyExpenses?.groceries);
-            setGroceries(data?.budgetGot?.MonthlyExpenses?.groceries)
+            setGroceries(parseFloat(data?.budgetGot?.MonthlyExpenses?.groceries))
 
 
             console.log("insurance:", data?.budgetGot?.MonthlyExpenses?.insurance);
-            setInsurance(data?.budgetGot?.MonthlyExpenses?.insurance)
+            setInsurance(parseFloat(data?.budgetGot?.MonthlyExpenses?.insurance))
 
 
             console.log("phone:", data?.budgetGot?.MonthlyExpenses?.phone);
-            setPhone(data?.budgetGot?.MonthlyExpenses?.phone)
+            setPhone(parseFloat(data?.budgetGot?.MonthlyExpenses?.phone))
 
 
             console.log("car:", data?.budgetGot?.MonthlyExpenses?.car);
-            setCar(data?.budgetGot?.MonthlyExpenses?.car)
+            setCar(parseFloat(data?.budgetGot?.MonthlyExpenses?.car))
 
 
             console.log("gas:", data?.budgetGot?.MonthlyExpenses?.gas);
-            setGas(data?.budgetGot?.MonthlyExpenses?.gas)
+            setGas(parseFloat(data?.budgetGot?.MonthlyExpenses?.gas))
 
 
             console.log("fun:", data?.budgetGot?.MonthlyExpenses?.fun);
-            setFun(data?.budgetGot?.MonthlyExpenses?.fun);
+            setFun(parseFloat(data?.budgetGot?.MonthlyExpenses?.fun));
 
 
             console.log("goal:", data?.budgetGot?.MonthlyExpenses?.goal);
-            setGoal(data?.budgetGot?.MonthlyExpenses?.goal);
+            setGoal(parseFloat(data?.budgetGot?.MonthlyExpenses?.goal));
 
-
-            console.log("monthly expenses amount:", data?.budgetGot?.MonthlyExpensesAmt);
-            // setMonthlyExpenses(data?.budgetGot?.MonthlyExpensesAmt);
-            setMonthlyExpenses(rent+utilities+groceries+insurance+phone+car+gas+fun+goal);
-            console.log("setMonthlyExpenses which is now: " + MonthlyExpenses);
-            // addDataPoint("MonthlyExpensesAmt",MonthlyExpensesAmt);
+            console.log("monthly expenses amount:", parseFloat(data?.budgetGot?.MonthlyExpensesAmt));
+            setMonthlyExpenses(parseFloat(data?.budgetGot?.MonthlyExpensesAmt));
 
             console.log("goal description:", data?.budgetGot?.GoalDescription);
             setGoalDescription(data?.budgetGot?.GoalDescription);
@@ -146,17 +142,44 @@ const Dashboard = ({ navigation }) => {
             setSavedAmt(data?.budgetGot?.SavedAmt);
             // addDataPoint("SavedAmt",SavedAmt);
 
-            addDataPoint("MonthlyIncome", (MonthlyIncome/MonthlyIncome)*100);
-            addDataPoint("MonthlyExpensesAmt",(MonthlyExpenses/MonthlyIncome)* 100);
-            // addDataPoint("rent",(rent/MonthlyIncome)* 100);
-            // addDataPoint("utilities",(utilities/MonthlyIncome)* 100);
-            // addDataPoint("groceries",(groceries/MonthlyIncome)* 100);
-            // addDataPoint("insurance",(insurance/MonthlyIncome)* 100);
-            // addDataPoint("phone",(phone/MonthlyIncome)* 100);
-            // addDataPoint("car",(car/MonthlyIncome)* 100);
-            // addDataPoint("gas",(gas/MonthlyIncome)* 100);
-            // addDataPoint("fun",(fun/MonthlyIncome)* 100);
-            // addDataPoint("goal",(goal/MonthlyIncome)* 100);
+            updateChartData("main","MonthlyIncome", 100 - (MonthlyExpenses/MonthlyIncome)* 100);
+            // updateChartData("main","MonthlyExpensesAmt",(MonthlyExpenses/MonthlyIncome)* 100);
+            updateChartData("main","rent",(rent/MonthlyIncome)* 100);
+            updateChartData("main","utilities",(utilities/MonthlyIncome)* 100);
+            updateChartData("main","groceries",(groceries/MonthlyIncome)* 100);
+            updateChartData("main","insurance",(insurance/MonthlyIncome)* 100);
+            updateChartData("main","phone",(phone/MonthlyIncome)* 100);
+            updateChartData("main","car",(car/MonthlyIncome)* 100);
+            updateChartData("main","gas",(gas/MonthlyIncome)* 100);
+            updateChartData("main","fun",(fun/MonthlyIncome)* 100);
+            updateChartData("main","goal",(goal/MonthlyIncome)* 100);
+
+            // updateChartData("rent",(rent/MonthlyExpenses)* 100);
+            // updateChartData("rent","MonthlyExpensesAmt",100-(rent/MonthlyExpenses)* 100);
+
+            // updateChartData("utilities",(utilities/MonthlyExpenses)* 100);
+            // updateChartData("utilities","MonthlyExpensesAmt",(MonthlyExpenses/MonthlyIncome)* 100);
+
+            // updateChartData("groceries",(groceries/MonthlyExpenses)* 100);
+            // updateChartData("groceries","MonthlyExpensesAmt",(MonthlyExpenses/MonthlyIncome)* 100);
+            
+            // updateChartData("insurance",(insurance/MonthlyExpenses)* 100);
+            // updateChartData("insurance","MonthlyExpensesAmt",(MonthlyExpenses/MonthlyIncome)* 100);
+
+            // updateChartData("phone",(phone/MonthlyExpenses)* 100);
+            // updateChartData("phone","MonthlyExpensesAmt",(MonthlyExpenses/MonthlyIncome)* 100);
+
+            // updateChartData("car",(car/MonthlyExpenses)* 100);
+            // updateChartData("car","MonthlyExpensesAmt",(MonthlyExpenses/MonthlyIncome)* 100);
+
+            // updateChartData("gas",(gas/MonthlyExpenses)* 100);
+            // updateChartData("gas","MonthlyExpensesAmt",(MonthlyExpenses/MonthlyIncome)* 100);
+
+            // updateChartData("fun",(fun/MonthlyExpenses)* 100);
+            // updateChartData("fun","MonthlyExpensesAmt",(MonthlyExpenses/MonthlyIncome)* 100);
+
+            // updateChartData("goal",(goal/MonthlyExpenses)* 100);
+            // updateChartData("goal","MonthlyExpensesAmt",(MonthlyExpenses/MonthlyIncome)* 100);
             
 
 
@@ -165,6 +188,28 @@ const Dashboard = ({ navigation }) => {
             console.error("An error occured: ", error)
         }
         };
+
+        useEffect(() => {
+            console.log("setMonthlyExpenses which is now:", MonthlyExpenses);
+            // updateChartData("main","MonthlyExpensesAmt",(MonthlyExpenses/MonthlyIncome)* 100);
+            updateChartData("main","rent",(rent/MonthlyIncome)* 100);
+            updateChartData("main","utilities",(utilities/MonthlyIncome)* 100);
+            updateChartData("main","groceries",(groceries/MonthlyIncome)* 100);
+            updateChartData("main","insurance",(insurance/MonthlyIncome)* 100);
+            updateChartData("main","phone",(phone/MonthlyIncome)* 100);
+            updateChartData("main","car",(car/MonthlyIncome)* 100);
+            updateChartData("main","gas",(gas/MonthlyIncome)* 100);
+            updateChartData("main","fun",(fun/MonthlyIncome)* 100);
+            updateChartData("main","goal",(goal/MonthlyIncome)* 100);
+
+            // updateChartData("rent","rent",(rent/MonthlyIncome)* 100);
+            // updateChartData("rent","monthlyExpenses",(rent/MonthlyIncome)* 100);
+        }, [MonthlyExpenses]); // This will trigger the effect whenever MonthlyExpenses changes
+
+        // useEffect(() => {
+        //     console.log("setRent which is now:", rent);
+        //     updateChartData("rent","rent",(rent/MonthlyExpenses)* 100);
+        // }, [rent]);
 
     const updateBudget = async() => {
         //update
@@ -295,20 +340,8 @@ const Dashboard = ({ navigation }) => {
     ]
 
     const clearData = () => {
-            setData([{ key: 1, value: 0.1, svg: { fill: 'white' } }]);
+            setData([{ key: 1, value: 0, svg: { fill: 'white' } }]);
         };
-
-    // function parseJwt(token) {
-    //     const base64Url = token.split('.')[1];
-    //     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    //     const jsonPayload = decodeURIComponent(
-    //         atob(base64)
-    //         .split('')
-    //         .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-    //         .join('')
-    //     );
-    //     return JSON.parse(jsonPayload);
-    //     }
 
         const [, forceUpdate] = useReducer((x) => x + 1, 0);
 
@@ -338,46 +371,174 @@ const Dashboard = ({ navigation }) => {
         { key: 1, value: 0.01, svg: { fill: 'white' } }
       ]);
 
-    const addDataPoint = (name, cost) => {
-        let color = "white"
-        console.log("name is: " + name);
-        if(name === "MonthlyExpensesAmt")
-        {
-            color = "red";
-        }
-        else if(name === "MonthlyIncome")
-        {
-            color = `green`;
-        }
-        else
-        {
-            color = `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 1)`;
-            console.log("name is " + name );
-        }
-        console.log("cost: " + cost + " color: " + color);
-        setData(prevData => {
-          const newDataPoint = {
-            key: prevData.length + 1,
-            value: cost,
-            // svg: { fill: `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 1)` },
-            svg:{fill:color},
-            name: name,
-          };
+    
+    const [rentData, setRentData] = useState([
+        { key: 1, value: 0.01, svg: { fill: 'white' } },
+      ]);
+
+    const [utilitiesData, setUtilitiesData] = useState([
+    { key: 1, value: 0.01, svg: { fill: 'white' } }
+    ]);
+
+    const [groceriesData, setGroceriesData] = useState([
+    { key: 1, value: 0.01, svg: { fill: 'white' } }
+    ]);
+
+    const [insuranceData, setInsuranceData] = useState([
+    { key: 1, value: 0.01, svg: { fill: 'white' } }
+    ]);
+
+    const [phoneData, setPhoneData] = useState([
+    { key: 1, value: 0.01, svg: { fill: 'white' } }
+    ]);
+
+    const [carData, setCarData] = useState([
+    { key: 1, value: 0.01, svg: { fill: 'white' } }
+    ]);
+
+    const [gasData, setGasData] = useState([
+    { key: 1, value: 0.01, svg: { fill: 'white' } }
+    ]);
+
+    const [funData, setFunData] = useState([
+    { key: 1, value: 0.01, svg: { fill: 'white' } }
+    ]);
+
+    const [goalData, setGoalData] = useState([
+    { key: 1, value: 0.01, svg: { fill: 'white' } }
+    ]);
+
+    // const addDataPoint = (name, cost) => {
+    //     let color = "white"
+    //     console.log("name is: " + name);
+    //     if(name === "MonthlyExpensesAmtPercentage")
+    //     {
+    //         color = "red";
+    //     }
+    //     else if(name === "MonthlyIncomePercentage")
+    //     {
+    //         color = `green`;
+    //     }
+    //     else
+    //     {
+    //         color = `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 1)`;
+    //         console.log("name is " + name );
+    //     }
+    //     console.log("cost: " + cost + " color: " + color);
+    //     setData(prevData => {
+    //       const newDataPoint = {
+    //         key: prevData.length + 1,
+    //         value: cost,
+    //         svg:{fill:color},
+    //         name: name,
+    //       };
       
-          return [...prevData, newDataPoint];
-        });
-      };
+    //       return [...prevData, newDataPoint];
+    //     });
+    //   };
 
       // Function to read all values
-    const readAllValues = () => {
-        data.forEach(item => {
+    
+    
+    
+      const readAllValues = () => {
+        rentData.forEach(item => {
         console.log(`Key: ${item.key}, Value: ${item.value}, Fill: ${item.svg.fill}`);
         });
     };
 
+    const updateChartData = (chartType, name, cost) => {
+        if(name === "MonthlyExpensesAmt")
+        {
+            color = "white";
+        }
+        else if(name === "MonthlyIncome")
+        {
+            color = `white`;
+        }
+        else if(name === "rent")
+        {
+            color = "blue";
+        }
+        else if(name === "utilities")
+        {
+            color = "yellow";
+        }
+        else if(name === "groceries")
+        {
+            color = "purple";
+        }
+        else if(name === "insurance")
+        {
+            color = "orange";
+        }
+        else if(name === "phone")
+        {
+            color = "pink";
+        }
+        else if(name === "car")
+        {
+            color = "brown";
+        }
+        else if(name === "gas")
+        {
+            color = "cyan";
+        }
+        else if(name === "fun")
+        {
+            color = "#4682B4";
+        }
+        else if(name === "goal")
+        {
+            color = "#FF8C00";
+        }
+      
+        const newDataPoint = {
+          key: Math.random(), // You can generate a unique key based on your requirements
+          value: cost,
+          svg: { fill: color },
+          name: name,
+        };
+      
+        switch (chartType) {
+            case "main":
+            setData((prevData) => [...prevData, newDataPoint]);
+            break;
+            case "rent":
+            setRentData((prevRentData) => [...prevRentData, newDataPoint]);
+            break;
+            case "utilities":
+            setUtilitiesData((prevUtilitiesData) => [...prevUtilitiesData, newDataPoint]);
+            break;
+            case "groceries":
+            setGroceriesData((prevGroceriesData) => [...prevGroceriesData, newDataPoint]);
+            break;
+            case "insurance":
+            setInsuranceData((prevInsuranceData) => [...prevInsuranceData, newDataPoint]);
+            break;
+            case "phone":
+            setPhoneData((prevPhoneData) => [...prevPhoneData, newDataPoint]);
+            break;
+            case "car":
+            setCarData((prevCarData) => [...prevCarData, newDataPoint]);
+            break;
+            case "gas":
+            setGasData((prevGasData) => [...prevGasData, newDataPoint]);
+            break;
+            case "fun":
+            setFunData((prevFunData) => [...prevFunData, newDataPoint]);
+            break;
+            case "goal":
+            setGoalData((prevGoalData) => [...prevGoalData, newDataPoint]);
+            break;
+            // Add more cases for other chart types as needed
+            default:
+            break;
+        }
+      };
+    
+
     return (
-
-
         <View style={styles.container}>
 
             <LinearGradient colors={['#67286C','#973C9F']} style={styles.section1} start = {[0,0]} end = {[1,0]}>
@@ -393,10 +554,6 @@ const Dashboard = ({ navigation }) => {
             <View style={styles.mainSummaryBox}>
 
                 <View style={styles.graphContainer}>
-                    {/* <PieChart
-                        style={{ height: 300 }}
-                        data={pieChartDataInitial}
-                    /> */}
 
                     <PieChart
                         style={{ height: 300 }}
@@ -603,10 +760,13 @@ const Dashboard = ({ navigation }) => {
                                 <View style={styles.categoryBreakdownContainer}>
                                     <Text style={styles.categoryBreakdownTitle}>Rent</Text>
                                     
-                                    {/* <PieChart
-                                        style={{ height: 300 }}
-                                        data={pieChartDataInitial}
-                                    /> */}
+                                    <PieChart
+                                    style={{ height: 300 }}
+                                    data={rentData}
+                                    innerRadius={'40%'}
+                                    outerRadius={'80%'}
+                                    labelRadius={'75%'}
+                                    />
                                     
                                     <TouchableOpacity 
                                     style={styles.categoryButton}
@@ -619,10 +779,165 @@ const Dashboard = ({ navigation }) => {
                                 <View style={styles.categoryBreakdownContainer}>
                                     <Text style={styles.categoryBreakdownTitle}>Utilities</Text>
                                     
-                                    {/* <PieChart
-                                        style={{ height: 300 }}
-                                        data={pieChartDataInitial}
-                                    /> */}
+                                    <PieChart
+                                    style={{ height: 300 }}
+                                    data={data}
+                                    innerRadius={'40%'}
+                                    outerRadius={'80%'}
+                                    labelRadius={'75%'}
+                                    />
+                                    
+                                    <TouchableOpacity 
+                                    style={styles.categoryButton}
+                                    onPress={hideCategoryBreakdownPopup}
+                                    >
+                                    <Text style={styles.buttonText}>Go Back</Text>
+                                    </TouchableOpacity>
+                                </View>
+
+                                <View style={styles.categoryBreakdownContainer}>
+                                    <Text style={styles.categoryBreakdownTitle}>Groceries</Text>
+                                    
+                                    <PieChart
+                                    style={{ height: 300 }}
+                                    data={data}
+                                    innerRadius={'40%'}
+                                    outerRadius={'80%'}
+                                    labelRadius={'75%'}
+                                    />
+                                    
+                                    <TouchableOpacity 
+                                    style={styles.categoryButton}
+                                    onPress={hideCategoryBreakdownPopup}
+                                    >
+                                    <Text style={styles.buttonText}>Go Back</Text>
+                                    </TouchableOpacity>
+                                </View>
+
+                                <View style={styles.categoryBreakdownContainer}>
+                                    <Text style={styles.categoryBreakdownTitle}>Insurance</Text>
+                                    
+                                    <PieChart
+                                    style={{ height: 300 }}
+                                    data={data}
+                                    innerRadius={'40%'}
+                                    outerRadius={'80%'}
+                                    labelRadius={'75%'}
+                                    />
+                                    
+                                    <TouchableOpacity 
+                                    style={styles.categoryButton}
+                                    onPress={hideCategoryBreakdownPopup}
+                                    >
+                                    <Text style={styles.buttonText}>Go Back</Text>
+                                    </TouchableOpacity>
+                                </View>
+
+                                <View style={styles.categoryBreakdownContainer}>
+                                    <Text style={styles.categoryBreakdownTitle}>Phone</Text>
+                                    
+                                    <PieChart
+                                    style={{ height: 300 }}
+                                    data={data}
+                                    innerRadius={'40%'}
+                                    outerRadius={'80%'}
+                                    labelRadius={'75%'}
+                                    />
+                                    
+                                    <TouchableOpacity 
+                                    style={styles.categoryButton}
+                                    onPress={hideCategoryBreakdownPopup}
+                                    >
+                                    <Text style={styles.buttonText}>Go Back</Text>
+                                    </TouchableOpacity>
+                                </View>
+
+                                <View style={styles.categoryBreakdownContainer}>
+                                    <Text style={styles.categoryBreakdownTitle}>Car</Text>
+                                    
+                                    <PieChart
+                                    style={{ height: 300 }}
+                                    data={data}
+                                    innerRadius={'40%'}
+                                    outerRadius={'80%'}
+                                    labelRadius={'75%'}
+                                    />
+                                    
+                                    <TouchableOpacity 
+                                    style={styles.categoryButton}
+                                    onPress={hideCategoryBreakdownPopup}
+                                    >
+                                    <Text style={styles.buttonText}>Go Back</Text>
+                                    </TouchableOpacity>
+                                </View>
+
+                                <View style={styles.categoryBreakdownContainer}>
+                                    <Text style={styles.categoryBreakdownTitle}>Gas</Text>
+                                    
+                                    <PieChart
+                                    style={{ height: 300 }}
+                                    data={data}
+                                    innerRadius={'40%'}
+                                    outerRadius={'80%'}
+                                    labelRadius={'75%'}
+                                    />
+                                    
+                                    <TouchableOpacity 
+                                    style={styles.categoryButton}
+                                    onPress={hideCategoryBreakdownPopup}
+                                    >
+                                    <Text style={styles.buttonText}>Go Back</Text>
+                                    </TouchableOpacity>
+                                </View>
+
+                                <View style={styles.categoryBreakdownContainer}>
+                                    <Text style={styles.categoryBreakdownTitle}>Entertainment</Text>
+                                    
+                                    <PieChart
+                                    style={{ height: 300 }}
+                                    data={data}
+                                    innerRadius={'40%'}
+                                    outerRadius={'80%'}
+                                    labelRadius={'75%'}
+                                    />
+                                    
+                                    <TouchableOpacity 
+                                    style={styles.categoryButton}
+                                    onPress={hideCategoryBreakdownPopup}
+                                    >
+                                    <Text style={styles.buttonText}>Go Back</Text>
+                                    </TouchableOpacity>
+                                </View>
+
+                                <View style={styles.categoryBreakdownContainer}>
+                                    <Text style={styles.categoryBreakdownTitle}>Goal</Text>
+                                    
+                                    <PieChart
+                                    style={{ height: 300 }}
+                                    data={data}
+                                    innerRadius={'40%'}
+                                    outerRadius={'80%'}
+                                    labelRadius={'75%'}
+                                    />
+                                    
+                                    <TouchableOpacity 
+                                    style={styles.categoryButton}
+                                    onPress={hideCategoryBreakdownPopup}
+                                    >
+                                    <Text style={styles.buttonText}>Go Back</Text>
+                                    </TouchableOpacity>
+                                </View>
+
+                                <View style={styles.categoryBreakdownContainer}>
+                                    <Text style={styles.categoryBreakdownTitle}>Transactions</Text>
+                                    
+                                    <PieChart
+                                    style={{ height: 300 }}
+                                    data={data}
+                                    innerRadius={'40%'}
+                                    outerRadius={'80%'}
+                                    labelRadius={'75%'}
+                                    />
                                     
                                     <TouchableOpacity 
                                     style={styles.categoryButton}
