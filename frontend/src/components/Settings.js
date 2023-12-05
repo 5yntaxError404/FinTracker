@@ -110,7 +110,7 @@ function SettingsPage() {
             const response = await fetch(
                 `${base_url}/api/user/delete/`,
                 {
-                method: 'POST',
+                method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${userinfo.accessToken}`
