@@ -146,16 +146,16 @@ const Dashboard = ({ navigation }) => {
             // addDataPoint("SavedAmt",SavedAmt);
 
             updateChartData("main","MonthlyIncome", 100 - (MonthlyExpenses/MonthlyIncome)* 100);
-            // updateChartData("main","MonthlyExpensesAmt",(MonthlyExpenses/MonthlyIncome)* 100);
-            updateChartData("main","rent",(rent/MonthlyIncome)* 100);
-            updateChartData("main","utilities",(utilities/MonthlyIncome)* 100);
-            updateChartData("main","groceries",(groceries/MonthlyIncome)* 100);
-            updateChartData("main","insurance",(insurance/MonthlyIncome)* 100);
-            updateChartData("main","phone",(phone/MonthlyIncome)* 100);
-            updateChartData("main","car",(car/MonthlyIncome)* 100);
-            updateChartData("main","gas",(gas/MonthlyIncome)* 100);
-            updateChartData("main","fun",(fun/MonthlyIncome)* 100);
-            updateChartData("main","goal",(goal/MonthlyIncome)* 100);
+            updateChartData("main","MonthlyExpensesAmt",(MonthlyExpenses/MonthlyIncome)* 100);
+            // updateChartData("main","rent",(rent/MonthlyIncome)* 100);
+            // updateChartData("main","utilities",(utilities/MonthlyIncome)* 100);
+            // updateChartData("main","groceries",(groceries/MonthlyIncome)* 100);
+            // updateChartData("main","insurance",(insurance/MonthlyIncome)* 100);
+            // updateChartData("main","phone",(phone/MonthlyIncome)* 100);
+            // updateChartData("main","car",(car/MonthlyIncome)* 100);
+            // updateChartData("main","gas",(gas/MonthlyIncome)* 100);
+            // updateChartData("main","fun",(fun/MonthlyIncome)* 100);
+            // updateChartData("main","goal",(goal/MonthlyIncome)* 100);
 
             // updateChartData("rent",(rent/MonthlyExpenses)* 100);
             // updateChartData("rent","MonthlyExpensesAmt",100-(rent/MonthlyExpenses)* 100);
@@ -194,16 +194,17 @@ const Dashboard = ({ navigation }) => {
 
         useEffect(() => {
             console.log("setMonthlyExpenses which is now:", MonthlyExpenses);
-            // updateChartData("main","MonthlyExpensesAmt",(MonthlyExpenses/MonthlyIncome)* 100);
-            updateChartData("main","rent",(rent/MonthlyIncome)* 100);
-            updateChartData("main","utilities",(utilities/MonthlyIncome)* 100);
-            updateChartData("main","groceries",(groceries/MonthlyIncome)* 100);
-            updateChartData("main","insurance",(insurance/MonthlyIncome)* 100);
-            updateChartData("main","phone",(phone/MonthlyIncome)* 100);
-            updateChartData("main","car",(car/MonthlyIncome)* 100);
-            updateChartData("main","gas",(gas/MonthlyIncome)* 100);
-            updateChartData("main","fun",(fun/MonthlyIncome)* 100);
-            updateChartData("main","goal",(goal/MonthlyIncome)* 100);
+            updateChartData("main","MonthlyExpensesAmt",(MonthlyExpenses/MonthlyIncome)* 100);
+            readAllValues();
+            // updateChartData("main","rent",(rent/MonthlyIncome)* 100);
+            // updateChartData("main","utilities",(utilities/MonthlyIncome)* 100);
+            // updateChartData("main","groceries",(groceries/MonthlyIncome)* 100);
+            // updateChartData("main","insurance",(insurance/MonthlyIncome)* 100);
+            // updateChartData("main","phone",(phone/MonthlyIncome)* 100);
+            // updateChartData("main","car",(car/MonthlyIncome)* 100);
+            // updateChartData("main","gas",(gas/MonthlyIncome)* 100);
+            // updateChartData("main","fun",(fun/MonthlyIncome)* 100);
+            // updateChartData("main","goal",(goal/MonthlyIncome)* 100);
 
             // updateChartData("rent","rent",(rent/MonthlyIncome)* 100);
             // updateChartData("rent","monthlyExpenses",(rent/MonthlyIncome)* 100);
@@ -482,11 +483,11 @@ const Dashboard = ({ navigation }) => {
     const updateChartData = (chartType, name, cost) => {
         if(name === "MonthlyExpensesAmt")
         {
-            color = "white";
+            color = "red";
         }
         else if(name === "MonthlyIncome")
         {
-            color = `white`;
+            color = `green`;
         }
         else if(name === "rent")
         {
