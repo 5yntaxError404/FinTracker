@@ -197,7 +197,6 @@ function TransactionsPage() {
           <Col sm={1} md={3} className="transactionInfo">
             {transactions.map((transaction) => (
               <Row className="transaction" key={transaction.Transactions.transactionID}>
-                <p>Transaction</p>
                 <p>Amount: ${transaction.Transactions.transactionAmt}</p>
                 <p>Category: {transaction.Transactions.transactionCategory}</p>
                 <Col>

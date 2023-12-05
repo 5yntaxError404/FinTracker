@@ -12,6 +12,11 @@
     overflow-y: fit;
 }
 
+iframe
+{
+    display: none;
+}
+
 .accounts-content {
     font-family: 'Montserrat' !important;
     text-align: center;

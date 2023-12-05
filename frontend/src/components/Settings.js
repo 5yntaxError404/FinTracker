@@ -37,6 +37,22 @@ function SettingsPage() {
         };
     }, []);
 
+    const validateInput = (inputElement, fieldName) => {
+        try {
+            const valuelength = inputElement.length;
+            const value = inputElement;
+            
+            if(valuelength == 0){
+                throw new Error('Invalid entries: Please enter a non-empty value in each box to successfully edit.');
+            }
+
+            return value;
+        } catch (error) {
+            setMessage(error.message);
+            throw error;
+        }
+    };
+
     // Adds and Edits Budget in DB and updates webpage
     const EditUser = async event =>
     {
@@ -49,13 +65,19 @@ function SettingsPage() {
         let newEmail = document.getElementById("inputEmail").value;
 
         console.log(newUsername);
+        
+        let validatedUser = validateInput(newUsername, "Username");
+        let validatedPass = validateInput(newPassword, "Password");
+        let validatedFirst = validateInput(newFirstName, "First Name");
+        let validatedLast = validateInput(newLastName, "Last Name");
+        let validatedEmail = validateInput(newEmail, "Email");
 
 		var obj = {
-            UserName: newUsername,
-            Password: newPassword,
-            FirstName: newFirstName,
-            LastName: newLastName,
-            Email: newEmail,
+            UserName: validatedUser,
+            Password: validatedPass,
+            FirstName: validatedFirst,
+            LastName: validatedLast,
+            Email: validatedEmail,
 		};
 		var js = JSON.stringify(obj);
         
@@ -170,6 +192,7 @@ function SettingsPage() {
         }
     };
 
+
     return (
 
         <div className="settings-container">
@@ -204,29 +227,31 @@ function SettingsPage() {
                         <div className="form-row">
                             <div className="form-group">
                             <label htmlFor="inputUserName">Username</label>
-                            <input type="text" className="form-control" id="inputUserName"/>
+                            <input type="text" placeholder = {settings.UserName} className="form-control" id="inputUserName"/>
                             </div>
                             <div className="form-group">
                             <label htmlFor="inputPassword">Password</label>
-                            <input type="text" className="form-control" id="inputPassword"/>
+                            <input type="text" placeholder = {settings.Password} className="form-control" id="inputPassword"/>
                             </div>
                         </div>
                         <div className="form-group">
-                            <label htmlFor="inputFirstName">FirstName</label>
-                            <input type="text" className="form-control" id="inputFirstName"/>
+                            <label htmlFor="inputFirstName">First Name</label>
+                            <input type="text" placeholder = {settings.FirstName} className="form-control" id="inputFirstName"/>
                         </div>
                         <div className="form-group">
-                            <label htmlFor="inputLastName">LastName</label>
-                            <input type="text" className="form-control" id="inputLastName"/>
+                            <label htmlFor="inputLastName">Last Name</label>
+                            <input type="text" placeholder = {settings.LastName} className="form-control" id="inputLastName"/>
                         </div>
                         <div className="form-row">
                             <div className="form-group">
                                 <label htmlFor="inputEmail">Email</label>
-                                <input type="text" className="form-control" id="inputEmail"/>
+                                <input type="text" placeholder = {settings.Email} className="form-control" id="inputEmail"/>
                             </div>
                         </div>
-                        <button type="submit" className="btn btn-primary" onClick={EditUser}>Edit Account</button>
-                        <button type="submit" className="btn btn-primary" onClick={DeleteUser}>Delete Account</button>
+                        <button type="submit" className="editaccbtn btn-primary" onClick={EditUser}>Edit Account</button>
+                        <button type="submit" className="delaccbtn btn-primary" onClick={DeleteUser}>Delete Account</button>
+                        {message && !message.startsWith('Success') && (
+                <div style={{ color: 'red', marginTop: '10px' }}>{message}</div>)}
                         </form>
                     </Col>
                 </Row>

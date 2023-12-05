@@ -5,6 +5,7 @@ import '../css/AccountsPage.css';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import { Error } from 'mongoose';
 
 // Looking for correct code to import font
 
@@ -13,11 +14,35 @@ function AccountsPage() {
 
     // Constants needed for the page
     const [accounts, setAccounts] = useState([]);
-    const [message,setMessage] = useState('');
+    const [message, setMessage] = useState('');
     
     const base_url = process.env.NODE_ENV === "production"
     ? `https://www.fintech.davidumanzor.com`
     : `http://localhost:5000`;
+
+    const validateInput = (inputElement, fieldName) => {
+        try {
+            const valuelength = inputElement.length;
+            const value = inputElement;
+
+            if ((valuelength < 8 || valuelength > 12) && fieldName == 'Account Number') {
+                throw new Error(`Invalid ${fieldName}: Account numbers must be 8-12 digits long.`);
+            }
+
+            if ((valuelength != 9) && fieldName == 'Route Number') {
+                throw new Error(`Invalid ${fieldName}: Route numbers must be 9 digits long.`);
+            }
+            
+            if(valuelength == 0){
+                throw new Error(`Invalid ${fieldName}: Please enter an account number, route number, and bank name.`);
+            }
+
+            return value;
+        } catch (error) {
+            setMessage(error.message);
+            throw error;
+        }
+    };
 
     // Adds and Edits Budget in DB and updates webpage
     const addAccount = async event =>
@@ -27,11 +52,15 @@ function AccountsPage() {
         let AccountNum = document.getElementById("inputAccountNum").value;
         let RouteNum = document.getElementById("inputRouteNum").value;
         let BankName = document.getElementById("inputBankName").value;
-
-		var obj = {
-            AccountNum: AccountNum,
-            RouteNum: RouteNum,
-            BankName: BankName,
+        
+        const validatedAccountNum = validateInput(AccountNum, "Account Number");
+        const validatedRouteNum = validateInput(RouteNum, "Route Number");
+        const validatedBankName = validateInput(BankName, "Bank Name");
+		
+        var obj = {
+            AccountNum: String(validatedAccountNum),
+            RouteNum: String(validatedRouteNum),
+            BankName: String(validatedBankName),
 		};
 		var js = JSON.stringify(obj);
         
@@ -66,8 +95,8 @@ function AccountsPage() {
             }
 
 		} catch (e) {
-			alert(e.toString());
-			return;
+			console.error(e);
+			setMessage('An error occurred while adding the account.');
 		}
     };
 
@@ -111,8 +140,8 @@ function AccountsPage() {
             }
             
 		} catch (e) {
-			alert(e.toString());
-			return;
+			console.error(e.toString());
+            setMessage('An error occurred while fetching accounts.');
 		}
     };
 
@@ -152,7 +181,7 @@ function AccountsPage() {
 			console.log(res);
 
 			if (res.error) {
-                setMessage('Unable to get accounts'); // Set an error message
+                setMessage('There was an error in your inputs.'); // Set an error message
                 console.log("Some error");
             } 
             else {
@@ -161,8 +190,8 @@ function AccountsPage() {
             }
 
 		} catch (e) {
-			alert(e.toString());
-			return;
+			console.error(e.toString());
+            setMessage('An error occurred while editing the account.');
 		}
     };
 
@@ -200,8 +229,8 @@ function AccountsPage() {
             }
             
 		} catch (e) {
-			alert(e.toString());
-			return;
+			console.error(e.toString());
+            setMessage('An error occurred while deleting the account.');
 		}
     };
 
@@ -244,6 +273,9 @@ function AccountsPage() {
                             <input type="text" className="form-control" id="inputBankName"/>
                         </div>
                         <button type="submit" className="btn btn-primary" onClick={addAccount}>Add Account</button>
+                        {message && !message.startsWith('Success') && (
+                <div style={{ color: 'red', marginTop: '10px' }}>{message}</div>
+            )}
                         </form>
                     </Col>
                 </Row>
