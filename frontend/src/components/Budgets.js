@@ -333,10 +333,6 @@ function BudgetPage() {
                                         <label htmlFor="inputFun">Entertainment</label>
                                         <input type="number" className="form-control" id="inputFun"/>
                                     </Col>
-                                    <Col>
-                                        <label htmlFor="inputGoal">Goal</label>
-                                        <input type="number" className="form-control" id="inputGoal"/>
-                                    </Col>
                                 </Row>
                                 <Row>
                                     <Col>
