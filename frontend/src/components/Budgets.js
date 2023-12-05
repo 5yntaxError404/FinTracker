@@ -74,19 +74,19 @@ function BudgetPage() {
         let savedAmt = document.getElementById("inputSavedAmt");
 
 		var obj = {
-            MonthlyIncome: parseFloat(income.value),
-            rent: parseFloat(rent.value),
-            utilities: parseFloat(utilities.value),
-            groceries: parseFloat(groceries.value),
-            insurance: parseFloat(insurance.value),
-            phone: parseFloat(phone.value),
-            car: parseFloat(car.value),
-            gas: parseFloat(gas.value),
-            fun: parseFloat(fun.value),
-            goal: parseFloat(goal.value),
+            MonthlyIncome: income.value,
+            rent: rent.value,
+            utilities: utilities.value,
+            groceries: groceries.value,
+            insurance: insurance.value,
+            phone: phone.value,
+            car: car.value,
+            gas: gas.value,
+            fun: fun.value,
+            goal: goal.value,
             GoalDescription: goalDescription.value,
-            GoalAmt: parseFloat(goalAmt.value),
-            SavedAmt: parseFloat(savedAmt.value),
+            GoalAmt: goalAmt.value,
+            SavedAmt: savedAmt.value,
 		};
 		var js = JSON.stringify(obj);
         
