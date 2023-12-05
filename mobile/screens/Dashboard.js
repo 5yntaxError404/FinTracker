@@ -3,7 +3,7 @@ import { View, TextInput, Button, StyleSheet, Image, Modal, TouchableOpacity, Te
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
-import { getAccessToken } from '../accessToken';
+import { getAccessToken, getUserId } from '../accessToken';
 import { PieChart } from 'react-native-svg-charts';
 import { useFonts } from 'expo-font';
 
@@ -12,6 +12,7 @@ const Dashboard = ({ navigation }) => {
     const [fontsLoaded] = useFonts({
         "Montserrat-Black":require("../assets/fonts/Montserrat-Black.ttf"),
     })
+    const userId = getUserId(); 
 
     const [visibleTransactionPopup, setVisibleTransactionPopup] = useState(false);
     const showTransactionPopup = () => setVisibleTransactionPopup(true);
@@ -59,6 +60,7 @@ const Dashboard = ({ navigation }) => {
     const createBudget = async() => {
         //create
         try {
+            
             const response = await fetch('http://192.168.1.29:5000/api/budgets/add/667', {
             method: 'POST',
             headers: {
@@ -235,7 +237,9 @@ const Dashboard = ({ navigation }) => {
     //CRUD for transactions
     const addTransaction = async() => {
         try {
-            const response = await fetch('http://www.fintech.davidumanzor.com/api/budgets/transactions/667', {
+            const userId = getUserId(); // supposed to get the id from the login.
+
+            const response = await fetch('http://www.fintech.davidumanzor.com/api/budgets/transactions/${userId}', { // how do we access this?
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json',
