@@ -35,8 +35,14 @@ function BudgetPage() {
         try {
             const value = parseFloat(inputElement.value);
 
-            if (isNaN(value) || value < 0) {
+            if (value < 0) {
                 throw new Error(`Invalid ${fieldName}: Please enter a non-negative number.`);
+            }
+            
+            if(isNaN(value) && fieldName == "Income"){
+                throw new Error(`Invalid ${fieldName}: Please enter a positive number for your income.`);
+            }else if (isNaN(value)){
+                inputElement.value = 0;
             }
 
             if (value.toString().includes('.') && (value.toString().split('.')[1].length > 2)) {
@@ -96,7 +102,7 @@ function BudgetPage() {
             const validatedCar = validateInput(car, 'Car');
             const validatedGas = validateInput(gas, 'Gas');
             const validatedFun = validateInput(fun, 'Entertainment');
-            const validatedGoal = validateInput(goal, 'Goal');
+            const validatedGoal = validateInput(goal, 'Monthly Savings');
             const validatedGoalAmt = validateInput(goalAmt, 'Goal Amount');
             const validatedSavedAmt = validateInput(savedAmt, 'Saved Amount');
 
@@ -334,7 +340,7 @@ function BudgetPage() {
                                         <input type="number" className="form-control" id="inputFun"/>
                                     </Col>
                                     <Col>
-                                        <label htmlFor="inputGoal">Goal</label>
+                                        <label htmlFor="inputGoal">Monthly Savings</label>
                                         <input type="number" className="form-control" id="inputGoal"/>
                                     </Col>
                                 </Row>
