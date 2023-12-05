@@ -1123,24 +1123,30 @@ app.post('/api/budgets/transactions/get/:UserId', authenticateToken, async (req,
   }
 });
 
-app.post(`api/budgets/transactions/getTotal/:UserId`, authenticateToken, async (req, res) => {
-  
+app.post('/api/budgets/transactions/getTotal/:UserId', authenticateToken, async (req, res) => {
   try {
-    if(parseInt(req.params.UserId) != req.user.UserId){
+    // Check user authentication
+    if (parseInt(req.params.UserId) !== req.user.UserId) {
       return res.status(403).json({ message: 'Access Denied' });
     }
 
-    var transactionGrabber = await budCollection.findOne(
-      { UserIdRef: parseInt(req.params.UserId)}
-    );
+    // Fetch transaction data from MongoDB
+    const transactionGrabber = await budCollection.findOne({ UserIdRef: parseInt(req.params.UserId) });
 
-    res.status(200).json(transactionGrabber.TransactionsAmt);
+    // Check if the data is found
+    if (!transactionGrabber) {
+      return res.status(404).json({ message: 'User not found or no transactions available' });
+    }
+
+    // Extract TransactionsAmt and send it in the response
+    const transactionsAmt = transactionGrabber.TransactionsAmt || 0; // Default to 0 if TransactionsAmt is not present
+    res.status(200).json({ TransactionsAmt: transactionsAmt });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
-  catch (error) {
-    console.error(error);
-    res.status(500).json({error: 'Internal Server Error'});
-  }
-})
+});
+
 
 //Achievement Endpoints
 app.post('/api/achievements/add/:UserId', authenticateToken, async (req, res) => {

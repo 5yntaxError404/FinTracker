@@ -271,6 +271,7 @@ const Dashboard = ({ navigation }) => {
             console.log(dynamicTransactionData);
 
             getTransaction();
+            //getTransactionTotal();
     
             // Add a data point
             //addDataPoint("Transaction", transactionAmt / MonthlyIncome * 100);
@@ -317,6 +318,7 @@ const Dashboard = ({ navigation }) => {
             } catch(error) {
                 console.error("An error occured: ", error)
             }
+            
         };
     
     const getTransactionTotal = async() => {
