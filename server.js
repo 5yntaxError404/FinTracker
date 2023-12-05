@@ -1166,19 +1166,18 @@ app.post('/api/achievements/get/:UserId', authenticateToken, async (req, res) =>
     res.status(500).json({ error: 'Internal server error' });
   }
 }); 
-    
-
-
 
     }
     catch
     {
       console.error(error);
+      
+      main().catch(console.error);
     }
   }
 
   
-  main().catch(console.error);
+  //main().catch(console.error);
 
   function startServer() {
     const port = process.env.PORT || 5000; // Use port from environment variable or default to 5000

@@ -55,7 +55,7 @@ const Dashboard = ({ navigation }) => {
 
     //achievement BODY
     const [achievementToAdd, setAchievementToAdd] = useState(0);
-    const [userId, setUserId] = useState("");
+    const [getUserId, setUserId] = useState("");
 
     //CRUD operations for Budget
     const createBudget = async() => {
@@ -93,7 +93,11 @@ const Dashboard = ({ navigation }) => {
             const data = await response.json();
 
             console.log("monthly income:", data?.budgetGot?.MonthlyIncome);
-            setMonthlyIncome(parseFloat(data?.budgetGot?.MonthlyIncome));
+            if(data?.budgetGot?.MonthlyIncome != null)
+            {
+                setMonthlyIncome(parseFloat(data?.budgetGot?.MonthlyIncome));
+            }
+          
             
 
             console.log("rent:", data?.budgetGot?.MonthlyExpenses?.rent);
