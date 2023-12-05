@@ -1,66 +1,79 @@
+// ForgotMyPassword.js
+
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import '../css/ForgotPassword.css';
 
-import '../css/LoginPage.css';
+function ForgotMyPassword() {
+  const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
+  const navigate = useNavigate();
 
-function ForgotMyPassword(){
+  const startPasswordReset = async (event) => {
+    event.preventDefault();
 
-	var email;
+    try {
+      const response = await fetch(`https://www.fintech.davidumanzor.com/forgot-password-email`, {
+        method: 'post',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ Email: email }),
+      });
 
-	const [message,setMessage] = useState('');
-    
-	const startPasswordReset = async event => {
+      if (response.status === 200) {
+        setMessage('If this email is registered to an account, you will receive an email momentarily.');
+      } else {
+        const data = await response.json();
 
-		event.preventDefault();
-       
-		var obj = {
-			"Email": email.value,
-		};
-		var js = JSON.stringify(obj);
-	
-		try {
-			  const response = await fetch(`https://www.fintech.davidumanzor.com/forgot-password-email`, {
-				method: 'post',
-				body: js,
-				headers: { 'Content-Type': 'application/json' }
-			});
-			var res = JSON.parse(await response.text());
-			console.log(res);
-			if (res.error !== '') {
-				setMessage('Unable to send Password Reset Email.');
-			} else {
-				alert('Password Reset Email Sent.');
-			}
-		} catch (e) {
-			alert(e.toString());
-			return;
-		}
-	};
-	
+        // Check if the error message includes a string indicating an internal server error
+        if (data.message && data.message.includes('internal server error')) {
+          setMessage('Internal Server Error. Please try again later.');
+        } else {
+          setMessage(data.message || 'Unable to send Password Reset Email.');
+        }
+      }
+    } catch (error) {
+      setMessage('Unable to send Password Reset Email.');
+    }
+  };
 
-	return (
-		<div className="login-container">
-			<div className="login-form">
-				<form className='form' onSubmit={startPasswordReset}>
-				<h3>Reset Your Password</h3>
+  return (
+    <div className="login-container">
+      <div className="login-form">
+        <form className="form" onSubmit={startPasswordReset}>
+          <h3 className="pass2_forms_title">Forget Your Password?</h3>
 
-				<div className="mb-3">
-				<label>Email</label>
-				<input
-					type="text"
-					id="email"
-					class="user-input-field" 
-					placeholder="Email"
-					ref={(c) => email = c}/><br />
-				</div>
+          <p className="instructions">
+            Please Enter Your Email Below. <br />
+            If you have an account with us, we will go ahead and send you a reset link.
+          </p>
 
-				<div className="d-grid">
-				<button>
-					Submit
-				</button>
-				</div>
-			</form>
-			</div> 
-		</div>
-	);
+          <div className="mb-3 forms_field">
+            <input
+              type="text"
+              id="email"
+              className="user-input-field forms_field-input"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="d-grid">
+            <button type="submit" className="forms_buttons-action">
+              Submit
+            </button>
+          </div>
+
+          {/* Separate container for the message at the bottom */}
+          <div className="message-container">
+            {/* Display the message at the bottom */}
+            {message && <p className="forms_field-label">{message}</p>}
+          </div>
+        </form>
+      </div>
+    </div>
+  );
 }
+
 export default ForgotMyPassword;

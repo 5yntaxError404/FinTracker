@@ -1,0 +1,78 @@
+/* accounts.css */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+
+.accounts-container {
+	background-image: linear-gradient(to bottom right, #6e2b62, #33243f, #211522, #613659);
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 10px;
+    overflow-y: fit;
+}
+
+.accounts-content {
+    font-family: 'Montserrat' !important;
+    text-align: center;
+    height: 80vh;
+    max-width: 600px;
+    background-image: linear-gradient(to bottom right, #211522, #613659);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    border-radius: 30px;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    animation: fadeInAnimation ease 3s;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+}
+
+.accountsInfo {
+    font-family: 'Montserrat', sans-serif;
+    text-align: left;
+    max-height: 80vh;
+    max-width: 600px;
+    background-image: linear-gradient(to bottom right, #211522, #613659);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Align items to the start */
+    padding: 20px;
+    border-radius: 30px;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    overflow-y: scroll; /* Show scrollbar as needed */
+    margin-bottom: 10px; /* Space after the last account */
+    overflow-y: scroll; /* Keep it as scroll */
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+.accountsInfo::-webkit-scrollbar {
+    display: none;
+}
+
+.account {
+    /* Remove the fixed height to allow content to determine the height */
+    /* Remove the margin-top that's pushing content down */
+    background-image: linear-gradient(to bottom right, #211522, #613659);
+    border-radius: 30px;
+    padding: 10px;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    margin-bottom: 5px; /* Add space between the accounts */
+}
+
+.account_button {
+    border-radius: 30px;
+    padding: -5px;
+    background-color: #6e2b62;
+	color: #fff;
+	padding: 12px 20px;
+	font-size: 16px;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+}

@@ -1,29 +1,49 @@
 import React from 'react';
 import '../css/Header.css';
+import Container from 'react-bootstrap/Container';
+import Nav from 'react-bootstrap/Nav';
+import Navbar from 'react-bootstrap/Navbar';
+import NavDropdown from 'react-bootstrap/NavDropdown';
 
-function PageTitle()
+function Header()
 {
 
-	const goToLanding = async event =>
+	const doLogout = async event =>
 	{
-		window.location.href = '/';
+	event.preventDefault();
+	localStorage.removeItem("user")
+	window.location.href = '/';
 	};
 
-	const OpenMenu = async event =>
-	{
-		// This is where it will open a drop down menu for other options\
-		window.location.href = '/dash'
-	};
+    // Check if user is logged in
+    const user = localStorage.getItem("user");
 
-return(
-<div className="header">
-	<div style={{display: 'inline-block', verticalAlign: 'middle', position: 'absolute', left: 10 + 'px'}} className="Title Name">
-	<h1 onClick={goToLanding}>FinTrack</h1>
-	</div>
-	<div style={{display: 'inline-block', position: 'absolute', right: 20 + 'px', down: 20 + 'px'}}>
-	<h3 onClick={OpenMenu}>Menu</h3>
-	</div>
-</div>
-);
+    // No need for async here since localStorage API is synchronous
+    const userMenu = user ? (
+        <NavDropdown title="Menu" id="basic-nav-dropdown">
+            <NavDropdown.Item href="/dash">Dash</NavDropdown.Item>
+            <NavDropdown.Item href="/accounts">Accounts</NavDropdown.Item>
+            <NavDropdown.Item href="/budgets">Budgets</NavDropdown.Item>
+            <NavDropdown.Item href="/transactions">Transactions</NavDropdown.Item>
+            <NavDropdown.Item href="/settings">Settings</NavDropdown.Item>
+            <NavDropdown.Divider />
+            <NavDropdown.Item onClick={doLogout}>Log Out</NavDropdown.Item>
+        </NavDropdown>
+    ) : null;
+
+    return (
+        <Navbar expand="lg" className="bg-body-tertiary">
+            <Container>
+                <Navbar.Brand href="/">FinTracker</Navbar.Brand>
+                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                <Navbar.Collapse id="basic-navbar-nav">
+                    <Nav className="me-auto">
+                        {userMenu} {/* This will only render if user is logged in */}
+                    </Nav>
+                </Navbar.Collapse>
+            </Container>
+        </Navbar>
+    );
 };
-export default PageTitle;
+
+export default Header;

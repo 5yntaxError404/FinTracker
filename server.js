@@ -10,11 +10,12 @@ const cookieParser = require('cookie-parser');
 const { MongoClient } = require('mongodb');
 const { generateOneTimePass, verifyEmail, forgotPassword } = require('./mailing');
 require('dotenv/config');
-const port = process.env.PORT || 5000; // Heroku set port
+// const port = process.env.PORT || 5000; // Heroku set port
 const app = express();
+const bcrypt = require ("bcrypt");
+app.use(cors({origin: ["http://localhost:3000", "https://www.fintech.davidumanzor.com"]}));
 const crypto = require('crypto');
 // const bcrypt = require ("bcrypt"); -- may need this. delete later if not.
-app.use(cors());
 app.use(bodyParser.json());
 app.use(cookieParser());
 
@@ -59,12 +60,14 @@ async function main() {
       const accCollection = db.collection('Accounts');
       const achCollection = db.collection('Achievements');
       const budCollection = db.collection('Budgets');     
-      app.listen(port, () => {
-        console.log(`Server is running on ${port}`);
-      });
+ //     app.listen(port, () => {
+   //     console.log(`Server is running on ${port}`);
+     // });
   
    // Define a variable for the user counter
 let userCounter = 665;
+
+
 
 // JWT post
 app.get('/posts, authenticateToken', (req, res) => {
@@ -86,7 +89,7 @@ app.post('/api/register', async (req, res) => {
     }
 
     if (existingEmail) {
-      return res.status(400).json({ error: 'Email already associated with another account.'});
+      return res.status(401).json({ error: 'Email already associated with another account.'});
     }
     
     var check = await usersCollection.findOne({ UserId: userCounter });
@@ -106,7 +109,6 @@ app.post('/api/register', async (req, res) => {
       UserId: userCounter,
       FirstName,
       LastName,
-      UserId: userCounter,
       Email,
       UserName,
       Password,
@@ -115,10 +117,7 @@ app.post('/api/register', async (req, res) => {
     };
 
 
-    if(!checkPassComplexity(Password)){
-      return res.status(402).json({ message: 'Password is too weak. It must be at least 8 characters long with a digit, special characte, an uppercase character and a lowercase character.' });
-    }
-
+    
 
 
     verifyEmail(newUser.Email,EmailURL);
@@ -289,6 +288,7 @@ function checkPassComplexity(pass){
         forgotPassword(name, Email, EmailURL);
       
           console.log('Email Sent To:', user);
+          return res.status(200).json({message: 'Email sent.'});
         }
 
         catch (error) {
@@ -345,7 +345,7 @@ function checkPassComplexity(pass){
      
       
 
-app.get('/api/info/:UserId', authenticateToken, async (req, res) => {
+app.post('/api/info/:UserId', authenticateToken, async (req, res) => {
   try {
 
     if(parseInt(req.params.UserId) != req.user.UserId){
@@ -508,6 +508,7 @@ app.get('/api/accounts', authenticateToken, async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 app.get('/api/info/:UserId', authenticateToken, async (req, res) => {
   try {
 
@@ -657,13 +658,13 @@ app.post('/api/accounts/add/:UserId', authenticateToken, async (req, res) => {
 });
 
 // Get all accounts for the authenticated user
-app.get('/api/accounts', authenticateToken, async (req, res) => {
+app.post('/api/accounts', authenticateToken, async (req, res) => {
   try {
     const UserId = req.user.UserId; // Get UserId from the JWT
 
     // Query your database to fetch all the user's account information based on the UserId
     //Doesn't work because it would be an array - we can workshop this
-    const userAccounts = await accCollection.find({ UserIdRef: UserId }).toArray;
+    const userAccounts = await accCollection.find({ UserIdRef: UserId }).toArray();
 
     res.status(200).json(userAccounts);
   } catch (error) {
@@ -692,6 +693,24 @@ app.post('/api/account', authenticateToken, async (req, res) => {
   }
 });
 
+app.get('/api/users/get/', authenticateToken, async (req, res) => {
+  try {
+    const UserId = req.user.UserId; // Get UserId from the JWT
+    // const { UserId } = req.body; // Get the AccountNum from the request body
+    console.log(UserId);
+    // Query your database to fetch the specific account information based on the UserId and AccountNum
+    const UserInfo = await usersCollection.findOne({ UserId });
+
+    if (!UserInfo) {
+      return res.status(404).json({ error: 'User Not Found' });
+    }
+
+    res.status(200).json(UserInfo);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 
 
@@ -912,7 +931,7 @@ app.put('/api/budgets/edit/:UserId', authenticateToken, async (req, res) => {
   }
 });
 
-app.get('/api/budgets/get/:UserId', authenticateToken, async (req, res) => {
+app.post('/api/budgets/get/:UserId', authenticateToken, async (req, res) => {
   try {
 
     if(parseInt(req.params.UserId) != req.user.UserId){
@@ -1083,7 +1102,7 @@ app.put('/api/budgets/transactions/edit/:UserId', authenticateToken, async (req,
 });
 
 //get transaction
-app.get('/api/budgets/transactions/get/:UserId', authenticateToken, async (req, res) => {
+app.post('/api/budgets/transactions/get/:UserId', authenticateToken, async (req, res) => {
   
   try {
 
@@ -1130,7 +1149,7 @@ app.post('/api/achievements/add/:UserId', authenticateToken, async (req, res) =>
 });
 
 //Get achievements
-app.get('/api/achievements/get/:UserId', authenticateToken, async (req, res) => {
+app.post('/api/achievements/get/:UserId', authenticateToken, async (req, res) => {
   try {
 
     if(parseInt(req.params.UserId) != req.user.UserId){
@@ -1148,13 +1167,28 @@ app.get('/api/achievements/get/:UserId', authenticateToken, async (req, res) => 
   }
 }); 
     
+
+
+
     }
     catch
     {
-      //console.error(error);
+      console.error(error);
     }
   }
-  
+
   
   main().catch(console.error);
+
+  function startServer() {
+    const port = process.env.PORT || 5000; // Use port from environment variable or default to 5000
+    app.listen(port, () => {
+      console.log(`Server is running on ${port}`);
+    });
+  }
+  // Start the server only if the file is executed directly
+  if (require.main === module) {
+    startServer();
+  }
+  module.exports = {app, startServer}; // Export the app for testing purposes
 

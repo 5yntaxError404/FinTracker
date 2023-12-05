@@ -1,80 +1,270 @@
-/* Bar Graph Class */
+/* src/DashPage.css */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
 
+/* General styles */
+body {
+  margin: 0;
+  font-family: 'Montserrat' !important;
+}
 
-/*
+/* Header styles */
+.loggedInDiv {
+  align-self: flex-start;
+}
 
-.barGraph {
-    position: relative;
-    width: 100%;
-    height: auto;
-    margin-bottom: 50px;
+.loggedInName {
+  color: white;
+  justify-content: left;
+  align-self: flex-start;
+}
+
+.logInNameFont {
+  font-size: large;
+}
+
+/* Main container styles */
+.background {
+  background-size: cover;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background-image: linear-gradient(to bottom right, #6e2b62, #33243f, #211522, #613659);
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 20px;
+}
+
+.doughnut-chart,
+.transactions {
+    margin-top: 20px; 
+}
+
+.widget h2{
+	margin-top: 10px; 
+	margin-left: -180px;
+	margin-bottom: -1px;;
+}
+
+.widget p1{
+	margin-left: -82px;
+	color: rgb(2, 178, 2);
+	font-size: 20px;;
+}
+
+.widget h44{
+	font-size: 20px;;
+	margin-left: -163px;
+}
+
+.widget ul{
+	display:grid;
+	font-size: 20px;;
+	margin-left: -100px;
+}
+
+.widget-box {
+    display:block;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px 1em;
+    align-items: center;
+    padding-top: -40px;
+    width: 90%; 
+    margin: auto; 
+	margin-top: -10px;
+	margin-bottom: 20px;
+}
+
+.widget {
+  position: relative;
+  background-image: linear-gradient(to bottom right, #613659, #301f31);
+  width: 30vw;
+  align-content: center;
+  height: fit-content;
+  border-radius: 14px;
+  color: white;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  animation: fadeInAnimation ease 3s;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  margin-bottom: 10px;
+}
+
+.widget-budget{
+	position: relative;
+	background-image: linear-gradient(to bottom right, #352337, #613659);
+	align-content: center;
+	height: fit-content;
+	border-radius: 14px;
+	color: white;
+	box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+	animation: fadeInAnimation ease 3s;
+	animation-iteration-count: 1;
+	animation-fill-mode: forwards;
+	margin-bottom: 10px;
+	margin-right: 30px;
   }
-  
-  .graph {
-    position: relative;
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-    width: calc(100% - 4%);
-    left: 4%;
-    
-    &-barBack {
-      border-radius: 2px;
-      background: #DAE4EB;
-      margin-bottom: 10px;
-      display: block;
-    }
-    
-    &-bar {
-      background-color: #59BAC0;    
-      .transition(all 1s ease-out);
-      border-radius: 2px;
-      cursor: pointer;
-      margin-bottom: 10px;
-      position: relative;
-      z-index: 9999;
-      display: block;
-      height: 20px;  
-      width: 0%;
-      
-      &:hover {
-        .transition(all 0.5s ease);
-        background: #428D92;
-      }
-      
-      &:last-child {
-        margin-bottom: 0;
-      }
-      
-      &:after {
-        position: absolute;
-        content: attr(data-value);
-        display: none;
-        
-        font-size: 12px;
-        border-radius: 4px;
-        background: rgba(0,0,0,0.5);
-        color: #fff;
-        
-        line-height: @barHeight;
-        height: @barHeight; 
-        padding: 0 10px;
-        
-        margin-left: 5px;
-        left: 100%;
-        top: 0;
-      }
-      
-      &:hover:after {
-        display: block;
-      }
-    }
-    
-    &-legend {
-      position: absolute;
-      margin-right: 10px;
-      left: -40px ;
-      z-index: 9999;
-    }
+
+.widget-ach{
+	position: relative;
+	background-image: linear-gradient(to bottom right, #322134, #613659);
+	align-content: center;
+	height: fit-content;
+	border-radius: 14px;
+	color: white;
+	box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+	animation: fadeInAnimation ease 3s;
+	animation-iteration-count: 1;
+	animation-fill-mode: forwards;
+	margin-bottom: 10px;
+}
+
+/* Content box styles */
+.content {
+  font-family: 'Montserrat' !important;
+  text-align: center;
+  max-width: 600px;
+  background-image: linear-gradient(to bottom right, #211522, #613659);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  animation: fadeInAnimation ease 3s;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  margin: 20px;
+}
+
+/* Menu styles */
+.menu {
+  cursor: pointer;
+}
+
+/* Form styles */
+.form {
+  width: 80%;
+  align-content: center;
+  place-content: center;
+  margin-left: 10%;
+  margin-top: 5%;
+}
+
+/* Transaction styles */
+.transaction {
+  align-content: left;
+  padding-top: 0px;
+}
+.transactions h4{
+	font-size: 30px;
   }
-*/
+
+.transaction p {
+  padding: 0; 
+  margin: auto;
+  color: rgb(217, 15, 15);
+  font-size: 20px;
+}
+
+.expenses-list {
+  text-align: left;
+  margin-left: 7vw;
+}
+
+.achievements,
+.budget-goal {
+  padding-top: 15px;
+  height: 30vh;
+}
+
+.budget-goal p{
+	font-size: 20px;
+}
+
+
+.achievements h4{
+	font-size: 28px;
+}
+
+.doughnut-chart {
+  position: absolute;
+  width: 350px;
+  height: 350px;
+  margin: auto;
+}
+
+.doughnut-chart p {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #fff;
+  font-size: 1.2em;
+  text-align: center;
+}
+
+/* General configs */
+* {
+  box-sizing: border-box;
+}
+
+.body {
+  font-size: 12px;
+  line-height: 1em;
+  background-color: #6C5B7B;
+}
+
+.button,
+.input,
+.input[type="submit"] {
+  background-color: transparent;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  cursor: pointer;
+}
+
+.input::placeholder {
+  font-size: .85rem;
+  font-family: 'Montserrat' !important;
+  font-weight: 300;
+  letter-spacing: .1rem;
+  color: #ccc;
+}
+
+/* Animation styles */
+@keyframes bounceLeft {
+  0% {
+    transform: translate3d(100%, -50%, 0);
+  }
+  50% {
+    transform: translate3d(-30px, -50%, 0);
+  }
+  100% {
+    transform: translate3d(0, -50%, 0);
+  }
+}
+
+@keyframes bounceRight {
+  0% {
+    transform: translate3d(0, -50%, 0);
+  }
+  50% {
+    transform: translate3d(calc(100% + 30px), -50%, 0);
+  }
+  100% {
+    transform: translate3d(100%, -50%, 0);
+  }
+}
+
+@keyframes showSignUp {
+  100% {
+    opacity: 1;
+    visibility: visible;
+    transform: translate3d(0, 0, 0);
+  }
+}

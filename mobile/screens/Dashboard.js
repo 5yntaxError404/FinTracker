@@ -3,15 +3,17 @@ import { View, TextInput, Button, StyleSheet, Image, Modal, TouchableOpacity, Te
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
-import { getAccessToken } from '../accessToken';
+import { getAccessToken, getUserId } from '../accessToken';
 import { PieChart } from 'react-native-svg-charts';
 import { useFonts } from 'expo-font';
+
 
 const Dashboard = ({ navigation }) => {
 
     const [fontsLoaded] = useFonts({
         "Montserrat-Black":require("../assets/fonts/Montserrat-Black.ttf"),
     })
+    
 
     const [visibleTransactionPopup, setVisibleTransactionPopup] = useState(false);
     const showTransactionPopup = () => setVisibleTransactionPopup(true);
@@ -59,7 +61,8 @@ const Dashboard = ({ navigation }) => {
     const createBudget = async() => {
         //create
         try {
-            const response = await fetch('http://192.168.1.29:5000/api/budgets/add/667', {
+            
+            const response = await fetch(`https://fintech.davidumanzor.com/api/budgets/add/${userId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -79,7 +82,7 @@ const Dashboard = ({ navigation }) => {
     const readBudget = async() => {
         //read
         try {
-            const response = await fetch('https://www.fintech.davidumanzor.com/api/budgets/get/667', {
+            const response = await fetch(`https://www.fintech.davidumanzor.com/api/budgets/get/${userId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -215,7 +218,7 @@ const Dashboard = ({ navigation }) => {
     const updateBudget = async() => {
         //update
         try {
-            const response = await fetch('http://192.168.1.29:5000/api/budgets/edit/667', {
+            const response = await fetch(`https://www.fintech.davidumanzor.com/api/budgets/edit/${userId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -234,29 +237,54 @@ const Dashboard = ({ navigation }) => {
         };
 
     //CRUD for transactions
-    const addTransaction = async() => {
+    const addTransaction = async () => {
         try {
-            const response = await fetch('http://www.fintech.davidumanzor.com/api/budgets/transactions/667', {
+            // Get the user ID from the login
+            const userId = getUserId();
+    
+            // Make the POST request to add a transaction
+            const response = await fetch(`http://www.fintech.davidumanzor.com/api/budgets/transactions/${userId}`, {
                 method: 'POST',
                 headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getAccessToken()}`,
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getAccessToken()}`,
                 },
-                body: JSON.stringify({transactionAmt,transactionCategory}),
+                body: JSON.stringify({
+                    transactionAmt,
+                    transactionCategory
+                }),
             });
+    
+            // Check if the response status is OK (2xx)
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+    
+            // Parse the response data
             const data = await response.json();
             console.log(data);
-            dynamicTransactionData.push({[transactionCategory]:transactionAmt});
+    
+            // Update dynamicTransactionData
+            dynamicTransactionData.push({
+                [transactionCategory]: transactionAmt
+            });
             console.log(dynamicTransactionData);
-            addDataPoint("Transaction,",transactionAmt/MonthlyIncome*100);
+    
+            // Add a data point
+            //addDataPoint("Transaction", transactionAmt / MonthlyIncome * 100);
+    
+            // Hide the transaction popup
             hideTransactionPopup();
-            } catch(error) {
-                console.error("An error occured: ", error)
-            }
-        };
+        } catch (error) {
+            console.error("An error occurred: ", error);
+        }
+    };
+    
+    
     const editTransaction = async() => {
         try {
-            const response = await fetch('http://192.168.1.29:5000/api/budgets/transactions/edit/667', {
+            const userId = getUserId();
+            const response = await fetch(`https://fintech.davidumanzor.com/api/budgets/transactions/edit/${userId}`, {
                 method: 'PUT',
                 headers: {
                 'Content-Type': 'application/json',
@@ -273,7 +301,8 @@ const Dashboard = ({ navigation }) => {
         };
     const getTransaction = async() => {
         try {
-            const response = await fetch('http://www.fintech.davidumanzor.com/api/budgets/transactions/get/667', {
+            const userId = getUserId();
+            const response = await fetch(`https://www.fintech.davidumanzor.com/api/budgets/transactions/get/${userId}`, {
                 method: 'GET',
                 headers: {
                 'Content-Type': 'application/json',
@@ -289,7 +318,8 @@ const Dashboard = ({ navigation }) => {
         };
     const deleteTransaction = async() => {
         try {
-            const response = await fetch('http://192.168.1.29:5000/api/budgets/transactions/delete/667', {
+            const userId = getUserId();
+            const response = await fetch(`https://fintech.davidumanzor.com/api/budgets/transactions/delete/${userId}`, {
                 method: 'DELETE',
                 headers: {
                 'Content-Type': 'application/json',
@@ -307,7 +337,8 @@ const Dashboard = ({ navigation }) => {
     
     const getAchievements = async() => {
         try {
-            const response = await fetch('http://192.168.1.29:5000/api/achievements/get/667', {
+            const userId = getUserId();
+            const response = await fetch(`https://fintech.davidumanzor.com/api/achievements/get/${userId}`, {
                 method: 'GET',
                 headers: {
                 'Content-Type': 'application/json',
@@ -323,7 +354,8 @@ const Dashboard = ({ navigation }) => {
 
     const getAPIdashinfo = async() => {
         try {
-            const response = await fetch('http://192.168.1.29:5000/api/info/667', {
+            const userId = getUserId();
+            const response = await fetch(`https://fintech.davidumanzor.com/api/info/${userId}`, {
                 method: 'GET',
                 headers: {
                 'Content-Type': 'application/json',
