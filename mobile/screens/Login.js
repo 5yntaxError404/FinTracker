@@ -3,7 +3,7 @@ import { View, TextInput, Button, StyleSheet, Image, Modal, TouchableOpacity, Te
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
-import { setAccessToken, setUserId } from '../accessToken';
+import { setAccessToken, setUserId, getUserId } from '../accessToken';
 import { getAccessToken } from '../accessToken';
 import Landing from './Landing'
 import Dashboard from './Dashboard'
@@ -53,6 +53,7 @@ const [Email, setSignupEmail] = useState('');
         setUserId(data.UserId); // check accessToken.js and JSON return from login
         console.log(data);
         console.log("access token is:" + getAccessToken());
+        console.log("userId is: " + getUserId());
         setShowError(false);
       } else{
         console.log("Login unsuccessful");
