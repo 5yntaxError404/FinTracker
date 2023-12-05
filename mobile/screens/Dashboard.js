@@ -7,12 +7,13 @@ import { getAccessToken, getUserId } from '../accessToken';
 import { PieChart } from 'react-native-svg-charts';
 import { useFonts } from 'expo-font';
 
+
 const Dashboard = ({ navigation }) => {
 
     const [fontsLoaded] = useFonts({
         "Montserrat-Black":require("../assets/fonts/Montserrat-Black.ttf"),
     })
-    const userId = getUserId(); 
+    
 
     const [visibleTransactionPopup, setVisibleTransactionPopup] = useState(false);
     const showTransactionPopup = () => setVisibleTransactionPopup(true);
@@ -235,28 +236,50 @@ const Dashboard = ({ navigation }) => {
         };
 
     //CRUD for transactions
-    const addTransaction = async() => {
+    const addTransaction = async () => {
         try {
-            const userId = getUserId(); // supposed to get the id from the login.
-
-            const response = await fetch('http://www.fintech.davidumanzor.com/api/budgets/transactions/${userId}', { // how do we access this?
+            // Get the user ID from the login
+            const userId = getUserId();
+    
+            // Make the POST request to add a transaction
+            const response = await fetch(`http://www.fintech.davidumanzor.com/api/budgets/transactions/${userId}`, {
                 method: 'POST',
                 headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getAccessToken()}`,
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getAccessToken()}`,
                 },
-                body: JSON.stringify({transactionAmt,transactionCategory}),
+                body: JSON.stringify({
+                    transactionAmt,
+                    transactionCategory
+                }),
             });
+    
+            // Check if the response status is OK (2xx)
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+    
+            // Parse the response data
             const data = await response.json();
             console.log(data);
-            dynamicTransactionData.push({[transactionCategory]:transactionAmt});
+    
+            // Update dynamicTransactionData
+            dynamicTransactionData.push({
+                [transactionCategory]: transactionAmt
+            });
             console.log(dynamicTransactionData);
-            addDataPoint("Transaction,",transactionAmt/MonthlyIncome*100);
+    
+            // Add a data point
+            //addDataPoint("Transaction", transactionAmt / MonthlyIncome * 100);
+    
+            // Hide the transaction popup
             hideTransactionPopup();
-            } catch(error) {
-                console.error("An error occured: ", error)
-            }
-        };
+        } catch (error) {
+            console.error("An error occurred: ", error);
+        }
+    };
+    
+    
     const editTransaction = async() => {
         try {
             const response = await fetch('http://192.168.1.29:5000/api/budgets/transactions/edit/667', {
