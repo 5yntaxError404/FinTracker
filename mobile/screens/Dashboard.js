@@ -270,8 +270,6 @@ const Dashboard = ({ navigation }) => {
             });
             console.log(dynamicTransactionData);
 
-            getTransaction();
-            //getTransactionTotal();
     
             // Add a data point
             //addDataPoint("Transaction", transactionAmt / MonthlyIncome * 100);
