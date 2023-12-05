@@ -1123,6 +1123,25 @@ app.post('/api/budgets/transactions/get/:UserId', authenticateToken, async (req,
   }
 });
 
+app.post(`api/budgets/transactions/getTotal/:UserId`, authenticateToken, async (req, res) => {
+  
+  try {
+    if(parseInt(req.params.UserId) != req.user.UserId){
+      return res.status(403).json({ message: 'Access Denied' });
+    }
+
+    var transactionGrabber = await budCollection.findOne(
+      { UserIdRef: parseInt(req.params.UserId)}
+    );
+
+    res.status(200).json(transactionGrabber.TransactionsAmt);
+  }
+  catch (error) {
+    console.error(error);
+    res.status(500).json({error: 'Internal Server Error'});
+  }
+})
+
 //Achievement Endpoints
 app.post('/api/achievements/add/:UserId', authenticateToken, async (req, res) => {
   const achievementToAdd = req.body.achievementToAdd;

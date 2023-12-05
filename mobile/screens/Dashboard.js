@@ -269,6 +269,8 @@ const Dashboard = ({ navigation }) => {
                 [transactionCategory]: transactionAmt
             });
             console.log(dynamicTransactionData);
+
+            getTransaction();
     
             // Add a data point
             //addDataPoint("Transaction", transactionAmt / MonthlyIncome * 100);
@@ -303,7 +305,7 @@ const Dashboard = ({ navigation }) => {
         try {
             const userId = getUserId();
             const response = await fetch(`https://www.fintech.davidumanzor.com/api/budgets/transactions/get/${userId}`, {
-                method: 'GET',
+                method: 'Post',
                 headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${getAccessToken()}`,
@@ -316,6 +318,25 @@ const Dashboard = ({ navigation }) => {
                 console.error("An error occured: ", error)
             }
         };
+    
+    const getTransactionTotal = async() => {
+        try {
+            const userId = getUserId();
+            const response = await fetch(`https://www.fintech.davidumanzor.com/api/budgets/transactions/getTotal/${userId}`, {
+                method: 'Post',
+                headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getAccessToken()}`,
+                },
+            });
+            const data = await response.json();
+            console.log(data);
+           // hideTransactionPopup();
+            } catch(error) {
+                console.error("An error occured: ", error)
+            }
+        }
+
     const deleteTransaction = async() => {
         try {
             const userId = getUserId();
