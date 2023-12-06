@@ -1036,7 +1036,7 @@ app.post('/api/budgets/transactions/:UserId', authenticateToken, async (req, res
 app.delete('/api/budgets/transactions/delete/:UserId', authenticateToken, async (req, res) => {
   
   var TransactionID = req.body.transactionID;
-  var TransactionsAmt = 0;
+  var TransactionsAmt;
   try {
 
     if(parseInt(req.params.UserId) != req.user.UserId){
@@ -1049,7 +1049,7 @@ app.delete('/api/budgets/transactions/delete/:UserId', authenticateToken, async 
     
     for(x in transactionGrabber.Transactions){
       if(transactionGrabber.Transactions[x].Transactions.transactionID == TransactionID){
-        //TransactionsAmt -= transactionGrabber.Transactions[x].Transactions.transactionAmt;
+        TransactionsAmt = transactionGrabber.transactionAmt - transactionGrabber.Transactions[x].Transactions.transactionAmt;
         var transactionDeleter = budCollection.findOneAndUpdate(
           { UserIdRef: parseInt(req.params.UserId)},
           { $pull : {Transactions : transactionGrabber.Transactions[x]}}
