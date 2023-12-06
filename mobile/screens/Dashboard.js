@@ -32,7 +32,7 @@ const Dashboard = ({ navigation }) => {
     const hideCategoryBreakdownPopup = () => setVisibleCategoryBreakdownPopup(false);
 
     // Budget BODY
-    const[MonthlyIncome, setMonthlyIncome] = useState(1.00);
+    const[MonthlyIncome, setMonthlyIncome] = useState(1.0);
     const[rent, setRent] = useState(0.0);
     const[utilities, setUtilities] = useState(0.0);
     const[groceries, setGroceries] = useState(0.0);
@@ -188,8 +188,6 @@ const Dashboard = ({ navigation }) => {
             // console.log("saved amount:", data?.budgetGot?.SavedAmt);
             setSavedAmt(data?.budgetGot?.SavedAmt);
 
-            // updateChartData("rent","rent",(rent/MonthlyIncome)* 100);
-            // hideBudgetPopup();
         } catch(error) {
             console.error("An error occured: ", error)
         }
@@ -200,9 +198,6 @@ const Dashboard = ({ navigation }) => {
         useEffect(() => {
             if(MonthlyExpenses != 0)
             {
-                // console.log("");
-                // console.log("setMonthlyExpenses percentage which is now: ", + (MonthlyExpenses/MonthlyIncome)* 100);
-                // console.log("MonthlyIncome percentage which is now: " + 100 - (MonthlyExpenses/MonthlyIncome) * 100);
                 console.log(MonthlyIncome);
                 console.log("Monthly Expenses: " + MonthlyExpenses);
                 updateChartData("main","MonthlyIncome", 100 - (MonthlyExpenses/MonthlyIncome)* 100);
@@ -213,18 +208,16 @@ const Dashboard = ({ navigation }) => {
             }
         }, [MonthlyExpenses]); // This will trigger the effect whenever MonthlyExpenses changes
 
-        useEffect(() => {
-            if(GoalAmt != 0 && SavedAmt != 0)
-            {
-                // console.log("");
-                // console.log("setMonthlyExpenses percentage which is now: ", + (MonthlyExpenses/MonthlyIncome)* 100);
-                // console.log("MonthlyIncome percentage which is now: " + 100 - (MonthlyExpenses/MonthlyIncome) * 100);
-                console.log("Goal: " + GoalAmt);
-                console.log("Saved: " + SavedAmt)
-                updateChartData("budget","goalAmt", 100 - (SavedAmt/GoalAmt)* 100);
-                updateChartData("budget","saved",(SavedAmt/GoalAmt)* 100);
-            }
-        }, [GoalAmt, SavedAmt]); // This will trigger the effect whenever MonthlyExpenses changes
+        // useEffect(() => {
+        //     if(GoalAmt != 0 && SavedAmt != 0)
+        //     {
+        //         if(GoalAmt > 9999 & SavedAmt > 100)
+        //         console.log("Goal: " + GoalAmt);
+        //         console.log("Saved: " + SavedAmt)
+        //         // updateChartData("budget","goalAmt", 100 - (SavedAmt/GoalAmt)* 100);
+        //         updateChartData("budget","saved",(SavedAmt/GoalAmt)* 100);
+        //     }
+        // }, [GoalAmt, firstEffectRun]); // This will trigger the effect whenever MonthlyExpenses changes
 
         useEffect(() => {
             console.log("we are under the rent part, MonthlyExpenses is: " + MonthlyExpenses + " Boolean is: " + firstEffectRun);
@@ -888,12 +881,6 @@ const Dashboard = ({ navigation }) => {
                         </View>
                     </View>
                 </Modal>
-
-                <TouchableOpacity
-                                style={styles.getStartedButton}
-                                onPress={showTransactionPopup}> 
-                                <Text style={styles.getStartedText}>Add Transaction</Text>
-                </TouchableOpacity>
        
                 <Modal
                     transparent={true}
@@ -1116,6 +1103,7 @@ const Dashboard = ({ navigation }) => {
                                     labelRadius={'75%'}
                                     />
                                     
+                                    
                                     <TouchableOpacity 
                                     style={styles.categoryButton}
                                     onPress={hideCategoryBreakdownPopup}
@@ -1139,20 +1127,6 @@ const Dashboard = ({ navigation }) => {
                         <Text style={styles.getStartedText}>Log Out</Text>
                 </TouchableOpacity>
 
-            </View>
-
-            <View style={styles.mainSummaryBox}>
-                <Text style={styles.text}>{GoalDescription}</Text>
-                <Text style={styles.expense}>{SavedAmt}/{GoalAmt}</Text>
-                <View style={styles.graphContainer}>
-                    <PieChart
-                        style={{ height: 300 }}
-                        data={budgetGoalData}
-                        innerRadius={'40%'}
-                        outerRadius={'80%'}
-                        labelRadius={'75%'}
-                    />
-                </View>
             </View>
             </ScrollView>
             </LinearGradient>
