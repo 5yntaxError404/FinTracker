@@ -35,8 +35,14 @@ function BudgetPage() {
         try {
             const value = parseFloat(inputElement.value);
 
-            if (isNaN(value) || value < 0) {
+            if (value < 0) {
                 throw new Error(`Invalid ${fieldName}: Please enter a non-negative number.`);
+            }
+            
+            if(isNaN(value) && fieldName == "Income"){
+                throw new Error(`Invalid ${fieldName}: Please enter a positive number for your income.`);
+            }else if (isNaN(value)){
+                inputElement.value = 0;
             }
 
             if (value.toString().includes('.') && (value.toString().split('.')[1].length > 2)) {
@@ -68,19 +74,19 @@ function BudgetPage() {
         let savedAmt = document.getElementById("inputSavedAmt");
 
 		var obj = {
-            MonthlyIncome: parseFloat(income.value),
-            rent: parseFloat(rent.value),
-            utilities: parseFloat(utilities.value),
-            groceries: parseFloat(groceries.value),
-            insurance: parseFloat(insurance.value),
-            phone: parseFloat(phone.value),
-            car: parseFloat(car.value),
-            gas: parseFloat(gas.value),
-            fun: parseFloat(fun.value),
-            goal: parseFloat(goal.value),
+            MonthlyIncome: income.value,
+            rent: rent.value,
+            utilities: utilities.value,
+            groceries: groceries.value,
+            insurance: insurance.value,
+            phone: phone.value,
+            car: car.value,
+            gas: gas.value,
+            fun: fun.value,
+            goal: goal.value,
             GoalDescription: goalDescription.value,
-            GoalAmt: parseFloat(goalAmt.value),
-            SavedAmt: parseFloat(savedAmt.value),
+            GoalAmt: goalAmt.value,
+            SavedAmt: savedAmt.value,
 		};
 		var js = JSON.stringify(obj);
         
@@ -96,7 +102,7 @@ function BudgetPage() {
             const validatedCar = validateInput(car, 'Car');
             const validatedGas = validateInput(gas, 'Gas');
             const validatedFun = validateInput(fun, 'Entertainment');
-            const validatedGoal = validateInput(goal, 'Goal');
+            const validatedGoal = validateInput(goal, 'Monthly Savings');
             const validatedGoalAmt = validateInput(goalAmt, 'Goal Amount');
             const validatedSavedAmt = validateInput(savedAmt, 'Saved Amount');
 
@@ -333,6 +339,12 @@ function BudgetPage() {
                                         <label htmlFor="inputFun">Entertainment</label>
                                         <input type="number" className="form-control" id="inputFun"/>
                                     </Col>
+
+                                    <Col>
+                                        <label htmlFor="inputGoal">Monthly Savings</label>
+                                        <input type="number" className="form-control" id="inputGoal"/>
+                                    </Col>
+
                                 </Row>
                                 <Row>
                                     <Col>

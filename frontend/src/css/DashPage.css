@@ -7,6 +7,35 @@ body {
   font-family: 'Montserrat' !important;
 }
 
+.chart-container {
+  position: flex;
+  width: 300px;
+  height:280px;
+  margin-top: 20px;
+  margin-left: -130px;
+
+}
+
+.centered-text {
+  position: absolute;
+  top: 70%;
+  left: 70%;
+  transform: translate(-410%, -230%);
+  color: #fff;
+  font-size: 1.2em;
+  text-align: center;
+}
+
+.above-centered-text {
+  position: absolute;
+  top: 70%;
+  left: 70%;
+  transform: translate(-487%, -300%);
+  color: #fff;
+  font-size: 1.2em;
+  text-align: center;
+}
+
 /* Header styles */
 .loggedInDiv {
   align-self: flex-start;
@@ -48,19 +77,19 @@ body {
 }
 
 .widget p1{
-	margin-left: -82px;
+	margin-left: -110px;
 	color: rgb(2, 178, 2);
-	font-size: 20px;;
+	font-size: 18px;;
 }
 
 .widget h44{
-	font-size: 20px;;
+	font-size: 20px;
 	margin-left: -163px;
 }
 
 .widget ul{
 	display:grid;
-	font-size: 20px;;
+	font-size: 16px;;
 	margin-left: -100px;
 }
 
@@ -155,20 +184,26 @@ body {
 }
 
 /* Transaction styles */
-.transaction {
+.transactionn {
   align-content: left;
-  padding-top: 0px;
 }
 .transactions h4{
-	font-size: 30px;
-  }
-
-.transaction p {
-  padding: 0; 
-  margin: auto;
-  color: rgb(217, 15, 15);
-  font-size: 20px;
+	font-size: 28px;
+  margin-left: 130px;
+  margin-top: -10px;
 }
+
+.transactions p1{
+  margin-left: 130px;
+  color: white;
+}
+
+  .transactionn p {
+    margin-left: 65px;
+    margin-bottom: 5px;
+    color: rgb(217, 15, 15);
+    font-size: 20px;
+  }
 
 .expenses-list {
   text-align: left;
@@ -191,17 +226,19 @@ body {
 }
 
 .doughnut-chart {
-  position: absolute;
+  position:absolute;
   width: 350px;
   height: 350px;
-  margin: auto;
+  margin-top: -295px;
+  margin-left: 210px;
+  margin-right: 200px;
 }
 
 .doughnut-chart p {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  top: 70%;
+  left: 70%;
+  transform: translate(-145%, -145%);
   color: #fff;
   font-size: 1.2em;
   text-align: center;
@@ -218,14 +255,15 @@ body {
   background-color: #6C5B7B;
 }
 
-.button,
-.input,
-.input[type="submit"] {
-  background-color: transparent;
-  padding: 0;
-  border: 0;
-  outline: 0;
-  cursor: pointer;
+.btn.btnn-primary{
+  background-color: #6e2b62;
+	color: #fff;
+	padding: 12px 20px;
+	font-size: 16px;
+	border: none;
+	border-radius: 5px;
+  margin-left: 130px;
+	cursor: pointer;
 }
 
 .input::placeholder {

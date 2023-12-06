@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+
 import '../css/DashPage.css';
 
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import ProgressBar from 'react-bootstrap/ProgressBar';
-import { Doughnut } from 'react-chartjs-2'
+import { Doughnut } from 'react-chartjs-2';
+import Chart from 'chart.js/auto'; 
 
 import {
     Chart as ChartJS,
@@ -167,45 +169,64 @@ const Dash = (props) => {
         }
     };
 
-    // Obtains achievements from DB and updates webpage
-    const GetAchievements = async() =>
-    {
+    const GetAchievements = async () => {
         try {
             const userinfo = JSON.parse(localStorage.getItem('user'));
-            
+            if (!userinfo || !userinfo.UserId || !userinfo.accessToken) {
+                console.error("User info not found in localStorage");
+                // Optionally, redirect to login or show an error message
+                return;
+            }
+    
             const response = await fetch(
                 `${base_url}/api/achievements/get/${userinfo.UserId}`,
                 {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${userinfo.accessToken}`
-                },
-                credentials: 'same-origin',
-            });
-            var check = response.text();
-            var res = JSON.parse(await check);
-            console.log(res);
-
-            if (res.error) {
-                setMessage('Unable to get Achievements'); // Set an error message
-                console.log('Some error');
-            } 
-            else {
-                setAchievements(res);
-                setMessage('Success');
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${userinfo.accessToken}`
+                    },
+                    credentials: 'same-origin',
+                }
+            );
+    
+            const responseText = await response.text();
+            console.log("Raw response:", responseText); // Log the raw response
+    
+            if (!response.ok) {
+                console.error("HTTP Error: ", response.status);
+                // Handle HTTP error, such as showing an error message
+                return;
             }
-            
+    
+            let res;
+            try {
+                res = JSON.parse(responseText);
+            } catch (e) {
+                console.error("JSON Parsing Error: ", e);
+                // Handle JSON parsing error, such as showing an error message
+                return;
+            }
+    
+            if (res.error) {
+                console.error('API Error:', res.error);
+                setMessage('Unable to get Achievements');
+                return;
+            }
+    
+            setAchievements(res);
+            setMessage('Success');
         } catch (e) {
-            console.log(check);
-            if(check.value == "Forbidden")
-            {
+            console.error("Catch Error: ", e.message);
+            alert(e.toString());
+            if (e.message === "User info not found in localStorage" || e.message === "Forbidden") {
                 window.location.href = '/login';
             }
-            alert(e.toString());
             return;
         }
     };
+    
+    /*
 
     const RefreshToken = async () => {
         const userinfo = JSON.parse(localStorage.getItem('user'));
@@ -226,7 +247,7 @@ const Dash = (props) => {
             return;
         }
     };
-
+    */
 
     useEffect(() => {
         const loadData = async () => {
@@ -235,7 +256,9 @@ const Dash = (props) => {
             await new Promise(resolve => setTimeout(resolve, 1000));
       
             await Promise.all([
-                RefreshToken(),
+
+              //  RefreshToken(),
+
                 GetBudget(),
                 GetAccounts(),
                 GetTransactions(),
@@ -286,6 +309,90 @@ const Dash = (props) => {
         Tooltip,
         Legend
       );
+
+      useEffect(() => {
+        const budgetData = {
+            income: budget.income,
+            rent: budget.rent,
+            utilities: budget.utilities,
+            groceries: budget.groceries,
+            insurance: budget.insurance,
+            phone: budget.phone,
+            car: budget.car,
+            gas: budget.gas,
+            fun: budget.fun,
+            goal: budget.goal,
+        };
+
+        const budgetLabels = Object.keys(budgetData);
+        const budgetValues = Object.values(budgetData);
+
+        const ctx = document.getElementById('budgetChart');
+        
+        if (ctx && ctx.chart) {
+            ctx.chart.destroy();
+        }
+        
+        if (ctx) {
+            ctx.chart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ["Income", "Rent", "Utilities", "Groceries", "Insurance", "Phone", "Gas", "Car", "Entertainment", "Goal"],
+                    datasets: [{
+                        data: budgetValues,
+                        backgroundColor: [
+                            '#FF6384', // Vivid Pink
+                            '#36A2EB', // Bright Blue
+                            '#FFCE56', // Soft Yellow
+                            '#4BC0C0', // Turquoise
+                            '#9966FF', // Amethyst Purple
+                            '#FF9F40', // Tangerine Orange
+                            '#7CDDDD', // Powder Blue
+                            '#C9CB3A', // Olive Green
+                            '#FF9999', // Light Coral
+                            '#99C24D'  // Apple Green
+                        ],
+                        
+                        borderWidth: 1, // Width of the border between segments
+                        borderColor: 'white', // Color of the border, white creates visible gaps
+                        borderRadius: 5,
+                    }],
+                },
+                options: {
+                    layout: {
+                        padding: {
+                            top: 0,
+                            right: 0,
+                            bottom: 0,
+                            left: 0
+                        }
+                    },
+                    plugins: {                    
+                        legend: {
+                            display: false,
+                            labels: {
+                                color: '#f1f1f1'
+                            },
+                            fonts: {
+                                size: 24
+                            }
+                        },
+                        animation: {
+                            animateRotate: true,
+                            animateScale: true,
+                        },
+                    },
+                    onHover: (event, chartElement) => {
+                        event.native.target.style.cursor = chartElement[0] ? 'pointer' : 'default';
+                    },
+                    hoverOffset: 20,
+                    responsive: true,
+                    width : 50,
+                    height : 50, // Adjust as needed, this controls the offset on hover
+                }
+            });
+        }
+    }, [budget]);
     return (
         <div className="background">
         <Container className='widget-box'>
@@ -310,9 +417,13 @@ const Dash = (props) => {
                         </div>
                         </Col>
                         <Col>
-                            {/* Conditional rendering of the Pie chart */}
+                        {(
+                            <div class = "chart-container">
+                            <canvas id="budgetChart"></canvas>
+                            </div>
+                        )}
                             {(
-                                <div className='doughnut-chart' style={{ width: '350px', height: '350px'}}>
+                                <div className='doughnut-chart' style={{ width: '350px', height: '300px'}}>
                                      <Doughnut data={data}/>
                                      <p> ${budget.transactionsAmt} / ${budget.income} </p>
                                 </div>
@@ -322,20 +433,20 @@ const Dash = (props) => {
                         <Col>
                             {/* Placeholder for transactions and achievements */}
                             <div className="transactions">
-                                <h4>Transactions</h4>
+                                <h4>Recent Transactions</h4>
                                 {/* Check if there are transactions */}
                                 {transactions.length > 0 ? (
                                     transactions.slice(0, 5).map((transaction) => (
-                                        <Row className="transaction" key={transaction.Transactions.transactionID}>
+                                        <Row className="transactionn" key={transaction.Transactions.transactionID}>
                                             <p> {transaction.Transactions.transactionCategory}: - ${transaction.Transactions.transactionAmt}</p>
                                         </Row>
                                     ))
                                 ) : (
                                     // Display a message when there are no transactions
-                                    <p>No transactions available.</p>
+                                    <p1>No recent transactions.</p1>
                                 )}
                             </div>
-                            <button className="btn btn-primary" onClick={() => window.location.href='/transactions'}>Add Transaction</button>
+                            <button className="btn btnn-primary" onClick={() => window.location.href='/transactions'}>Add Transaction</button>
                         </Col>
 
                     </Row>

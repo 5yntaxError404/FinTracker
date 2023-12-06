@@ -35,3 +35,26 @@
     text-align: center;
     color: white
 }
+
+.editaccbtn.btn-primary{
+	background-color: #6e2b62;
+	color: #fff;
+	padding: 12px 20px;
+	font-size: 16px;
+	border: none;
+	border-radius: 5px;
+    margin-right: 10px;
+	cursor: pointer;
+}
+
+.delaccbtn.btn-primary{
+    background-color: #6e2b62;
+	color: #fff;
+	padding: 12px 20px;
+	font-size: 16px;
+	border: none;
+	border-radius: 5px;
+    margin-left: 10px;
+    margin: auto;
+	cursor: pointer;
+}

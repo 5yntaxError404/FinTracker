@@ -9,6 +9,7 @@ import Col from 'react-bootstrap/Col';
 
 // Looking for correct code to import font
 
+
 function SettingsPage() {
 
     const [settings, setSettings] = useState({
@@ -37,6 +38,30 @@ function SettingsPage() {
         };
     }, []);
 
+    const validateInput = (inputElement, fieldName) => {
+        try {
+            const valuelength = inputElement.length;
+            const value = inputElement;
+            
+            if(valuelength == 0 && fieldName == "Username"){
+                return settings.UserName;
+            }else if(valuelength == 0 && fieldName == "Password"){
+                return settings.Password;
+            }else if(valuelength == 0 && fieldName == "First Name"){
+                return settings.FirstName;
+            }else if(valuelength == 0 && fieldName == "Last Name"){
+                return settings.LastName;
+            }else if(valuelength == 0 && fieldName == "Email"){
+                return settings.Email;
+            }
+    
+            return value;
+        } catch (error) {
+            setMessage(error.message);
+            throw error;
+        }
+    };
+
     // Adds and Edits Budget in DB and updates webpage
     const EditUser = async event =>
     {
@@ -49,13 +74,19 @@ function SettingsPage() {
         let newEmail = document.getElementById("inputEmail").value;
 
         console.log(newUsername);
+        
+        let validatedUser = validateInput(newUsername, "Username");
+        let validatedPass = validateInput(newPassword, "Password");
+        let validatedFirst = validateInput(newFirstName, "First Name");
+        let validatedLast = validateInput(newLastName, "Last Name");
+        let validatedEmail = validateInput(newEmail, "Email");
 
 		var obj = {
-            UserName: newUsername,
-            Password: newPassword,
-            FirstName: newFirstName,
-            LastName: newLastName,
-            Email: newEmail,
+            UserName: validatedUser,
+            Password: validatedPass,
+            FirstName: validatedFirst,
+            LastName: validatedLast,
+            Email: validatedEmail,
 		};
 		var js = JSON.stringify(obj);
         
@@ -95,49 +126,58 @@ function SettingsPage() {
 		}
     };
 
-    // Obtains budget from DB and updates webpage
-    const DeleteUser = async () =>
-    {
+    const DeleteUser = async (event) => {
+        event.preventDefault(); // Prevent default form submission behavior
+    
         if (!window.confirm("Are you sure you want to delete this user?")) {
             console.log("User deletion cancelled.");
             return; // Exit the function if user cancels
         }
-
+    
         try {
             const userinfo = JSON.parse(localStorage.getItem('user'));
             console.log(userinfo);
             console.log(userinfo.UserId);
-            const response = await fetch(
-                `${base_url}/api/user/delete/`,
-                {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${userinfo.accessToken}`
-                },
-                credentials: 'same-origin',
-            });
-            
-            var res = JSON.parse(await response.text());
-            var res = {message: "2000"};
-			console.log(res);
 
-			if (res.error) {
-                setMessage('Unable to get Budget'); // Set an error message
+            // Correctly format the request body
+            const obj = { UserId: userinfo.UserId };
+            const body = JSON.stringify(obj); // Stringify the object
+
+            const response = await fetch(
+                `${base_url}/api/users/delete/`, // Ensure this endpoint is correct
+                {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${userinfo.accessToken}`
+                    },
+                    body: body, // Use the correctly formatted body
+                    credentials: 'same-origin',
+                });
+    
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+    
+            var res = await response.json();
+            console.log(res);
+    
+            if (res.error) {
+                setMessage('Unable to delete user'); // Set an error message
                 console.log('Some error');
-            } 
-            else {
-                setMessage('Success');
-                console.log("Reached delete state");
-                window.location.href = '/login';
+            } else {
+                setMessage('User successfully deleted');
+                console.log("User deleted");
                 localStorage.removeItem("user");
+                window.location.href = '/login';
             }
             
-		} catch (e) {
-			alert(e.toString());
-			return;
-		}
+        } catch (e) {
+            alert(e.toString());
+            return;
+        }
     };
+    
 
     const GetUser = async () => {
         try {
@@ -169,6 +209,7 @@ function SettingsPage() {
             setMessage(`Error: ${e.message}`);
         }
     };
+
 
     return (
 
@@ -204,29 +245,31 @@ function SettingsPage() {
                         <div className="form-row">
                             <div className="form-group">
                             <label htmlFor="inputUserName">Username</label>
-                            <input type="text" className="form-control" id="inputUserName"/>
+                            <input type="text" placeholder = {settings.UserName} className="form-control" id="inputUserName"/>
                             </div>
                             <div className="form-group">
                             <label htmlFor="inputPassword">Password</label>
-                            <input type="text" className="form-control" id="inputPassword"/>
+                            <input type="text" placeholder = {settings.Password} className="form-control" id="inputPassword"/>
                             </div>
                         </div>
                         <div className="form-group">
-                            <label htmlFor="inputFirstName">FirstName</label>
-                            <input type="text" className="form-control" id="inputFirstName"/>
+                            <label htmlFor="inputFirstName">First Name</label>
+                            <input type="text" placeholder = {settings.FirstName} className="form-control" id="inputFirstName"/>
                         </div>
                         <div className="form-group">
-                            <label htmlFor="inputLastName">LastName</label>
-                            <input type="text" className="form-control" id="inputLastName"/>
+                            <label htmlFor="inputLastName">Last Name</label>
+                            <input type="text" placeholder = {settings.LastName} className="form-control" id="inputLastName"/>
                         </div>
                         <div className="form-row">
                             <div className="form-group">
                                 <label htmlFor="inputEmail">Email</label>
-                                <input type="text" className="form-control" id="inputEmail"/>
+                                <input type="text" placeholder = {settings.Email} className="form-control" id="inputEmail"/>
                             </div>
                         </div>
-                        <button type="submit" className="btn btn-primary" onClick={EditUser}>Edit Account</button>
-                        <button type="submit" className="btn btn-primary" onClick={DeleteUser}>Delete Account</button>
+                        <button type="submit" className="editaccbtn btn-primary" onClick={EditUser}>Edit Account</button>
+                        <button type="submit" className="delaccbtn btn-primary" onClick={DeleteUser}>Delete Account</button>
+                        {message && !message.startsWith('Success') && (
+                <div style={{ color: 'red', marginTop: '10px' }}>{message}</div>)}
                         </form>
                     </Col>
                 </Row>
