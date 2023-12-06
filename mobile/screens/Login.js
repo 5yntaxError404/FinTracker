@@ -48,6 +48,9 @@ const [Email, setSignupEmail] = useState('');
       });
       const data = await response.json();
       if(data.message === "Login successful" && data.accessToken){
+    //     setTimeout(() => {
+    //         navigation.navigate('Dashboard');
+    //       }, 1000);
         navigation.navigate('Dashboard');
         setAccessToken(data.accessToken);
         setUserId(data.UserId); // check accessToken.js and JSON return from login
