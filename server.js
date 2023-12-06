@@ -1045,6 +1045,8 @@ app.post('/api/budgets/transactions/:UserId', authenticateToken, async (req, res
       TransactionsAmt += transactionGrabber.Transactions[x].Transactions.transactionAmt;
     }  
 
+    TransactionsAmt = TransactionsAmt.toFixed(2);
+
     budgetToEdit = await budCollection.findOneAndUpdate(
       { UserIdRef: parseInt(req.params.UserId)},
       { $set: { TransactionsAmt: TransactionsAmt} },
@@ -1076,6 +1078,7 @@ app.delete('/api/budgets/transactions/delete/:UserId', authenticateToken, async 
     for(x in transactionGrabber.Transactions){
       if(transactionGrabber.Transactions[x].Transactions.transactionID == TransactionID){
         TransactionsAmt = transactionGrabber.TransactionsAmt - transactionGrabber.Transactions[x].Transactions.transactionAmt;
+        TransactionsAmt = TransactionsAmt.toFixed(2);
         var transactionDeleter = budCollection.findOneAndUpdate(
           { UserIdRef: parseInt(req.params.UserId)},
           { $pull : {Transactions : transactionGrabber.Transactions[x]}}
@@ -1147,6 +1150,7 @@ app.put('/api/budgets/transactions/edit/:UserId', authenticateToken, async (req,
     for (x in transactionGrabber.Transactions) {
       TransactionsAmt += transactionGrabber.Transactions[x].Transactions.transactionAmt;
     }  
+    TransactionsAmt = TransactionsAmt.toFixed(2);
     
     //set new amt
     var transactionGrabberr = await budCollection.findOneAndUpdate(
