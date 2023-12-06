@@ -31,6 +31,40 @@ function BudgetPage() {
         ? `https://www.fintech.davidumanzor.com`
         : `http://localhost:5000`;
 
+    const RefreshToken = async () => {
+        const userinfo = JSON.parse(localStorage.getItem('refresh'));
+        console.log(userinfo);
+        try {
+            
+            var js = JSON.stringify({ refreshToken: userinfo.refreshToken }); 
+            console.log(js);
+            const response = await fetch(
+                `${base_url}/api/token`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${userinfo.accessToken}`
+                    },
+                    body: js,
+                    credentials: 'same-origin',
+                });
+    
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+    
+            const res = await response.json(); // Use the .json() method to parse the JSON response
+    
+            console.log(res);
+            console.log("Token Refreshed");
+        }
+        catch (e) {
+            alert(e.toString());
+            return;
+        }
+    };
+
     const validateInput = (inputElement, fieldName) => {
         try {
             const value = parseFloat(inputElement.value);
@@ -48,7 +82,6 @@ function BudgetPage() {
             if (value.toString().includes('.') && (value.toString().split('.')[1].length > 2)) {
                 throw new Error(`Invalid ${fieldName}: Please enter up to two decimal places.`);
             }
-
             return value.toFixed(2);
         } catch (error) {
             setMessage(error.message);
@@ -93,18 +126,18 @@ function BudgetPage() {
 		try {
             const userinfo = JSON.parse(localStorage.getItem('user'));
 
-            const validatedIncome = validateInput(income, 'Income');
-            const validatedRent = validateInput(rent, 'Rent');
-            const validatedUtilities = validateInput(utilities, 'Utilities');
-            const validatedGroceries = validateInput(groceries, 'Groceries');
-            const validatedInsurance = validateInput(insurance, 'Insurance');
-            const validatedPhone = validateInput(phone, 'Phone');
-            const validatedCar = validateInput(car, 'Car');
-            const validatedGas = validateInput(gas, 'Gas');
-            const validatedFun = validateInput(fun, 'Entertainment');
-            const validatedGoal = validateInput(goal, 'Monthly Savings');
-            const validatedGoalAmt = validateInput(goalAmt, 'Goal Amount');
-            const validatedSavedAmt = validateInput(savedAmt, 'Saved Amount');
+            const validatedIncome = parseFloat(validateInput(income, 'Income'));
+            const validatedRent = parseFloat(validateInput(rent, 'Rent'));
+            const validatedUtilities = parseFloat(validateInput(utilities, 'Utilities'));
+            const validatedGroceries = parseFloat(validateInput(groceries, 'Groceries'));
+            const validatedInsurance = parseFloat(validateInput(insurance, 'Insurance'));
+            const validatedPhone = parseFloat(validateInput(phone, 'Phone'));
+            const validatedCar = parseFloat(validateInput(car, 'Car'));
+            const validatedGas = parseFloat(validateInput(gas, 'Gas'));
+            const validatedFun = parseFloat(validateInput(fun, 'Entertainment'));
+            const validatedGoal = parseFloat(validateInput(goal, 'Monthly Savings'));
+            const validatedGoalAmt = parseFloat(validateInput(goalAmt, 'Goal Amount'));
+            const validatedSavedAmt = parseFloat(validateInput(savedAmt, 'Saved Amount'));
 
             var obj = {
                 MonthlyIncome: validatedIncome,
@@ -149,7 +182,7 @@ function BudgetPage() {
                     savedAmt: res.budgetGot.SavedAmt,
                 }
                 var newBudget = Object.assign({}, temp, res.budgetGot.MonthlyExpenses);
-
+                RefreshToken();
                 setBudget(newBudget);
                 setMessage('Success');
             }
@@ -189,7 +222,7 @@ function BudgetPage() {
                     savedAmt: res.budgetGot.SavedAmt,
                 }
                 var newBudget = Object.assign({}, temp, res.budgetGot.MonthlyExpenses);
-
+                RefreshToken();
                 setBudget(newBudget);
                 setMessage('');
             }

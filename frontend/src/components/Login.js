@@ -90,12 +90,18 @@ function Login() {
 
         const res = await response.json();
         const parsedToken = parseJwt(res.accessToken);
+        console.log(res);
+
+        const refresh = {refreshToken: res.refreshToken};
+
         const userinfo = {
+          refreshToken: res.refreshToken,
           accessToken: res.accessToken,
           UserId: parsedToken.UserId,
         };
-        localStorage.setItem('user', JSON.stringify(userinfo));
 
+        localStorage.setItem('user', JSON.stringify(userinfo));
+        localStorage.setItem('refresh', JSON.stringify(refresh))
         try {
           const infoResponse = await fetch(`${base_url}/api/info/${userinfo.UserId}`, {
             method: 'POST',
