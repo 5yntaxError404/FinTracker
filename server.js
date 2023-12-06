@@ -1049,6 +1049,7 @@ app.delete('/api/budgets/transactions/delete/:UserId', authenticateToken, async 
     
     for(x in transactionGrabber.Transactions){
       if(transactionGrabber.Transactions[x].Transactions.transactionID == TransactionID){
+        TransactionsAmt -= transactionGrabber.Transactions[x].Transactions.transactionAmt;
         var transactionDeleter = budCollection.findOneAndUpdate(
           { UserIdRef: parseInt(req.params.UserId)},
           { $pull : {Transactions : transactionGrabber.Transactions[x]}}
@@ -1056,16 +1057,7 @@ app.delete('/api/budgets/transactions/delete/:UserId', authenticateToken, async 
       }
     }
 
-    transactionGrabber = await budCollection.findOne(
-      { UserIdRef: parseInt(req.params.UserId)}
-    );
-
-    if (transactionGrabber.Transactions == 0)
-      TransactionsAmt = 0;
-    //recalculate the total transaction amt
-    for (x in transactionGrabber.Transactions) {
-      TransactionsAmt += transactionGrabber.Transactions[x].Transactions.transactionAmt;
-    }  
+    
     
     //set new amt
     var transactionGrabber2s = await budCollection.findOneAndUpdate(

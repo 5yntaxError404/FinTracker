@@ -237,7 +237,7 @@ const Dash = (props) => {
             await new Promise(resolve => setTimeout(resolve, 1000));
       
             await Promise.all([
-                RefreshToken(),
+              //  RefreshToken(),
                 GetBudget(),
                 GetAccounts(),
                 GetTransactions(),
