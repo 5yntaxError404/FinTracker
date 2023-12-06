@@ -121,7 +121,10 @@ app.post('/api/register', async (req, res) => {
     // Insert the user document into the "Users" collection
     await usersCollection.insertOne(newUser);
     
-    const {MonthlyIncome, GoalDescription, GoalAmt, SavedAmt} = 0;
+    var MonthlyIncome = 0;
+    var GoalDescription = 0;
+    var GoalAmt = 0;
+    var SavedAmt = 0;
 
     const UserIdRef = userCounter;
     
