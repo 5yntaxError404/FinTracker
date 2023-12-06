@@ -1066,7 +1066,7 @@ app.delete('/api/budgets/transactions/delete/:UserId', authenticateToken, async 
     }  
     
     //set new amt
-    transactionGrabber = await budCollection.findOneAndUpdate(
+    var transactionGrabber2s = await budCollection.findOneAndUpdate(
       { UserIdRef: parseInt(req.params.UserId)},
       { $set: { TransactionsAmt: TransactionsAmt} },
     );
