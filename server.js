@@ -65,7 +65,7 @@ async function main() {
      // });
   
    // Define a variable for the user counter
-let userCounter = 665;
+let userCounter = 800;
 
 
 
@@ -249,7 +249,7 @@ function checkPassComplexity(pass){
           UserId: user.UserId,
           // Any other user-specific data needed??
         };
-        const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '30m' });
+        const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '120m' });
         return accessToken;
       }
       
