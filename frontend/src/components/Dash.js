@@ -204,7 +204,7 @@ const Dash = (props) => {
             return;
         }
     };
-
+    var completedAchievements = [];
     const GetAchievements = async () => {
         try {
             const userinfo = JSON.parse(localStorage.getItem('user'));
@@ -251,6 +251,8 @@ const Dash = (props) => {
             }
             setAchievements(res);
             setMessage('Success');
+            console.log(res);
+
         } catch (e) {
             console.error("Catch Error: ", e.message);
             alert(e.toString());
@@ -309,8 +311,6 @@ const Dash = (props) => {
           animateRotate: true
         }
       };
-
-    const completedAchievements = achievements.filter(achievement => achievement.achievementAdded.Completed);
       
       // Registering the required components
       ChartJS.register(
@@ -493,8 +493,8 @@ const Dash = (props) => {
                     <div className="achievements">
                         <h4>Achievements</h4>
                         {/* Check if there are any completed achievements */}
-                        {completedAchievements.length > 0 ? (
-                            completedAchievements.map(achievement => (
+                        {achievements.length > 0 ? (
+                            achievements.map(achievement => (
                                 <Row className="achievement" key={achievement.achievementAdded.achievementId}>
                                     <p>{achievement.achievementAdded.AchievementName}: {achievement.achievementAdded.Description}</p>
                                 </Row>
