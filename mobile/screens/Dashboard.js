@@ -89,7 +89,7 @@ const Dashboard = ({ navigation }) => {
                 'Authorization': `Bearer ${getAccessToken()}`,
             },
             });
-            
+
 
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
