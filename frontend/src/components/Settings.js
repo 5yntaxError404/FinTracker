@@ -27,6 +27,40 @@ function SettingsPage() {
     ? `https://www.fintech.davidumanzor.com`
     : `http://localhost:5000`;
 
+    const RefreshToken = async () => {
+        const userinfo = JSON.parse(localStorage.getItem('refresh'));
+        console.log(userinfo);
+        try {
+            
+            var js = JSON.stringify({ refreshToken: userinfo.refreshToken }); 
+            console.log(js);
+            const response = await fetch(
+                `${base_url}/api/token`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${userinfo.accessToken}`
+                    },
+                    body: js,
+                    credentials: 'same-origin',
+                });
+    
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+    
+            const res = await response.json(); // Use the .json() method to parse the JSON response
+    
+            console.log(res);
+            console.log("Token Refreshed");
+        }
+        catch (e) {
+            alert(e.toString());
+            return;
+        }
+    };
+
     useEffect(() => {
         GetUser();
         const handleStorageChange = () => {
@@ -116,6 +150,7 @@ function SettingsPage() {
                 console.log("Some error");
             } 
             else {
+                RefreshToken();
                 await GetUser();
                 setMessage('Success');
             }
@@ -182,6 +217,7 @@ function SettingsPage() {
                 setMessage('User successfully deleted');
                 console.log("User deleted");
                 localStorage.removeItem("user");
+                localStorage.removeItem("refresh");
                 window.location.href = '/login';
             }
             
@@ -219,6 +255,7 @@ function SettingsPage() {
                 setMessage('Success');
             }
         } catch (e) {
+            RefreshToken();
             setMessage(`Error: ${e.message}`);
         }
     };
