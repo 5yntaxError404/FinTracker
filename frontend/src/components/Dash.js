@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
+
 import '../css/DashPage.css';
 
 import Container from 'react-bootstrap/Container';
@@ -412,11 +413,11 @@ const Dash = (props) => {
                     <Row>
                         <Col>
                         <h2>Hello User!</h2>
-                        <p>Monthly Income: ${budget.income.toLocaleString()}</p>
+                        <p1>Monthly Income: ${budget.income.toLocaleString()}</p1>
 
                         {/* Expenses List */}
                         <div>
-                            <h4>Monthly Expenses:</h4>
+                            <h44>Monthly Expenses:</h44>
                             <ul>
                                 {Object.keys(budget).map((key) => {
                                     if (key !== 'income' && key !== 'goal' && key !== 'goalDescription' && key !== 'goalAmt' && key !== 'savedAmt' && key !== 'transactionsAmt' && key !== 'monthlyExpensesAmt') {
@@ -430,13 +431,17 @@ const Dash = (props) => {
                         <Col>
                         {(
                             <div className = "chart-container">
+                            {budget.income != 0 && (
                             <canvas id="budgetChart"></canvas>
+                            )}
                             </div>
                         )}
                             {(
                                 <div className='doughnut-chart' style={{ width: '350px', height: '300px'}}>
                                      <Doughnut data={data}/>
+                                     {budget.income != 0 && (
                                      <p> ${budget.transactionsAmt} / ${budget.income} </p>
+                                     )}
                                 </div>
                                
                             )}
@@ -454,7 +459,7 @@ const Dash = (props) => {
                                     ))
                                 ) : (
                                     // Display a message when there are no transactions
-                                    <p>No recent transactions.</p>
+                                    <p1>No recent transactions.</p1>
                                 )}
                             </div>
                             <button className="btn btnn-primary" onClick={() => window.location.href='/transactions'}>Add Transaction</button>

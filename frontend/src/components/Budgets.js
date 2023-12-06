@@ -191,6 +191,7 @@ function BudgetPage() {
             console.error(e);
             return;
         }
+        window.location.href = '/budgets';
     };
 
     const GetBudget = async () => {
@@ -396,7 +397,7 @@ function BudgetPage() {
                                     </Col>
                                 </Row>
                                 <Row>
-                                    <button type="submit" className="btn btn-primary" onClick={AddBudget}>Edit Budget</button>
+                                    <button type="submit" className="btn btn-primary" onClick={AddBudget}>Save Budget</button>
                                 </Row>
                                 {message && <div style={{ color: 'red', marginTop: '10px' }}>{message}</div>}
                             </Container>
