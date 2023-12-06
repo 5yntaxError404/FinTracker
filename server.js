@@ -156,7 +156,7 @@ app.post('/api/register', async (req, res) => {
     }
 
     // Insert budget into budgets collection
-    await budCollection.findOneAndUpdate(newBudget);
+    await budCollection.insertOne(newBudget);
     // Return a success message
     res.status(201).json({ message: 'User registered successfully' });
   } catch (error) {
