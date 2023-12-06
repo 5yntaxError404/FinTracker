@@ -790,7 +790,9 @@ app.post('/api/budgets/add/:UserId', authenticateToken, async (req, res) => {
   try {
     //If it is first of the month then call this to create a new budget.
     if(parseInt(req.params.UserId) != req.user.UserId){
-      return res.status(403).json({ message: 'Access Denied' });
+      const userIdParams = req.params.UserId;
+      const userIdFromToken = req.user.UserId;
+      return res.status(403).json({ message: 'Access Denied userIdParams: ${userIdParams}, userIdFromToken: ${userIdFromToken}' });
     }
 
     const existingBudget = await budCollection.findOneAndDelete({UserIdRef : parseInt(req.params.UserId)})

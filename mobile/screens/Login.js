@@ -48,6 +48,9 @@ const [Email, setSignupEmail] = useState('');
       });
       const data = await response.json();
       if(data.message === "Login successful" && data.accessToken){
+    //     setTimeout(() => {
+    //         navigation.navigate('Dashboard');
+    //       }, 1000);
         navigation.navigate('Dashboard');
         setAccessToken(data.accessToken);
         setUserId(data.UserId); // check accessToken.js and JSON return from login
@@ -72,7 +75,7 @@ const [Email, setSignupEmail] = useState('');
   const handleSignUp = async() => {
     //sign up
     try {
-        const response = await fetch('https://192.168.1.29:5000/api/register/', {
+        const response = await fetch('https://www.fintech.davidumanzor.com/api/register/', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
