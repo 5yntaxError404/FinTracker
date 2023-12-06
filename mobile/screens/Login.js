@@ -72,7 +72,7 @@ const [Email, setSignupEmail] = useState('');
   const handleSignUp = async() => {
     //sign up
     try {
-        const response = await fetch('https://192.168.1.29:5000/api/register/', {
+        const response = await fetch('https://www.fintech.davidumanzor.com/api/register/', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
