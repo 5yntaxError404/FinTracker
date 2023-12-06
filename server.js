@@ -1060,6 +1060,8 @@ app.delete('/api/budgets/transactions/delete/:UserId', authenticateToken, async 
       { UserIdRef: parseInt(req.params.UserId)}
     );
 
+    if (transactionGrabber.Transactions == 0)
+      TransactionsAmt = 0;
     //recalculate the total transaction amt
     for (x in transactionGrabber.Transactions) {
       TransactionsAmt += transactionGrabber.Transactions[x].Transactions.transactionAmt;
