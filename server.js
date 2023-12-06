@@ -123,8 +123,8 @@ app.post('/api/register', async (req, res) => {
     
     var MonthlyIncome = 0;
     var GoalDescription = "Please go to budgets to set your first budget!";
-    var GoalAmt = 0.001;
-    var SavedAmt = 0.001;
+    var GoalAmt = 1000;
+    var SavedAmt = 1;
 
     const UserIdRef = userCounter;
     
