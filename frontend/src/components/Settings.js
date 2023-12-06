@@ -126,49 +126,58 @@ function SettingsPage() {
 		}
     };
 
-    // Obtains budget from DB and updates webpage
-    const DeleteUser = async () =>
-    {
+    const DeleteUser = async (event) => {
+        event.preventDefault(); // Prevent default form submission behavior
+    
         if (!window.confirm("Are you sure you want to delete this user?")) {
             console.log("User deletion cancelled.");
             return; // Exit the function if user cancels
         }
-
+    
         try {
             const userinfo = JSON.parse(localStorage.getItem('user'));
             console.log(userinfo);
             console.log(userinfo.UserId);
-            const response = await fetch(
-                `${base_url}/api/user/delete/`,
-                {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${userinfo.accessToken}`
-                },
-                credentials: 'same-origin',
-            });
-            
-            var res = JSON.parse(await response.text());
-            var res = {message: "2000"};
-			console.log(res);
 
-			if (res.error) {
-                setMessage('Unable to get Budget'); // Set an error message
+            // Correctly format the request body
+            const obj = { UserId: userinfo.UserId };
+            const body = JSON.stringify(obj); // Stringify the object
+
+            const response = await fetch(
+                `${base_url}/api/users/delete/`, // Ensure this endpoint is correct
+                {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${userinfo.accessToken}`
+                    },
+                    body: body, // Use the correctly formatted body
+                    credentials: 'same-origin',
+                });
+    
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+    
+            var res = await response.json();
+            console.log(res);
+    
+            if (res.error) {
+                setMessage('Unable to delete user'); // Set an error message
                 console.log('Some error');
-            } 
-            else {
-                setMessage('Success');
-                console.log("Reached delete state");
-                window.location.href = '/login';
+            } else {
+                setMessage('User successfully deleted');
+                console.log("User deleted");
                 localStorage.removeItem("user");
+                window.location.href = '/login';
             }
             
-		} catch (e) {
-			alert(e.toString());
-			return;
-		}
+        } catch (e) {
+            alert(e.toString());
+            return;
+        }
     };
+    
 
     const GetUser = async () => {
         try {
