@@ -6,7 +6,6 @@ import LandingPage from './pages/LandingPage';
 import SignUpPage from './pages/SignUpPage';
 import DashPage from './pages/DashPage';
 import AccountsPage from './pages/AccountsPage';
-import HelpPage from './pages/HelpPage';
 import SettingsPage from './pages/SettingsPage';
 import BudgetsPage from './pages/BudgetsPage';
 import EmailVerificationPage from './pages/EmailVerificationPage';
@@ -25,7 +24,6 @@ function App() {
                   <Route path="/signup" element={<SignUpPage />} />
                   <Route path="/dash" element={<DashPage />} />       
                   <Route path="/accounts" element={<AccountsPage />} />
-                  <Route path="/help" element={<HelpPage/>} />
                   <Route path="/settings" element={<SettingsPage/>} />
                   <Route path="/budgets" element={<BudgetsPage/>} />
                   <Route path="/transactions" element={<TransactionsPage/>} />
