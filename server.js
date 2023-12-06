@@ -104,6 +104,7 @@ app.post('/api/register', async (req, res) => {
     //const oneTimePass = generateOneTimePass() -- may use this later on.
     const VerificationToken = crypto.randomBytes(32).toString('hex');
     const EmailURL = `https://www.fintech.davidumanzor.com/EmailVerification?token=${VerificationToken}`;
+    var AchievementList = [];
     
     const newUser = {
       UserId: userCounter,
@@ -113,7 +114,8 @@ app.post('/api/register', async (req, res) => {
       UserName,
       Password,
       VerificationToken,
-      isVerified: false
+      isVerified: false,
+      AchievementList
     };
 
     verifyEmail(newUser.Email,EmailURL);
@@ -158,8 +160,12 @@ app.post('/api/register', async (req, res) => {
       Complete
     }
 
+    
+
     // Insert budget into budgets collection
     await budCollection.insertOne(newBudget);
+
+
     // Return a success message
     res.status(201).json({ message: 'User registered successfully' });
   } catch (error) {
