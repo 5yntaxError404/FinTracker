@@ -93,18 +93,18 @@ function BudgetPage() {
 		try {
             const userinfo = JSON.parse(localStorage.getItem('user'));
 
-            const validatedIncome = validateInput(income, 'Income');
-            const validatedRent = validateInput(rent, 'Rent');
-            const validatedUtilities = validateInput(utilities, 'Utilities');
-            const validatedGroceries = validateInput(groceries, 'Groceries');
-            const validatedInsurance = validateInput(insurance, 'Insurance');
-            const validatedPhone = validateInput(phone, 'Phone');
-            const validatedCar = validateInput(car, 'Car');
-            const validatedGas = validateInput(gas, 'Gas');
-            const validatedFun = validateInput(fun, 'Entertainment');
-            const validatedGoal = validateInput(goal, 'Monthly Savings');
-            const validatedGoalAmt = validateInput(goalAmt, 'Goal Amount');
-            const validatedSavedAmt = validateInput(savedAmt, 'Saved Amount');
+            const validatedIncome = parseFloat(validateInput(income, 'Income'));
+            const validatedRent = parseFloat(validateInput(rent, 'Rent'));
+            const validatedUtilities = parseFloat(validateInput(utilities, 'Utilities'));
+            const validatedGroceries = parseFloat(validateInput(groceries, 'Groceries'));
+            const validatedInsurance = parseFloat(validateInput(insurance, 'Insurance'));
+            const validatedPhone = parseFloat(validateInput(phone, 'Phone'));
+            const validatedCar = parseFloat(validateInput(car, 'Car'));
+            const validatedGas = parseFloat(validateInput(gas, 'Gas'));
+            const validatedFun = parseFloat(validateInput(fun, 'Entertainment'));
+            const validatedGoal = parseFloat(validateInput(goal, 'Monthly Savings'));
+            const validatedGoalAmt = parseFloat(validateInput(goalAmt, 'Goal Amount'));
+            const validatedSavedAmt = parseFloat(validateInput(savedAmt, 'Saved Amount'));
 
             var obj = {
                 MonthlyIncome: validatedIncome,

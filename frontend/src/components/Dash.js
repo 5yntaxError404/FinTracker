@@ -132,6 +132,7 @@ const Dash = (props) => {
     // Obtains transactions from DB and updates webpage
     const GetTransactions = async() =>
     {
+        var check
         try {
             const userinfo = JSON.parse(localStorage.getItem('user'));
             
@@ -145,7 +146,7 @@ const Dash = (props) => {
                 },
                 credentials: 'same-origin',
             });
-            var check = response.text();
+            check = response.text();
             var res = JSON.parse(await check);
             console.log(res);
 
@@ -225,36 +226,47 @@ const Dash = (props) => {
             return;
         }
     };
-    
-    /*
 
     const RefreshToken = async () => {
-        const userinfo = JSON.parse(localStorage.getItem('user'));
+        const userinfo = JSON.parse(localStorage.getItem('refresh'));
+        console.log(userinfo);
         try {
-            await fetch(
+            
+            var js = JSON.stringify({ refreshToken: userinfo.refreshToken }); 
+            console.log(js);
+            const response = await fetch(
                 `${base_url}/api/token`,
                 {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${userinfo.accessToken}`
-                },
-                credentials: 'same-origin',
-            });
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${userinfo.accessToken}`
+                    },
+                    body: js,
+                    credentials: 'same-origin',
+                });
+    
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+    
+            const res = await response.json(); // Use the .json() method to parse the JSON response
+    
+            console.log(res);
+            console.log("Token Refreshed");
         }
         catch (e) {
             alert(e.toString());
             return;
         }
     };
-    */
 
     useEffect(() => {
         const loadData = async () => {
           try {
             // Delaying the execution to ensure all setups are complete
             await new Promise(resolve => setTimeout(resolve, 1000));
-      
+            
             await Promise.all([
                 /*RefreshToken(),*/
                 GetBudget(),
@@ -399,11 +411,11 @@ const Dash = (props) => {
                     <Row>
                         <Col>
                         <h2>Hello User!</h2>
-                        <p1>Monthly Income: ${budget.income.toLocaleString()}</p1>
+                        <p>Monthly Income: ${budget.income.toLocaleString()}</p>
 
                         {/* Expenses List */}
                         <div>
-                            <h44>Monthly Expenses:</h44>
+                            <h4>Monthly Expenses:</h4>
                             <ul>
                                 {Object.keys(budget).map((key) => {
                                     if (key !== 'income' && key !== 'goal' && key !== 'goalDescription' && key !== 'goalAmt' && key !== 'savedAmt' && key !== 'transactionsAmt' && key !== 'monthlyExpensesAmt') {
@@ -416,7 +428,7 @@ const Dash = (props) => {
                         </Col>
                         <Col>
                         {(
-                            <div class = "chart-container">
+                            <div className = "chart-container">
                             <canvas id="budgetChart"></canvas>
                             </div>
                         )}
@@ -441,7 +453,7 @@ const Dash = (props) => {
                                     ))
                                 ) : (
                                     // Display a message when there are no transactions
-                                    <p1>No recent transactions.</p1>
+                                    <p>No recent transactions.</p>
                                 )}
                             </div>
                             <button className="btn btnn-primary" onClick={() => window.location.href='/transactions'}>Add Transaction</button>

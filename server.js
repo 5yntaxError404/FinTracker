@@ -254,7 +254,7 @@ function checkPassComplexity(pass){
       }
       
       app.post('/api/token', (req, res) => {
-        const refreshToken = req.cookies.refreshToken;
+        const refreshToken = req.body.refreshToken;
       
         // Check for the presence of the refresh token
         if (!refreshToken) {
@@ -856,12 +856,15 @@ app.post('/api/budgets/add/:UserId', authenticateToken, async (req, res) => {
     for (x in MonthlyExpenses) {
       MonthlyExpensesAmt += MonthlyExpenses[x];
     }
+    MonthlyExpensesAmt = Math.round(MonthlyExpensesAmt);
     
     var Transactions = [];
     var TransactionsAmt = 0;
     for (x in Transactions) {
       TransactionsAmt += Transactions[x];
     }
+
+    TransactionsAmt = Math.round(TransactionsAmt);
 
     var Complete = false;
     if(GoalAmt == SavedAmt){
@@ -922,6 +925,7 @@ app.put('/api/budgets/edit/:UserId', authenticateToken, async (req, res) => {
     for (x in MonthlyExpenses) {
       MonthlyExpensesAmt += MonthlyExpenses[x];
     }
+    MonthlyExpensesAmt = MonthlyExpensesAmt.toFixed(2);
 
     var Complete = false;
     if(GoalAmt == SavedAmt){
@@ -983,6 +987,28 @@ app.post('/api/budgets/get/:UserId', authenticateToken, async (req, res) => {
 
     // Return a success message
     res.status(201).json({budgetGot});
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+app.delete('/api/budgets/delete/:UserId', authenticateToken, async (req, res) => {
+  try {
+
+    if(parseInt(req.params.UserId) != req.user.UserId){
+      return res.status(403).json({ message: 'Access Denied' });
+    }
+
+    // Find and delete the user by UserId
+    const deletionResult = await budCollection.deleteOne({ UserIdRef: parseInt(req.params.UserId) });
+
+    if (deletionResult.deletedCount === 1) {
+      res.status(200).json({ message: 'User deleted successfully' });
+    } else {
+      res.status(404).json({ error: 'User not found' });
+    }
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });

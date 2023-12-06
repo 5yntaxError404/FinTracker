@@ -143,6 +143,19 @@ function SettingsPage() {
             const obj = { UserId: userinfo.UserId };
             const body = JSON.stringify(obj); // Stringify the object
 
+
+            const Budgetresponse = await fetch(
+                `${base_url}/api/budgets/delete/${userinfo.UserId}`,
+                {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${userinfo.accessToken}`
+                },
+                credentials: 'same-origin',
+            });
+            var res = JSON.parse(await Budgetresponse.text());
+            
             const response = await fetch(
                 `${base_url}/api/users/delete/`, // Ensure this endpoint is correct
                 {
