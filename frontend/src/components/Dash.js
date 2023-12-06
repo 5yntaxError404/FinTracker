@@ -169,45 +169,64 @@ const Dash = (props) => {
         }
     };
 
-    // Obtains achievements from DB and updates webpage
-    const GetAchievements = async() =>
-    {
+    const GetAchievements = async () => {
         try {
             const userinfo = JSON.parse(localStorage.getItem('user'));
-            
+            if (!userinfo || !userinfo.UserId || !userinfo.accessToken) {
+                console.error("User info not found in localStorage");
+                // Optionally, redirect to login or show an error message
+                return;
+            }
+    
             const response = await fetch(
                 `${base_url}/api/achievements/get/${userinfo.UserId}`,
                 {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${userinfo.accessToken}`
-                },
-                credentials: 'same-origin',
-            });
-            var check = response.text();
-            var res = JSON.parse(await check);
-            console.log(res);
-
-            if (res.error) {
-                setMessage('Unable to get Achievements'); // Set an error message
-                console.log('Some error');
-            } 
-            else {
-                setAchievements(res);
-                setMessage('Success');
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${userinfo.accessToken}`
+                    },
+                    credentials: 'same-origin',
+                }
+            );
+    
+            const responseText = await response.text();
+            console.log("Raw response:", responseText); // Log the raw response
+    
+            if (!response.ok) {
+                console.error("HTTP Error: ", response.status);
+                // Handle HTTP error, such as showing an error message
+                return;
             }
-            
+    
+            let res;
+            try {
+                res = JSON.parse(responseText);
+            } catch (e) {
+                console.error("JSON Parsing Error: ", e);
+                // Handle JSON parsing error, such as showing an error message
+                return;
+            }
+    
+            if (res.error) {
+                console.error('API Error:', res.error);
+                setMessage('Unable to get Achievements');
+                return;
+            }
+    
+            setAchievements(res);
+            setMessage('Success');
         } catch (e) {
-            console.log(check);
-            if(check.value == "Forbidden")
-            {
+            console.error("Catch Error: ", e.message);
+            alert(e.toString());
+            if (e.message === "User info not found in localStorage" || e.message === "Forbidden") {
                 window.location.href = '/login';
             }
-            alert(e.toString());
             return;
         }
     };
+    
+    /*
 
     const RefreshToken = async () => {
         const userinfo = JSON.parse(localStorage.getItem('user'));
@@ -228,7 +247,7 @@ const Dash = (props) => {
             return;
         }
     };
-
+    */
 
     useEffect(() => {
         const loadData = async () => {
@@ -237,7 +256,7 @@ const Dash = (props) => {
             await new Promise(resolve => setTimeout(resolve, 1000));
       
             await Promise.all([
-                RefreshToken(),
+                /*RefreshToken(),*/
                 GetBudget(),
                 GetAccounts(),
                 GetTransactions(),
