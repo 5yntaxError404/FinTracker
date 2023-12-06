@@ -49,6 +49,40 @@ const Dash = (props) => {
     const base_url = process.env.NODE_ENV === "production"
     ? `https://www.fintech.davidumanzor.com`
     : `http://localhost:5000`;
+
+    const RefreshToken = async () => {
+        const userinfo = JSON.parse(localStorage.getItem('refresh'));
+        console.log(userinfo);
+        try {
+            
+            var js = JSON.stringify({ refreshToken: userinfo.refreshToken }); 
+            console.log(js);
+            const response = await fetch(
+                `${base_url}/api/token`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${userinfo.accessToken}`
+                    },
+                    body: js,
+                    credentials: 'same-origin',
+                });
+    
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+    
+            const res = await response.json(); // Use the .json() method to parse the JSON response
+    
+            console.log(res);
+            console.log("Token Refreshed");
+        }
+        catch (e) {
+            alert(e.toString());
+            return;
+        }
+    };
   
     // Obtains accounts from DB and updates webpage
     const GetAccounts = async () =>
@@ -214,7 +248,6 @@ const Dash = (props) => {
                 setMessage('Unable to get Achievements');
                 return;
             }
-    
             setAchievements(res);
             setMessage('Success');
         } catch (e) {
@@ -227,40 +260,6 @@ const Dash = (props) => {
         }
     };
 
-    const RefreshToken = async () => {
-        const userinfo = JSON.parse(localStorage.getItem('refresh'));
-        console.log(userinfo);
-        try {
-            
-            var js = JSON.stringify({ refreshToken: userinfo.refreshToken }); 
-            console.log(js);
-            const response = await fetch(
-                `${base_url}/api/token`,
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${userinfo.accessToken}`
-                    },
-                    body: js,
-                    credentials: 'same-origin',
-                });
-    
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-    
-            const res = await response.json(); // Use the .json() method to parse the JSON response
-    
-            console.log(res);
-            console.log("Token Refreshed");
-        }
-        catch (e) {
-            alert(e.toString());
-            return;
-        }
-    };
-
     useEffect(() => {
         const loadData = async () => {
           try {
@@ -269,7 +268,7 @@ const Dash = (props) => {
             
             await Promise.all([
 
-              //  RefreshToken(),
+                RefreshToken(),
 
                 GetBudget(),
                 GetAccounts(),

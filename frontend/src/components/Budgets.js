@@ -31,6 +31,40 @@ function BudgetPage() {
         ? `https://www.fintech.davidumanzor.com`
         : `http://localhost:5000`;
 
+    const RefreshToken = async () => {
+        const userinfo = JSON.parse(localStorage.getItem('refresh'));
+        console.log(userinfo);
+        try {
+            
+            var js = JSON.stringify({ refreshToken: userinfo.refreshToken }); 
+            console.log(js);
+            const response = await fetch(
+                `${base_url}/api/token`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${userinfo.accessToken}`
+                    },
+                    body: js,
+                    credentials: 'same-origin',
+                });
+    
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+    
+            const res = await response.json(); // Use the .json() method to parse the JSON response
+    
+            console.log(res);
+            console.log("Token Refreshed");
+        }
+        catch (e) {
+            alert(e.toString());
+            return;
+        }
+    };
+
     const validateInput = (inputElement, fieldName) => {
         try {
             const value = parseFloat(inputElement.value);
@@ -48,7 +82,6 @@ function BudgetPage() {
             if (value.toString().includes('.') && (value.toString().split('.')[1].length > 2)) {
                 throw new Error(`Invalid ${fieldName}: Please enter up to two decimal places.`);
             }
-
             return value.toFixed(2);
         } catch (error) {
             setMessage(error.message);
@@ -149,7 +182,7 @@ function BudgetPage() {
                     savedAmt: res.budgetGot.SavedAmt,
                 }
                 var newBudget = Object.assign({}, temp, res.budgetGot.MonthlyExpenses);
-
+                RefreshToken();
                 setBudget(newBudget);
                 setMessage('Success');
             }
@@ -189,7 +222,7 @@ function BudgetPage() {
                     savedAmt: res.budgetGot.SavedAmt,
                 }
                 var newBudget = Object.assign({}, temp, res.budgetGot.MonthlyExpenses);
-
+                RefreshToken();
                 setBudget(newBudget);
                 setMessage('');
             }
