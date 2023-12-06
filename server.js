@@ -1036,7 +1036,7 @@ app.post('/api/budgets/transactions/:UserId', authenticateToken, async (req, res
 app.delete('/api/budgets/transactions/delete/:UserId', authenticateToken, async (req, res) => {
   
   var TransactionID = req.body.transactionID;
-  var TransactionsAmt;
+  let TransactionsAmt = 0;
   try {
 
     if(parseInt(req.params.UserId) != req.user.UserId){
