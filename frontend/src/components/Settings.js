@@ -9,6 +9,7 @@ import Col from 'react-bootstrap/Col';
 
 // Looking for correct code to import font
 
+
 function SettingsPage() {
 
     const [settings, setSettings] = useState({
@@ -42,10 +43,18 @@ function SettingsPage() {
             const valuelength = inputElement.length;
             const value = inputElement;
             
-            if(valuelength == 0){
-                throw new Error('Invalid entries: Please enter a non-empty value in each box to successfully edit.');
+            if(valuelength == 0 && fieldName == "Username"){
+                return settings.UserName;
+            }else if(valuelength == 0 && fieldName == "Password"){
+                return settings.Password;
+            }else if(valuelength == 0 && fieldName == "First Name"){
+                return settings.FirstName;
+            }else if(valuelength == 0 && fieldName == "Last Name"){
+                return settings.LastName;
+            }else if(valuelength == 0 && fieldName == "Email"){
+                return settings.Email;
             }
-
+    
             return value;
         } catch (error) {
             setMessage(error.message);

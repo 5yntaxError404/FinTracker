@@ -333,7 +333,7 @@ const Dash = (props) => {
         
         if (ctx) {
             ctx.chart = new Chart(ctx, {
-                type: 'doughnut',
+                type: 'pie',
                 data: {
                     labels: ["Income", "Rent", "Utilities", "Groceries", "Insurance", "Phone", "Gas", "Car", "Entertainment", "Goal"],
                     datasets: [{
@@ -418,8 +418,6 @@ const Dash = (props) => {
                         {(
                             <div class = "chart-container">
                             <canvas id="budgetChart"></canvas>
-                            <p className="above-centered-text">Expenses</p>
-        <p className="centered-text">Breakdown</p>
                             </div>
                         )}
                             {(
