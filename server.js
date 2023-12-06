@@ -122,9 +122,9 @@ app.post('/api/register', async (req, res) => {
     await usersCollection.insertOne(newUser);
     
     var MonthlyIncome = 0;
-    var GoalDescription = 0;
-    var GoalAmt = 0;
-    var SavedAmt = 0;
+    var GoalDescription = "Please go to budgets to set your first budget!";
+    var GoalAmt = 0.001;
+    var SavedAmt = 0.001;
 
     const UserIdRef = userCounter;
     
