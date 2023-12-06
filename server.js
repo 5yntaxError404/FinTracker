@@ -116,15 +116,47 @@ app.post('/api/register', async (req, res) => {
       isVerified: false
     };
 
-
-    
-
-
     verifyEmail(newUser.Email,EmailURL);
 
     // Insert the user document into the "Users" collection
     await usersCollection.insertOne(newUser);
+    
+    const {MonthlyIncome, GoalDescription, GoalAmt, SavedAmt} = 0;
 
+    const UserIdRef = userCounter;
+    
+    const MonthlyExpenses = {
+        rent: 0,
+        utilities: 0,
+        groceries: 0,
+        insurance: 0,
+        phone: 0,
+        car: 0,
+        gas: 0,
+        fun: 0,
+        goal: 0,
+    };
+
+    var MonthlyExpensesAmt = 0;
+    var Transactions = [];
+    var TransactionsAmt = 0;
+    var Complete = false;
+
+    const newBudget = {
+      UserIdRef,
+      MonthlyIncome,
+      MonthlyExpenses,
+      MonthlyExpensesAmt,
+      Transactions,
+      TransactionsAmt,
+      GoalDescription,
+      GoalAmt,
+      SavedAmt,
+      Complete
+    }
+
+    // Insert budget into budgets collection
+    await budCollection.findOneAndUpdate(newBudget);
     // Return a success message
     res.status(201).json({ message: 'User registered successfully' });
   } catch (error) {
@@ -1088,7 +1120,7 @@ app.put('/api/budgets/transactions/edit/:UserId', authenticateToken, async (req,
     }  
     
     //set new amt
-    transactionGrabber = await budCollection.findOneAndUpdate(
+    var transactionGrabberr = await budCollection.findOneAndUpdate(
       { UserIdRef: parseInt(req.params.UserId)},
       { $set: { TransactionsAmt: TransactionsAmt} },
     );
