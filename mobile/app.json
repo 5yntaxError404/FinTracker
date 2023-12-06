@@ -21,7 +21,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.jackiez226.fintracker"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -32,6 +33,11 @@
     },
     "updates": {
       "url": "https://u.expo.dev/fcf7c055-399f-4ec4-b2d7-8b6bc3687fff"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "fcf7c055-399f-4ec4-b2d7-8b6bc3687fff"
+      }
     }
   }
 }
